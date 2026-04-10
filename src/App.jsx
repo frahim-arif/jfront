@@ -132,7 +132,7 @@ export default function App() {
       setLoading(true);
       const amount = Math.round(Number(amountInRupees) * 100);
 
-      const res = await axios.post("http://localhost:5000/create-order", {
+      const res = await axios.post("https://jbackend-5vqv.onrender.com/create-order", {
         amount,
         customerName,
         mobileNumber,
