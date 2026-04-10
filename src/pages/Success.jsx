@@ -17,7 +17,7 @@ function Success(){
         return
       }
       try{
-        const { data } = await axios.get(`http://localhost:5000/order/${merchantOrderId}`)
+        const { data } = await axios.get(`https://jbackend-5vqv.onrender.com/order/${merchantOrderId}`)
         if(mounted) setOrder(data)
       }catch(e){
         if(mounted) setError('Unable to fetch order details')

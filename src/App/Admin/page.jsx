@@ -8,7 +8,7 @@ export default function AdminDashboard() {
   // Fetch all jobs
   const fetchJobs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/jobs");
+      const res = await axios.get("https://jbackend-5vqv.onrender.com/jobs");;
       setJobs(res.data.jobs);
     } catch (err) {
       console.error("Error fetching jobs:", err);
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
 
     try {
       setLoading(true);
-      await axios.delete(`http://localhost:5000/jobs/${jobId}`);
+      await axios.delete(`https://jbackend-5vqv.onrender.com/jobs/${jobId}`);
       // Refresh job list after deletion
       fetchJobs();
     } catch (err) {

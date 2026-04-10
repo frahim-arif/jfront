@@ -38,7 +38,7 @@ export default function JobCard({ job }) {
         jobId: job._id,
       };
 
-      const res = await axios.post("http://localhost:5000/create-order", payload);
+      const res = await axios.post("https://jbackend-5vqv.onrender.com/create-order", payload);
 
       if (res.data.checkoutPageUrl) {
         window.open(res.data.checkoutPageUrl, "_blank");

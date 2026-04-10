@@ -23,7 +23,7 @@ export default function App() {
 
   const fetchJobs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/jobs");
+      const res = await axios.get("https://jbackend-5vqv.onrender.com/jobs");
       setJobs(res.data.jobs);
     } catch (err) { console.error(err); }
   };
@@ -33,7 +33,7 @@ export default function App() {
       alert("All fields are required!"); return;
     }
     try {
-      await axios.post("http://localhost:5000/jobs", { title, description, amount, district, postedByPhone: phone, postedByEmail: email });
+      await axios.post("https://jbackend-5vqv.onrender.com/jobs", { title, description, amount, district, postedByPhone: phone, postedByEmail: email });
       setShowOfferJob(false);
       setTitle(""); setDescription(""); setAmount(10); setDistrict(""); setPhone(""); setEmail("");
       fetchJobs();

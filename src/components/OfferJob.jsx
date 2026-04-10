@@ -31,7 +31,7 @@ export default function OfferJob() {
     }
 
     try {
-      await axios.post("http://localhost:5000/jobs", {
+      await axios.post("https://jbackend-5vqv.onrender.com/jobs", {
         title: jobTitle,
         description: jobDescription,
         amount: Number(jobAmount),
