@@ -12,7 +12,7 @@ function Payments(){
     let mounted = true
     async function load(){
       try{
-        const { data } = await axios.get('https://jbackend-5vqv.onrender.com/orders')
+        const { data } = await axios.get('https://jbackend-h963.onrender.com/orders')
         if(mounted){
           setItems(data.items || [])
           setTotal(data.total || 0)

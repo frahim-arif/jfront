@@ -81,7 +81,7 @@ export default function App() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get("https://jbackend-5vqv.onrender.com/jobs");
+        const res = await axios.get("https://jbackend-h963.onrender.com/jobs");
         setJobs(res.data.jobs);
         setFilteredJobs(res.data.jobs);
 
@@ -132,7 +132,7 @@ export default function App() {
       setLoading(true);
       const amount = Math.round(Number(amountInRupees) * 100);
 
-      const res = await axios.post("https://jbackend-5vqv.onrender.com/create-order", {
+      const res = await axios.post("https://jbackend-h963.onrender.com/create-order", {
         amount,
         customerName,
         mobileNumber,
