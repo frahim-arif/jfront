@@ -240,6 +240,7 @@ export default function App() {
           </p>
         )}
 
+
         {filteredJobs
           .filter((job) => !appliedJobs.includes(job._id))
           .map((job) => (
