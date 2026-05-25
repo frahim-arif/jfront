@@ -4,9 +4,12 @@ import { formatDistanceToNow } from "date-fns";
 
 
 
+
 // Header Import
 import Header from "./components/Header.jsx";
 
+const [jobs, setJobs] = useState([]);
+const [appliedJobs, setAppliedJobs] = useState([]);
 // ---- SCROLLER CSS ----
 const scrollerStyle = `
 @keyframes scrollText {
@@ -98,6 +101,32 @@ export default function App() {
     };
     fetchJobs();
   }, []);
+  useEffect(() => {
+
+    const mobile = localStorage.getItem("mobileNumber");
+
+    if (!mobile) return;
+
+    const fetchAppliedJobs = async () => {
+
+      try {
+
+        const res = await axios.get(
+          `https://jbackend-h963.onrender.com/applied-jobs/${mobile}`
+        );
+
+        setAppliedJobs(res.data.appliedJobIds || []);
+
+      } catch (err) {
+
+        console.error("Applied jobs fetch error:", err);
+
+      }
+    };
+
+    fetchAppliedJobs();
+
+  }, []);
 
   // Filter by district
   useEffect(() => {
@@ -131,6 +160,7 @@ export default function App() {
       setError("");
       setLoading(true);
       const amount = Math.round(Number(amountInRupees) * 100);
+      localStorage.setItem("mobileNumber", mobileNumber);
 
       const res = await axios.post("https://jbackend-h963.onrender.com/create-order", {
         amount,
@@ -162,10 +192,10 @@ export default function App() {
 
       {/* ---- SCROLLING TIME BAR ---- */}
       <div className="bg-white text-black py-1 overflow-hidden">
-  <p className="scroller text-center font-semibold text-xs">
-    {currentTime}  / Find your dream job today ! 
-  </p>
-</div>
+        <p className="scroller text-center font-semibold text-xs">
+          {currentTime}  / Find your dream job today !
+        </p>
+      </div>
 
       {/* DISTRICT FILTER */}
       <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-between items-center">
@@ -210,49 +240,51 @@ export default function App() {
           </p>
         )}
 
-        {filteredJobs.map((job) => (
-          <div
-            key={job._id}
-            className="relative rounded-2xl p-1 shadow-2xl hover:scale-105 transition-all duration-300"
-          >
-            <div className="bg-white rounded-2xl p-5 flex flex-col justify-between">
-              <h2 className="text-xl font-bold mb-2 text-gray-900">
-                {job.title}
-              </h2>
-              <p className="text-gray-700 mb-4">{job.description}</p>
+        {filteredJobs
+          .filter((job) => !appliedJobs.includes(job._id))
+          .map((job) => (
+            <div
+              key={job._id}
+              className="relative rounded-2xl p-1 shadow-2xl hover:scale-105 transition-all duration-300"
+            >
+              <div className="bg-white rounded-2xl p-5 flex flex-col justify-between">
+                <h2 className="text-xl font-bold mb-2 text-gray-900">
+                  {job.title}
+                </h2>
+                <p className="text-gray-700 mb-4">{job.description}</p>
 
-              <ul className="text-black mb-4 space-y-1 text-sm">
-                <li>
-                  <strong className="text-green-500">Price:</strong>{" "}
-                  {job.amount} ₹
-                </li>
-                <li>
-                  <strong className="text-fuchsia-700">District:</strong>{" "}
-                  {job.district}
-                </li>
-                {job.createdAt && (
+                <ul className="text-black mb-4 space-y-1 text-sm">
                   <li>
-                    <strong>Posted:</strong>{" "}
-                    {formatDistanceToNow(new Date(job.createdAt), {
-                      addSuffix: true,
-                    })}
+                    <strong className="text-green-500">Price:</strong>{" "}
+                    {job.amount} ₹
                   </li>
-                )}
-              </ul>
+                  <li>
+                    <strong className="text-fuchsia-700">District:</strong>{" "}
+                    {job.district}
+                  </li>
+                  {job.createdAt && (
+                    <li>
+                      <strong>Posted:</strong>{" "}
+                      {formatDistanceToNow(new Date(job.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </li>
+                  )}
+                </ul>
 
-              <button
-                onClick={() => {
-                  setSelectedJob(job);
-                  setAmountInRupees(10);
-                  setNote(`Applying for ${job.title}`);
-                }}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition blink"
-              >
-                Apply Now
-              </button>
+                <button
+                  onClick={() => {
+                    setSelectedJob(job);
+                    setAmountInRupees(10);
+                    setNote(`Applying for ${job.title}`);
+                  }}
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition blink"
+                >
+                  Apply Now
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {/* APPLY / OFFER MODAL */}
@@ -333,8 +365,8 @@ export default function App() {
               {loading
                 ? "Processing..."
                 : selectedJob
-                ? "Pay & Apply"
-                : "Submit Job Offer"}
+                  ? "Pay & Apply"
+                  : "Submit Job Offer"}
             </button>
           </div>
         </div>
