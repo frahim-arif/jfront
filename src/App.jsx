@@ -5,11 +5,12 @@ import { formatDistanceToNow } from "date-fns";
 
 
 
+
+
 // Header Import
 import Header from "./components/Header.jsx";
 
-const [jobs, setJobs] = useState([]);
-const [appliedJobs, setAppliedJobs] = useState([]);
+
 // ---- SCROLLER CSS ----
 const scrollerStyle = `
 @keyframes scrollText {
@@ -38,10 +39,11 @@ export default function App() {
     "Sunitpur",
     "Dhubri",
     "Borpeta",
-    "Haju",
+    "Hajo",
   ];
 
   const [jobs, setJobs] = useState([]);
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [districtList, setDistrictList] = useState(fixedDistricts);
   const [selectedDistrict, setSelectedDistrict] = useState("All");
