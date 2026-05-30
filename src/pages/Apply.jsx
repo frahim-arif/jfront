@@ -49,7 +49,7 @@ export default function App() {
       {showOfferJob && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Offer a Job</h2>
+            <h2 className="text-xl font-bold mb-4">Offer Your Job</h2>
             <input type="text" placeholder="Job Title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full mb-2 p-2 border rounded" />
             <textarea placeholder="Job Description" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full mb-2 p-2 border rounded" />
             <input type="number" placeholder="Price in INR" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full mb-2 p-2 border rounded" />
