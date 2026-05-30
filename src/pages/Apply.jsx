@@ -67,6 +67,7 @@ export default function App() {
         </div>
       )}
 
+      
       {/* Job List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
         {jobs.map(job => <JobCard key={job._id} job={job} />)}
