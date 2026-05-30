@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 
-
-
-
-
-
 // Header Import
 import Header from "./components/Header.jsx";
 
@@ -58,7 +53,7 @@ export default function App() {
   const [note, setNote] = useState("Order for job");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [loadingJobs, setLoadingJobs] = useState(true);
   // ----- LIVE TIME STATE -----
   const [currentTime, setCurrentTime] = useState("");
 
@@ -83,26 +78,36 @@ export default function App() {
   }, []);
 
   // Fetch Jobs
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const res = await axios.get("https://jbackend-h963.onrender.com/jobs");
-        setJobs(res.data.jobs);
-        setFilteredJobs(res.data.jobs);
+ useEffect(() => {
+  const fetchJobs = async () => {
+    try {
+      const res = await axios.get(
+        "https://jbackend-h963.onrender.com/jobs"
+      );
 
-        const apiDistricts = [
-          ...new Set(res.data.jobs.map((job) => job.district)),
-        ];
-        const mergedDistricts = Array.from(
-          new Set([...fixedDistricts, ...apiDistricts])
-        );
-        setDistrictList(mergedDistricts);
-      } catch (err) {
-        console.error("Error fetching jobs", err);
-      }
-    };
-    fetchJobs();
-  }, []);
+      setJobs(res.data.jobs);
+      setFilteredJobs(res.data.jobs);
+
+      const apiDistricts = [
+        ...new Set(res.data.jobs.map((job) => job.district)),
+      ];
+
+      const mergedDistricts = Array.from(
+        new Set([...fixedDistricts, ...apiDistricts])
+      );
+
+      setDistrictList(mergedDistricts);
+
+    } catch (err) {
+      console.error("Error fetching jobs", err);
+
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+
+  fetchJobs();
+}, []);
   useEffect(() => {
 
     const mobile = localStorage.getItem("mobileNumber");
@@ -233,147 +238,152 @@ export default function App() {
           </select>
         </div>
       </div>
-
-      {/* JOB GRID */}
-      <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 px-4">
-        {filteredJobs.length === 0 && (
-          <p className="text-center col-span-full text-lg font-semibold text-gray-700">
-            No jobs found for this district.
-          </p>
-        )}
-
-
-        {filteredJobs
-          .filter((job) => !appliedJobs.includes(job._id))
-          .map((job) => (
-            <div
-              key={job._id}
-              className="relative rounded-2xl p-1 shadow-2xl hover:scale-105 transition-all duration-300"
-            >
-              <div className="bg-white rounded-2xl p-5 flex flex-col justify-between">
-                <h2 className="text-xl font-bold mb-2 text-gray-900">
-                  {job.title}
-                </h2>
-                <p className="text-gray-700 mb-4">{job.description}</p>
-
-                <ul className="text-black mb-4 space-y-1 text-sm">
-                  <li>
-                    <strong className="text-green-500">Price:</strong>{" "}
-                    {job.amount} ₹
-                  </li>
-                  <li>
-                    <strong className="text-fuchsia-700">District:</strong>{" "}
-                    {job.district}
-                  </li>
-                  {job.createdAt && (
-                    <li>
-                      <strong>Posted:</strong>{" "}
-                      {formatDistanceToNow(new Date(job.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </li>
-                  )}
-                </ul>
-
-                <button
-                  onClick={() => {
-                    setSelectedJob(job);
-                    setAmountInRupees(10);
-                    setNote(`Applying for ${job.title}`);
-                  }}
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition blink"
-                >
-                  Apply Now
-                </button>
-              </div>
-            </div>
-          ))}
-      </div>
-
-      {/* APPLY / OFFER MODAL */}
-      {(selectedJob || showOfferPopup) && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
-          onClick={handleCloseModal}
-        >
-          <div
-            className="bg-white rounded-lg shadow-md p-5 w-full max-w-md relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-3 right-3 text-black hover:text-gray-700 text-xl"
-            >
-              ✕
-            </button>
-
-            <h2 className="text-2xl font-bold text-center mb-4 text-black">
-              {selectedJob ? `Apply for ${selectedJob.title}` : "Offer a Job"}
-            </h2>
-
-            <div className="grid gap-4">
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Your Name"
-                className="p-3 border border-gray-300 rounded-lg"
-              />
-
-              <input
-                type="tel"
-                value={mobileNumber}
-                onChange={(e) =>
-                  setMobileNumber(
-                    e.target.value.replace(/[^\d]/g, "").slice(0, 10)
-                  )
-                }
-                placeholder="Mobile Number"
-                className="p-3 border border-gray-300 rounded-lg"
-              />
-
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="p-3 border border-gray-300 rounded-lg"
-              />
-
-              <input
-                type="number"
-                value={amountInRupees}
-                onChange={(e) => setAmountInRupees(e.target.value)}
-                placeholder="Amount in INR"
-                className="p-3 border border-gray-300 rounded-lg"
-              />
-
-              <input
-                type="text"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Note"
-                className="p-3 border border-gray-300 rounded-lg"
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-600 mt-2 text-sm">{error}</p>
-            )}
-
-            <button
-              onClick={createOrder}
-              className="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg shadow-md transition-all"
-            >
-              {loading
-                ? "Processing..."
-                : selectedJob
-                  ? "Pay & Apply"
-                  : "Submit Job Offer"}
-            </button>
-          </div>
+     <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 px-4">
+      {loadingJobs ? (
+        <div className="col-span-full flex justify-center items-center py-20">
+          <div className="w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
+      ) : filteredJobs.length === 0 && (
+        <p className="text-center col-span-full text-lg font-semibold text-gray-700">
+          No jobs found for this district.
+        </p>
       )}
+
+      {filteredJobs
+        .filter((job) => !appliedJobs.includes(job._id))
+        .map((job) => (
+          <div
+            key={job._id}
+            className="relative rounded-2xl p-1 shadow-2xl hover:scale-105 transition-all duration-300"
+          >
+            <div className="bg-white rounded-2xl p-5 flex flex-col justify-between">
+              <h2 className="text-xl font-bold mb-2 text-gray-900">
+                {job.title}
+              </h2>
+              <p className="text-gray-700 mb-4">{job.description}</p>
+
+              <ul className="text-black mb-4 space-y-1 text-sm">
+                <li>
+                  <strong className="text-green-500">Price:</strong>{" "}
+                  {job.amount} ₹
+                </li>
+                <li>
+                  <strong className="text-fuchsia-700">District:</strong>{" "}
+                  {job.district}
+                </li>
+                {job.createdAt && (
+                  <li>
+                    <strong>Posted:</strong>{" "}
+                    {formatDistanceToNow(new Date(job.createdAt), {
+                      addSuffix: true,
+                    })}
+                    
+                  </li>
+                )}
+              </ul>
+
+              <button
+                onClick={() => {
+                  setSelectedJob(job);
+                  setAmountInRupees(10);
+                  setNote(`Applying for ${job.title}`);
+                }}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition blink"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+        ))}
     </div>
-  );
+    
+
+     {/* APPLY / OFFER MODAL */}
+  
+    {(selectedJob || showOfferPopup) && (
+      <div
+        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+        onClick={handleCloseModal}
+      >
+        <div
+          className="bg-white rounded-lg shadow-md p-5 w-full max-w-md relative"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={handleCloseModal}
+            className="absolute top-3 right-3 text-black hover:text-gray-700 text-xl"
+          >
+            ✕
+          </button>
+
+          <h2 className="text-2xl font-bold text-center mb-4 text-black">
+            {selectedJob ? `Apply for ${selectedJob.title}` : "Offer a Job"}
+          </h2>
+
+          <div className="grid gap-4">
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Your Name"
+              className="p-3 border border-gray-300 rounded-lg"
+            />
+
+            <input
+              type="tel"
+              value={mobileNumber}
+              onChange={(e) =>
+                setMobileNumber(
+                  e.target.value.replace(/[^\d]/g, "").slice(0, 10)
+                )
+              }
+              placeholder="Mobile Number"
+              className="p-3 border border-gray-300 rounded-lg"
+            />
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="p-3 border border-gray-300 rounded-lg"
+            />
+
+            <input
+              type="number"
+              value={amountInRupees}
+              onChange={(e) => setAmountInRupees(e.target.value)}
+              placeholder="Amount in INR"
+              className="p-3 border border-gray-300 rounded-lg"
+            />
+
+            <input
+              type="text"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note"
+              className="p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          {error && (  
+            <p className="text-red-600 mt-2 text-sm">{error}</p>
+          )}
+
+          <button
+            onClick={createOrder}
+            className="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg shadow-md transition-all"
+          >
+            {loading     
+              ? "Processing..."
+              : selectedJob
+                ? "Pay & Apply"
+                : "Submit Job Offer"}
+          </button>
+        </div>
+      </div>
+       )}
+       </div>
+    );
 }
+    
