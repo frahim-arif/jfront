@@ -241,8 +241,22 @@ export default function App() {
      <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 px-4">
       {loadingJobs ? (
         <div className="col-span-full flex justify-center items-center py-20">
-          <div className="w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
+<div className="flex justify-center items-center py-20">
+  <div className="relative">
+    
+    {/* Outer Ring */}
+    <div className="w-16 h-16 rounded-full border-4 border-blue-200"></div>
+
+    {/* Animated Ring */}
+    <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+
+    {/* Center Dot */}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-3 h-3 bg-blue-600 rounded-full animate-pulse"></div>
+    </div>
+
+  </div>
+</div>        </div>
       ) : filteredJobs.length === 0 && (
         <p className="text-center col-span-full text-lg font-semibold text-gray-700">
           No jobs found for this district.
