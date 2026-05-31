@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 
 // Header Import
 import Header from "./components/Header.jsx";
-import Header from "./components/Footer.jsx";
+import Footer from "./components/Footer.jsx";
 
 
 // ---- SCROLLER CSS ----
