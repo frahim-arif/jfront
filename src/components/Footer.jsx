@@ -9,6 +9,7 @@ import {
   MapPin,
 } from "lucide-react";
 
+
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-br from-sky-500 via-sky-600 to-sky-700 text-white pt-14 pb-6 mt-10">
