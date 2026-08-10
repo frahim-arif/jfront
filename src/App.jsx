@@ -205,11 +205,11 @@ export default function App() {
       </div>
 
       {/* DISTRICT FILTER */}
-      <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-between items-center">
+      {/* <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-between items-center">
         <span className="text-black font-bold text-xl">Jobs</span>
 
         {/* Desktop */}
-        <select
+        {/* <select
           value={selectedDistrict}
           onChange={(e) => setSelectedDistrict(e.target.value)}
           className="hidden sm:inline-block px-5 py-2.5 bg-yellow-300 text-black font-semibold rounded-xl shadow-md border border-white hover:bg-yellow-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300"
@@ -223,7 +223,7 @@ export default function App() {
         </select>
 
         {/* Mobile */}
-        <div className="sm:hidden flex justify-end w-full">
+        {/* <div className="sm:hidden flex justify-end w-full">
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
@@ -237,7 +237,63 @@ export default function App() {
             ))}
           </select>
         </div>
-      </div>
+      </div>  */}
+
+      {/* DISTRICT FILTER + WORKER REGISTER */}
+<div className="max-w-7xl mx-auto px-4 mt-4 flex justify-between items-center gap-3">
+
+  {/* Jobs Title */}
+  <span className="text-black font-bold text-xl">
+    Jobs
+  </span>
+
+  {/* Right Side Buttons */}
+  <div className="flex items-center gap-2">
+
+    {/* Register as Worker Button */}
+    <button
+      onClick={() => {
+        window.location.href = "/worker-register";
+      }}
+      className="px-4 sm:px-5 py-2.5 bg-green-500 text-white font-semibold rounded-xl shadow-md hover:bg-green-600 transition-all duration-200"
+    >
+      Register as Worker
+    </button>
+
+    {/* Desktop District */}
+    <select
+      value={selectedDistrict}
+      onChange={(e) => setSelectedDistrict(e.target.value)}
+      className="hidden sm:inline-block px-5 py-2.5 bg-yellow-300 text-black font-semibold rounded-xl shadow-md border border-white hover:bg-yellow-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+    >
+      <option value="All">Districts</option>
+
+      {districtList.map((district, index) => (
+        <option key={index} value={district}>
+          {district}
+        </option>
+      ))}
+    </select>
+
+    {/* Mobile District */}
+    <div className="sm:hidden">
+      <select
+        value={selectedDistrict}
+        onChange={(e) => setSelectedDistrict(e.target.value)}
+        className="px-3 py-2 bg-yellow-300 text-black font-semibold rounded-lg shadow-md border border-white hover:bg-yellow-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300 w-28"
+      >
+        <option value="All">Districts</option>
+
+        {districtList.map((district, index) => (
+          <option key={index} value={district}>
+            {district}
+          </option>
+        ))}
+      </select>
+    </div>
+
+  </div>
+</div>
      <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 px-4">
       {loadingJobs ? (
         <div className="col-span-full flex justify-center items-center py-20">
