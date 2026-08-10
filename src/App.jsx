@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 
+
 // Header Import
 import Header from "./components/Header.jsx";
+import WorkerRegister from "./pages/WorkerRegister.jsx";
 
 
 // ---- SCROLLER CSS ----
@@ -26,6 +28,11 @@ styleTag.innerHTML = scrollerStyle;
 document.head.appendChild(styleTag);
 
 export default function App() {
+
+    // Worker Register Page
+  if (window.location.pathname === "/worker-register") {
+    return <WorkerRegister />;
+  }
   const fixedDistricts = [
     "Nagaon",
     "Morigaon",
