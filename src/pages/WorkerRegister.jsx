@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.jsx";
 
 export default function WorkerRegister() {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -19,6 +18,9 @@ export default function WorkerRegister() {
 
   const [loading, setLoading] = useState(false);
 
+  // =========================
+  // Handle Input Change
+  // =========================
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -28,9 +30,13 @@ export default function WorkerRegister() {
     }));
   };
 
+  // =========================
+  // Submit Worker Registration
+  // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Required fields validation
     if (
       !formData.name ||
       !formData.mobile ||
@@ -47,17 +53,61 @@ export default function WorkerRegister() {
     try {
       setLoading(true);
 
-      console.log("Worker Registration Data:", formData);
+      // =========================
+      // Create FormData
+      // =========================
+      const data = new FormData();
 
-      // Registration successful
+      data.append("name", formData.name);
+      data.append("mobile", formData.mobile);
+      data.append("district", formData.district);
+      data.append("workType", formData.workType);
+      data.append("kycType", formData.kycType);
+      data.append("kycNumber", formData.kycNumber);
+
+      // Backend expects kycDocument
+      data.append("kycDocument", formData.document);
+
+      // =========================
+      // Send Data To Backend
+      // =========================
+      const response = await fetch(
+        "http://localhost:5000/workers/register",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const result = await response.json();
+
+      // =========================
+      // Backend Error
+      // =========================
+      if (!response.ok) {
+        alert(
+          result.message ||
+            "Registration failed. Please try again."
+        );
+
+        return;
+      }
+
+      // =========================
+      // Registration Success
+      // =========================
+      console.log("Worker Registered:", result);
+
       alert("Registration submitted successfully!");
 
-      // Redirect to Home page
+      // Redirect to Home
       navigate("/");
-
     } catch (error) {
       console.error("Registration Error:", error);
-      alert("Registration failed. Please try again.");
+
+      alert(
+        "Unable to connect with server. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -68,9 +118,11 @@ export default function WorkerRegister() {
       <Header />
 
       <div className="max-w-3xl mx-auto px-4 py-10">
-
         <div className="bg-white shadow-md border border-gray-200 p-6 sm:p-8">
 
+          {/* =========================
+              Heading
+          ========================= */}
           <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Register as Worker
           </h1>
@@ -79,9 +131,14 @@ export default function WorkerRegister() {
             Register yourself to receive new job notifications.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
 
-            {/* Name */}
+            {/* =========================
+                Full Name
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 Full Name
@@ -97,7 +154,9 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* Mobile */}
+            {/* =========================
+                Mobile Number
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 Mobile Number
@@ -120,7 +179,9 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* District */}
+            {/* =========================
+                District
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 District
@@ -132,19 +193,47 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">Select District</option>
-                <option value="Nagaon">Nagaon</option>
-                <option value="Morigaon">Morigaon</option>
-                <option value="Hojai">Hojai</option>
-                <option value="Kamrup">Kamrup</option>
-                <option value="Sunitpur">Sunitpur</option>
-                <option value="Dhubri">Dhubri</option>
-                <option value="Borpeta">Borpeta</option>
-                <option value="Hajo">Hajo</option>
+                <option value="">
+                  Select District
+                </option>
+
+                <option value="Nagaon">
+                  Nagaon
+                </option>
+
+                <option value="Morigaon">
+                  Morigaon
+                </option>
+
+                <option value="Hojai">
+                  Hojai
+                </option>
+
+                <option value="Kamrup">
+                  Kamrup
+                </option>
+
+                <option value="Sunitpur">
+                  Sunitpur
+                </option>
+
+                <option value="Dhubri">
+                  Dhubri
+                </option>
+
+                <option value="Borpeta">
+                  Borpeta
+                </option>
+
+                <option value="Hajo">
+                  Hajo
+                </option>
               </select>
             </div>
 
-            {/* Work Type */}
+            {/* =========================
+                Work Type
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 Work Type
@@ -156,19 +245,47 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">Select Work Type</option>
-                <option value="Mason">Mason</option>
-                <option value="Carpenter">Carpenter</option>
-                <option value="Painter">Painter</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Gardener">Gardener</option>
-                <option value="Cleaner">Cleaner</option>
-                <option value="Other">Other</option>
+                <option value="">
+                  Select Work Type
+                </option>
+
+                <option value="Mason">
+                  Mason
+                </option>
+
+                <option value="Carpenter">
+                  Carpenter
+                </option>
+
+                <option value="Painter">
+                  Painter
+                </option>
+
+                <option value="Electrician">
+                  Electrician
+                </option>
+
+                <option value="Plumber">
+                  Plumber
+                </option>
+
+                <option value="Gardener">
+                  Gardener
+                </option>
+
+                <option value="Cleaner">
+                  Cleaner
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
               </select>
             </div>
 
-            {/* KYC Type */}
+            {/* =========================
+                KYC Type
+            ========================= */}
             <div>
               <label className="block font-semibold mb-2">
                 KYC Document
@@ -181,9 +298,12 @@ export default function WorkerRegister() {
                     type="radio"
                     name="kycType"
                     value="Aadhaar"
-                    checked={formData.kycType === "Aadhaar"}
+                    checked={
+                      formData.kycType === "Aadhaar"
+                    }
                     onChange={handleChange}
                   />
+
                   Aadhaar Card
                 </label>
 
@@ -192,16 +312,21 @@ export default function WorkerRegister() {
                     type="radio"
                     name="kycType"
                     value="PAN"
-                    checked={formData.kycType === "PAN"}
+                    checked={
+                      formData.kycType === "PAN"
+                    }
                     onChange={handleChange}
                   />
+
                   PAN Card
                 </label>
 
               </div>
             </div>
 
-            {/* KYC Number */}
+            {/* =========================
+                KYC Number
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 {formData.kycType === "PAN"
@@ -223,7 +348,9 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* Document */}
+            {/* =========================
+                KYC Document
+            ========================= */}
             <div>
               <label className="block font-semibold mb-1">
                 Upload KYC Document
@@ -242,19 +369,21 @@ export default function WorkerRegister() {
               </p>
             </div>
 
-            {/* Submit */}
+            {/* =========================
+                Submit Button
+            ========================= */}
             <button
               type="submit"
               disabled={loading}
               className="w-full h-11 bg-[#9B845E] text-white font-semibold border border-[#9B845E] hover:bg-[#866F4D] transition-colors duration-200 disabled:opacity-60"
             >
-              {loading ? "Submitting..." : "Register"}
+              {loading
+                ? "Submitting..."
+                : "Register"}
             </button>
 
           </form>
-
         </div>
-
       </div>
     </>
   );
