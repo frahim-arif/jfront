@@ -29,9 +29,6 @@ document.head.appendChild(styleTag);
 
 export default function App() {
 
-    // Worker Register Page
-  if (window.location.pathname === "/worker-register") {
-    return <WorkerRegister />;
   }
   const fixedDistricts = [
     "Nagaon",
@@ -198,6 +195,11 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  
+    // Worker Register Page
+  if (window.location.pathname === "/worker-register") {
+    return <WorkerRegister />;
 
   return (
     <div className="min-h-screen bg-gray-100 text-black">
