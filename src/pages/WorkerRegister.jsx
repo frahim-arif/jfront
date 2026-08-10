@@ -71,8 +71,8 @@ export default function WorkerRegister() {
       // =========================
       // Send Data To Backend
       // =========================
-      const response = await fetch(
-  "https://www.jobhir.com/workers/register",
+    const response = await fetch(
+  "https://jbackend-h963.onrender.com/workers/register",
   {
     method: "POST",
     body: data,
