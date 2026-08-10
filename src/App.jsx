@@ -238,8 +238,7 @@ export default function App() {
           </select>
         </div>
       </div>  */}
-
-      {/* REGISTER + DISTRICT FILTER */}
+{/* REGISTER + DISTRICT FILTER */}
 <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-end items-center gap-2">
 
   {/* Register Button */}
@@ -247,7 +246,7 @@ export default function App() {
     onClick={() => {
       window.location.href = "/worker-register";
     }}
-    className="w-32 h-11 bg-green-500 text-white font-semibold rounded-xl shadow-md border border-white hover:bg-green-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-300"
+    className="w-32 h-10 bg-green-600 text-white font-semibold border border-green-600 hover:bg-green-700 transition-all duration-200 focus:outline-none"
   >
     Register
   </button>
@@ -256,7 +255,7 @@ export default function App() {
   <select
     value={selectedDistrict}
     onChange={(e) => setSelectedDistrict(e.target.value)}
-    className="hidden sm:inline-block w-32 h-11 px-4 bg-yellow-300 text-black font-semibold rounded-xl shadow-md border border-white hover:bg-yellow-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+    className="hidden sm:inline-block w-32 h-10 px-3 bg-yellow-300 text-black font-semibold border border-yellow-400 hover:bg-yellow-400 transition-all duration-200 focus:outline-none"
   >
     <option value="All">Districts</option>
 
@@ -272,7 +271,7 @@ export default function App() {
     <select
       value={selectedDistrict}
       onChange={(e) => setSelectedDistrict(e.target.value)}
-      className="w-32 h-11 px-4 bg-yellow-300 text-black font-semibold rounded-xl shadow-md border border-white hover:bg-yellow-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+      className="w-32 h-10 px-3 bg-yellow-300 text-black font-semibold border border-yellow-400 hover:bg-yellow-400 transition-all duration-200 focus:outline-none"
     >
       <option value="All">Districts</option>
 
