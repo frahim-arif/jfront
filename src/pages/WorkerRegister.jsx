@@ -50,6 +50,11 @@ export default function WorkerRegister() {
       return;
     }
 
+    if (formData.mobile.length !== 10) {
+      alert("Please enter a valid 10 digit mobile number.");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -65,19 +70,19 @@ export default function WorkerRegister() {
       data.append("kycType", formData.kycType);
       data.append("kycNumber", formData.kycNumber);
 
-      // Backend expects kycDocument
+      // Backend expects: kycDocument
       data.append("kycDocument", formData.document);
 
       // =========================
       // Send Data To Backend
       // =========================
-    const response = await fetch(
-  "https://jbackend-h963.onrender.com/workers/register",
-  {
-    method: "POST",
-    body: data,
-  }
-);
+      const response = await fetch(
+        "https://jbackend-h963.onrender.com/workers/register",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
 
       const result = await response.json();
 
@@ -94,13 +99,13 @@ export default function WorkerRegister() {
       }
 
       // =========================
-      // Registration Success
+      // Success
       // =========================
       console.log("Worker Registered:", result);
 
       alert("Registration submitted successfully!");
 
-      // Redirect to Home
+      // Redirect Home
       navigate("/");
     } catch (error) {
       console.error("Registration Error:", error);
@@ -120,9 +125,7 @@ export default function WorkerRegister() {
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="bg-white shadow-md border border-gray-200 p-6 sm:p-8">
 
-          {/* =========================
-              Heading
-          ========================= */}
+          {/* Heading */}
           <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Register as Worker
           </h1>
@@ -136,9 +139,7 @@ export default function WorkerRegister() {
             className="space-y-5"
           >
 
-            {/* =========================
-                Full Name
-            ========================= */}
+            {/* Full Name */}
             <div>
               <label className="block font-semibold mb-1">
                 Full Name
@@ -154,9 +155,7 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* =========================
-                Mobile Number
-            ========================= */}
+            {/* Mobile Number */}
             <div>
               <label className="block font-semibold mb-1">
                 Mobile Number
@@ -179,9 +178,7 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* =========================
-                District
-            ========================= */}
+            {/* District */}
             <div>
               <label className="block font-semibold mb-1">
                 District
@@ -193,47 +190,19 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">
-                  Select District
-                </option>
-
-                <option value="Nagaon">
-                  Nagaon
-                </option>
-
-                <option value="Morigaon">
-                  Morigaon
-                </option>
-
-                <option value="Hojai">
-                  Hojai
-                </option>
-
-                <option value="Kamrup">
-                  Kamrup
-                </option>
-
-                <option value="Sunitpur">
-                  Sunitpur
-                </option>
-
-                <option value="Dhubri">
-                  Dhubri
-                </option>
-
-                <option value="Borpeta">
-                  Borpeta
-                </option>
-
-                <option value="Hajo">
-                  Hajo
-                </option>
+                <option value="">Select District</option>
+                <option value="Nagaon">Nagaon</option>
+                <option value="Morigaon">Morigaon</option>
+                <option value="Hojai">Hojai</option>
+                <option value="Kamrup">Kamrup</option>
+                <option value="Sunitpur">Sunitpur</option>
+                <option value="Dhubri">Dhubri</option>
+                <option value="Borpeta">Borpeta</option>
+                <option value="Hajo">Hajo</option>
               </select>
             </div>
 
-            {/* =========================
-                Work Type
-            ========================= */}
+            {/* Work Type */}
             <div>
               <label className="block font-semibold mb-1">
                 Work Type
@@ -245,47 +214,19 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">
-                  Select Work Type
-                </option>
-
-                <option value="Mason">
-                  Mason
-                </option>
-
-                <option value="Carpenter">
-                  Carpenter
-                </option>
-
-                <option value="Painter">
-                  Painter
-                </option>
-
-                <option value="Electrician">
-                  Electrician
-                </option>
-
-                <option value="Plumber">
-                  Plumber
-                </option>
-
-                <option value="Gardener">
-                  Gardener
-                </option>
-
-                <option value="Cleaner">
-                  Cleaner
-                </option>
-
-                <option value="Other">
-                  Other
-                </option>
+                <option value="">Select Work Type</option>
+                <option value="Mason">Mason</option>
+                <option value="Carpenter">Carpenter</option>
+                <option value="Painter">Painter</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Gardener">Gardener</option>
+                <option value="Cleaner">Cleaner</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
-            {/* =========================
-                KYC Type
-            ========================= */}
+            {/* KYC Type */}
             <div>
               <label className="block font-semibold mb-2">
                 KYC Document
@@ -298,12 +239,9 @@ export default function WorkerRegister() {
                     type="radio"
                     name="kycType"
                     value="Aadhaar"
-                    checked={
-                      formData.kycType === "Aadhaar"
-                    }
+                    checked={formData.kycType === "Aadhaar"}
                     onChange={handleChange}
                   />
-
                   Aadhaar Card
                 </label>
 
@@ -312,21 +250,16 @@ export default function WorkerRegister() {
                     type="radio"
                     name="kycType"
                     value="PAN"
-                    checked={
-                      formData.kycType === "PAN"
-                    }
+                    checked={formData.kycType === "PAN"}
                     onChange={handleChange}
                   />
-
                   PAN Card
                 </label>
 
               </div>
             </div>
 
-            {/* =========================
-                KYC Number
-            ========================= */}
+            {/* KYC Number */}
             <div>
               <label className="block font-semibold mb-1">
                 {formData.kycType === "PAN"
@@ -348,9 +281,7 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* =========================
-                KYC Document
-            ========================= */}
+            {/* KYC Document */}
             <div>
               <label className="block font-semibold mb-1">
                 Upload KYC Document
@@ -365,21 +296,17 @@ export default function WorkerRegister() {
               />
 
               <p className="text-xs text-gray-500 mt-1">
-                JPG, PNG or PDF only
+                JPG, PNG or PDF only — Maximum 5MB
               </p>
             </div>
 
-            {/* =========================
-                Submit Button
-            ========================= */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
               className="w-full h-11 bg-[#9B845E] text-white font-semibold border border-[#9B845E] hover:bg-[#866F4D] transition-colors duration-200 disabled:opacity-60"
             >
-              {loading
-                ? "Submitting..."
-                : "Register"}
+              {loading ? "Submitting..." : "Register"}
             </button>
 
           </form>
