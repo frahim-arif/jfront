@@ -257,7 +257,7 @@ export default function App() {
       }}
       className="px-4 sm:px-5 py-2.5 bg-green-500 text-white font-semibold rounded-xl shadow-md hover:bg-green-600 transition-all duration-200"
     >
-      Register as Worker
+      Register
     </button>
 
     {/* Desktop District */}
