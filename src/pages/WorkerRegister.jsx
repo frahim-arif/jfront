@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.jsx";
@@ -31,27 +30,177 @@ export default function WorkerRegister() {
   };
 
   // =========================
+  // Handle Mobile
+  // =========================
+  const handleMobileChange = (e) => {
+    const mobile = e.target.value
+      .replace(/\D/g, "")
+      .slice(0, 10);
+
+    setFormData((prev) => ({
+      ...prev,
+      mobile,
+    }));
+  };
+
+  // =========================
+  // Handle KYC Number
+  // =========================
+  const handleKycNumberChange = (e) => {
+    let value = e.target.value.toUpperCase();
+
+    if (formData.kycType === "Aadhaar") {
+      value = value
+        .replace(/\D/g, "")
+        .slice(0, 12);
+    }
+
+    if (formData.kycType === "PAN") {
+      value = value
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 10);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      kycNumber: value,
+    }));
+  };
+
+  // =========================
+  // Handle KYC Type
+  // =========================
+  const handleKycTypeChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      kycType: e.target.value,
+      kycNumber: "",
+    }));
+  };
+
+  // =========================
+  // Handle Document
+  // =========================
+  const handleDocumentChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setFormData((prev) => ({
+        ...prev,
+        document: null,
+      }));
+
+      return;
+    }
+
+    // Maximum 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size must be less than 5MB.");
+
+      e.target.value = "";
+
+      setFormData((prev) => ({
+        ...prev,
+        document: null,
+      }));
+
+      return;
+    }
+
+    // Allowed file types
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only JPG, PNG or PDF files are allowed.");
+
+      e.target.value = "";
+
+      setFormData((prev) => ({
+        ...prev,
+        document: null,
+      }));
+
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      document: file,
+    }));
+  };
+
+  // =========================
   // Submit Worker Registration
   // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Required fields validation
-    if (
-      !formData.name ||
-      !formData.mobile ||
-      !formData.district ||
-      !formData.workType ||
-      !formData.kycType ||
-      !formData.kycNumber ||
-      !formData.document
-    ) {
-      alert("Please fill all details.");
+    // =========================
+    // Required Validation
+    // =========================
+
+    if (!formData.name.trim()) {
+      alert("Please enter your full name.");
       return;
     }
 
     if (formData.mobile.length !== 10) {
       alert("Please enter a valid 10 digit mobile number.");
+      return;
+    }
+
+    if (!formData.district) {
+      alert("Please select your district.");
+      return;
+    }
+
+    if (!formData.workType) {
+      alert("Please select your work type.");
+      return;
+    }
+
+    if (!formData.kycType) {
+      alert("Please select KYC document type.");
+      return;
+    }
+
+    if (!formData.kycNumber) {
+      alert(
+        formData.kycType === "PAN"
+          ? "Please enter your PAN number."
+          : "Please enter your Aadhaar number."
+      );
+
+      return;
+    }
+
+    // Aadhaar validation
+    if (
+      formData.kycType === "Aadhaar" &&
+      formData.kycNumber.length !== 12
+    ) {
+      alert("Please enter a valid 12 digit Aadhaar number.");
+      return;
+    }
+
+    // PAN validation
+    if (
+      formData.kycType === "PAN" &&
+      !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(
+        formData.kycNumber
+      )
+    ) {
+      alert("Please enter a valid PAN number.");
+      return;
+    }
+
+    if (!formData.document) {
+      alert("Please upload your KYC document.");
       return;
     }
 
@@ -61,21 +210,51 @@ export default function WorkerRegister() {
       // =========================
       // Create FormData
       // =========================
+
       const data = new FormData();
 
-      data.append("name", formData.name);
-      data.append("mobile", formData.mobile);
-      data.append("district", formData.district);
-      data.append("workType", formData.workType);
-      data.append("kycType", formData.kycType);
-      data.append("kycNumber", formData.kycNumber);
+      data.append(
+        "name",
+        formData.name.trim()
+      );
 
-      // Backend expects: kycDocument
-      data.append("kycDocument", formData.document);
+      data.append(
+        "mobile",
+        formData.mobile
+      );
+
+      data.append(
+        "district",
+        formData.district
+      );
+
+      data.append(
+        "workType",
+        formData.workType
+      );
+
+      data.append(
+        "kycType",
+        formData.kycType
+      );
+
+      data.append(
+        "kycNumber",
+        formData.kycNumber
+      );
+
+      // IMPORTANT:
+      // Must match backend:
+      // upload.single("kycDocument")
+      data.append(
+        "kycDocument",
+        formData.document
+      );
 
       // =========================
-      // Send Data To Backend
+      // Backend API
       // =========================
+
       const response = await fetch(
         "https://jbackend-h963.onrender.com/workers/register",
         {
@@ -84,15 +263,44 @@ export default function WorkerRegister() {
         }
       );
 
-      const result = await response.json();
+      // =========================
+      // Read Response
+      // =========================
+
+      const responseText =
+        await response.text();
+
+      let result;
+
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        result = {
+          success: false,
+          message:
+            responseText ||
+            "Invalid server response.",
+        };
+      }
+
+      console.log(
+        "Worker API Status:",
+        response.status
+      );
+
+      console.log(
+        "Worker API Response:",
+        result
+      );
 
       // =========================
       // Backend Error
       // =========================
+
       if (!response.ok) {
         alert(
           result.message ||
-            "Registration failed. Please try again."
+            `Registration failed. Error ${response.status}`
         );
 
         return;
@@ -101,17 +309,33 @@ export default function WorkerRegister() {
       // =========================
       // Success
       // =========================
-      console.log("Worker Registered:", result);
 
-      alert("Registration submitted successfully!");
+      alert(
+        result.message ||
+          "Registration submitted successfully!"
+      );
+
+      // Reset form
+      setFormData({
+        name: "",
+        mobile: "",
+        district: "",
+        workType: "",
+        kycType: "",
+        kycNumber: "",
+        document: null,
+      });
 
       // Redirect Home
       navigate("/");
     } catch (error) {
-      console.error("Registration Error:", error);
+      console.error(
+        "Worker Registration Error:",
+        error
+      );
 
       alert(
-        "Unable to connect with server. Please try again."
+        `Unable to connect with server.\n\n${error.message}`
       );
     } finally {
       setLoading(false);
@@ -123,9 +347,13 @@ export default function WorkerRegister() {
       <Header />
 
       <div className="max-w-3xl mx-auto px-4 py-10">
+
         <div className="bg-white shadow-md border border-gray-200 p-6 sm:p-8">
 
-          {/* Heading */}
+          {/* =========================
+              Heading
+          ========================= */}
+
           <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
             Register as Worker
           </h1>
@@ -134,12 +362,19 @@ export default function WorkerRegister() {
             Register yourself to receive new job notifications.
           </p>
 
+          {/* =========================
+              Form
+          ========================= */}
+
           <form
             onSubmit={handleSubmit}
             className="space-y-5"
           >
 
-            {/* Full Name */}
+            {/* =========================
+                Full Name
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 Full Name
@@ -155,7 +390,10 @@ export default function WorkerRegister() {
               />
             </div>
 
-            {/* Mobile Number */}
+            {/* =========================
+                Mobile
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 Mobile Number
@@ -165,20 +403,18 @@ export default function WorkerRegister() {
                 type="tel"
                 name="mobile"
                 value={formData.mobile}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    mobile: e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 10),
-                  })
-                }
+                onChange={handleMobileChange}
                 placeholder="Enter 10 digit mobile number"
+                maxLength={10}
+                inputMode="numeric"
                 className="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:border-[#9B845E]"
               />
             </div>
 
-            {/* District */}
+            {/* =========================
+                District
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 District
@@ -190,19 +426,48 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">Select District</option>
-                <option value="Nagaon">Nagaon</option>
-                <option value="Morigaon">Morigaon</option>
-                <option value="Hojai">Hojai</option>
-                <option value="Kamrup">Kamrup</option>
-                <option value="Sunitpur">Sunitpur</option>
-                <option value="Dhubri">Dhubri</option>
-                <option value="Borpeta">Borpeta</option>
-                <option value="Hajo">Hajo</option>
+                <option value="">
+                  Select District
+                </option>
+
+                <option value="Nagaon">
+                  Nagaon
+                </option>
+
+                <option value="Morigaon">
+                  Morigaon
+                </option>
+
+                <option value="Hojai">
+                  Hojai
+                </option>
+
+                <option value="Kamrup">
+                  Kamrup
+                </option>
+
+                <option value="Sunitpur">
+                  Sunitpur
+                </option>
+
+                <option value="Dhubri">
+                  Dhubri
+                </option>
+
+                <option value="Borpeta">
+                  Borpeta
+                </option>
+
+                <option value="Hajo">
+                  Hajo
+                </option>
               </select>
             </div>
 
-            {/* Work Type */}
+            {/* =========================
+                Work Type
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 Work Type
@@ -214,34 +479,68 @@ export default function WorkerRegister() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
-                <option value="">Select Work Type</option>
-                <option value="Mason">Mason</option>
-                <option value="Carpenter">Carpenter</option>
-                <option value="Painter">Painter</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Gardener">Gardener</option>
-                <option value="Cleaner">Cleaner</option>
-                <option value="Other">Other</option>
+                <option value="">
+                  Select Work Type
+                </option>
+
+                <option value="Mason">
+                  Mason
+                </option>
+
+                <option value="Carpenter">
+                  Carpenter
+                </option>
+
+                <option value="Painter">
+                  Painter
+                </option>
+
+                <option value="Electrician">
+                  Electrician
+                </option>
+
+                <option value="Plumber">
+                  Plumber
+                </option>
+
+                <option value="Gardener">
+                  Gardener
+                </option>
+
+                <option value="Cleaner">
+                  Cleaner
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
               </select>
             </div>
 
-            {/* KYC Type */}
+            {/* =========================
+                KYC Type
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-2">
                 KYC Document
               </label>
 
-              <div className="flex gap-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
 
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     name="kycType"
                     value="Aadhaar"
-                    checked={formData.kycType === "Aadhaar"}
-                    onChange={handleChange}
+                    checked={
+                      formData.kycType === "Aadhaar"
+                    }
+                    onChange={
+                      handleKycTypeChange
+                    }
                   />
+
                   Aadhaar Card
                 </label>
 
@@ -250,16 +549,24 @@ export default function WorkerRegister() {
                     type="radio"
                     name="kycType"
                     value="PAN"
-                    checked={formData.kycType === "PAN"}
-                    onChange={handleChange}
+                    checked={
+                      formData.kycType === "PAN"
+                    }
+                    onChange={
+                      handleKycTypeChange
+                    }
                   />
+
                   PAN Card
                 </label>
 
               </div>
             </div>
 
-            {/* KYC Number */}
+            {/* =========================
+                KYC Number
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 {formData.kycType === "PAN"
@@ -271,17 +578,27 @@ export default function WorkerRegister() {
                 type="text"
                 name="kycNumber"
                 value={formData.kycNumber}
-                onChange={handleChange}
+                onChange={
+                  handleKycNumberChange
+                }
                 placeholder={
                   formData.kycType === "PAN"
                     ? "Enter PAN number"
                     : "Enter Aadhaar number"
                 }
+                maxLength={
+                  formData.kycType === "PAN"
+                    ? 10
+                    : 12
+                }
                 className="w-full px-4 py-3 border border-gray-300 uppercase focus:outline-none focus:border-[#9B845E]"
               />
             </div>
 
-            {/* KYC Document */}
+            {/* =========================
+                KYC Document
+            ========================= */}
+
             <div>
               <label className="block font-semibold mb-1">
                 Upload KYC Document
@@ -291,28 +608,42 @@ export default function WorkerRegister() {
                 type="file"
                 name="document"
                 accept=".jpg,.jpeg,.png,.pdf"
-                onChange={handleChange}
+                onChange={
+                  handleDocumentChange
+                }
                 className="w-full px-3 py-3 border border-gray-300 bg-white"
               />
 
               <p className="text-xs text-gray-500 mt-1">
                 JPG, PNG or PDF only — Maximum 5MB
               </p>
+
+              {formData.document && (
+                <p className="text-sm text-green-600 mt-2">
+                  Selected:{" "}
+                  {formData.document.name}
+                </p>
+              )}
             </div>
 
-            {/* Submit */}
+            {/* =========================
+                Submit
+            ========================= */}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#9B845E] text-white font-semibold border border-[#9B845E] hover:bg-[#866F4D] transition-colors duration-200 disabled:opacity-60"
+              className="w-full h-11 bg-[#9B845E] text-white font-semibold border border-[#9B845E] hover:bg-[#866F4D] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? "Submitting..." : "Register"}
+              {loading
+                ? "Submitting..."
+                : "Register"}
             </button>
 
           </form>
+
         </div>
       </div>
     </>
   );
 }
-
