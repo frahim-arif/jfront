@@ -246,7 +246,7 @@ export default function App() {
     onClick={() => {
       window.location.href = "/worker-register";
     }}
-    className="w-32 h-10 bg-green-600 text-white font-semibold border border-green-600 hover:bg-green-700 transition-all duration-200 focus:outline-none"
+    className="w-32 h-10 bg-[#9B845E] text-white font-semibold border border-[#9B845E] hover:bg-[#866F4D] transition-colors duration-200 focus:outline-none"
   >
     Register
   </button>
@@ -255,7 +255,7 @@ export default function App() {
   <select
     value={selectedDistrict}
     onChange={(e) => setSelectedDistrict(e.target.value)}
-    className="hidden sm:inline-block w-32 h-10 px-3 bg-yellow-300 text-black font-semibold border border-yellow-400 hover:bg-yellow-400 transition-all duration-200 focus:outline-none"
+    className="hidden sm:inline-block w-32 h-10 px-3 bg-[#E8E0CF] text-[#333333] font-semibold border border-[#D5C9B0] hover:bg-[#DDD3C0] transition-colors duration-200 focus:outline-none"
   >
     <option value="All">Districts</option>
 
@@ -271,7 +271,7 @@ export default function App() {
     <select
       value={selectedDistrict}
       onChange={(e) => setSelectedDistrict(e.target.value)}
-      className="w-32 h-10 px-3 bg-yellow-300 text-black font-semibold border border-yellow-400 hover:bg-yellow-400 transition-all duration-200 focus:outline-none"
+      className="w-32 h-10 px-3 bg-[#E8E0CF] text-[#333333] font-semibold border border-[#D5C9B0] hover:bg-[#DDD3C0] transition-colors duration-200 focus:outline-none"
     >
       <option value="All">Districts</option>
 
