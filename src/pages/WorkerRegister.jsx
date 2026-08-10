@@ -72,12 +72,12 @@ export default function WorkerRegister() {
       // Send Data To Backend
       // =========================
       const response = await fetch(
-        "https://www.jobhir.com/worker-register",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+  "https://www.jobhir.com/workers/register",
+  {
+    method: "POST",
+    body: data,
+  }
+);
 
       const result = await response.json();
 
