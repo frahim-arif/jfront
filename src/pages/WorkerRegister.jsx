@@ -1,7 +1,12 @@
+
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.jsx";
 
 export default function WorkerRegister() {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -44,7 +49,12 @@ export default function WorkerRegister() {
 
       console.log("Worker Registration Data:", formData);
 
+      // Registration successful
       alert("Registration submitted successfully!");
+
+      // Redirect to Home page
+      navigate("/");
+
     } catch (error) {
       console.error("Registration Error:", error);
       alert("Registration failed. Please try again.");
@@ -54,8 +64,7 @@ export default function WorkerRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-black">
-
+    <>
       <Header />
 
       <div className="max-w-3xl mx-auto px-4 py-10">
@@ -247,7 +256,7 @@ export default function WorkerRegister() {
         </div>
 
       </div>
-
-    </div>
+    </>
   );
 }
+
