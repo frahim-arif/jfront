@@ -243,9 +243,9 @@ export default function App() {
 <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-between items-center gap-3">
 
   {/* Jobs Title */}
-  <span className="text-black font-bold text-xl">
+  {/* <span className="text-black font-bold text-xl">
     Jobs
-  </span>
+  </span> */}
 
   {/* Right Side Buttons */}
   <div className="flex items-center gap-2">
