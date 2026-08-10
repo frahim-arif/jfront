@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 
-
 // Header Import
 import Header from "./components/Header.jsx";
-import WorkerRegister from "./pages/WorkerRegister.jsx";
 
 
 // ---- SCROLLER CSS ----
@@ -28,8 +26,6 @@ styleTag.innerHTML = scrollerStyle;
 document.head.appendChild(styleTag);
 
 export default function App() {
-
-  }
   const fixedDistricts = [
     "Nagaon",
     "Morigaon",
@@ -196,11 +192,6 @@ export default function App() {
     }
   };
 
-  
-    // Worker Register Page
-  if (window.location.pathname === "/worker-register") {
-    return <WorkerRegister />;
-
   return (
     <div className="min-h-screen bg-gray-100 text-black">
       {/* HEADER */}
@@ -247,7 +238,8 @@ export default function App() {
           </select>
         </div>
       </div>  */}
-{/* REGISTER + DISTRICT FILTER */}
+
+     {/* REGISTER + DISTRICT FILTER */}
 <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-end items-center gap-2">
 
   {/* Register Button */}

@@ -42,12 +42,9 @@ export default function WorkerRegister() {
     try {
       setLoading(true);
 
-      // Backend API baad mein yahan connect karenge
-
       console.log("Worker Registration Data:", formData);
 
       alert("Registration submitted successfully!");
-
     } catch (error) {
       console.error("Registration Error:", error);
       alert("Registration failed. Please try again.");
@@ -59,10 +56,8 @@ export default function WorkerRegister() {
   return (
     <div className="min-h-screen bg-gray-100 text-black">
 
-      {/* Header */}
       <Header />
 
-      {/* Registration Section */}
       <div className="max-w-3xl mx-auto px-4 py-10">
 
         <div className="bg-white shadow-md border border-gray-200 p-6 sm:p-8">
@@ -129,7 +124,6 @@ export default function WorkerRegister() {
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
                 <option value="">Select District</option>
-
                 <option value="Nagaon">Nagaon</option>
                 <option value="Morigaon">Morigaon</option>
                 <option value="Hojai">Hojai</option>
@@ -154,7 +148,6 @@ export default function WorkerRegister() {
                 className="w-full px-4 py-3 border border-gray-300 bg-white focus:outline-none focus:border-[#9B845E]"
               >
                 <option value="">Select Work Type</option>
-
                 <option value="Mason">Mason</option>
                 <option value="Carpenter">Carpenter</option>
                 <option value="Painter">Painter</option>

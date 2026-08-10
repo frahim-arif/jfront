@@ -37,6 +37,7 @@ import Terms from './App/Terms/page.jsx'
 import Contact from './App/Contact/page.jsx'
 import Disclaimer from './App/Disclaimer/page.jsx'
 import Admin from './App/Admin/page.jsx'
+import WorkerRegister from './pages/WorkerRegister.jsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
     { path: '/admin', element: <Admin /> },
   // ✅ NEW ROUTE
   { path: '/offer-job', element: <OfferJob /> },
+  { path: '/worker-register', element: <WorkerRegister /> },
 ])
 
 createRoot(document.getElementById('root')).render(
