@@ -7,19 +7,43 @@ export default function JobCard({ job }) {
   const [applicantPhone, setApplicantPhone] = useState("");
   const [applicantEmail, setApplicantEmail] = useState("");
   const [showApply, setShowApply] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Close modal on Esc key
+  // =========================
+  // Close Modal with ESC
+  // =========================
+
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === "Escape") setShowApply(false);
+      if (e.key === "Escape") {
+        setShowApply(false);
+      }
     };
+
     window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
   }, []);
 
+  // =========================
+  // Apply Job
+  // =========================
+
   const handleApply = async () => {
-    if (!applicantName || !applicantPhone || !applicantEmail) {
-      alert("All fields are required!");
+    if (!applicantName.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    if (applicantPhone.length !== 10) {
+      alert("Please enter a valid 10 digit phone number.");
+      return;
+    }
+
+    if (!applicantEmail.trim()) {
+      alert("Please enter your email.");
       return;
     }
 
@@ -29,123 +53,394 @@ export default function JobCard({ job }) {
     }
 
     try {
+      setLoading(true);
+
       const payload = {
+        // PhonePe expects amount in paise
         amount: Math.floor(Number(job.amount) * 100),
-        customerName: applicantName,
+
+        customerName: applicantName.trim(),
+
         mobileNumber: applicantPhone,
-        email: applicantEmail,
+
+        email: applicantEmail.trim(),
+
         note: `Applying for ${job.title}`,
+
         jobId: job._id,
       };
 
-      const res = await axios.post("https://jbackend-h963.onrender.com/create-order", payload);
+      console.log("Payment Payload:", payload);
+
+      const res = await axios.post(
+        "https://jbackend-h963.onrender.com/create-order",
+        payload
+      );
+
+      console.log("Payment Response:", res.data);
 
       if (res.data.checkoutPageUrl) {
-        window.open(res.data.checkoutPageUrl, "_blank");
+        window.open(
+          res.data.checkoutPageUrl,
+          "_blank"
+        );
+
+        setShowApply(false);
       } else {
-        alert("Checkout URL not received!");
+        alert(
+          res.data.message ||
+            "Checkout URL not received!"
+        );
       }
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data || "Error creating order!");
+      console.error(
+        "Payment Error:",
+        err
+      );
+
+      alert(
+        err.response?.data?.message ||
+          "Error creating payment order!"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="border rounded-lg shadow-md bg-white p-5 flex flex-col justify-between">
-      {/* Job Info */}
-      <div>
-        <h2 className="text-xl font-bold mb-2 text-gray-900">{job.title}</h2>
-        <p className="text-gray-700 mb-4">{job.description}</p>
+  // =========================
+  // Reset Form
+  // =========================
 
-        <div className="flex flex-col gap-2 mb-4 text-black">
-          <span className="font-medium">
-            <strong>District:</strong> {job.district}
-          </span>
-          <span className="font-medium">
-            <strong>Price:</strong> ₹{job.amount}
-          </span>
-          {job.createdAt && (
-            <span className="font-medium">
-              <strong>Posted:</strong>{" "}
-              {formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}
-            </span>
-          )}
+  const closeModal = () => {
+    if (loading) return;
+
+    setShowApply(false);
+
+    setApplicantName("");
+    setApplicantPhone("");
+    setApplicantEmail("");
+  };
+
+  return (
+    <>
+      {/* =========================
+          JOB CARD
+      ========================= */}
+
+      <div className="group bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+
+        {/* Top Border */}
+
+        <div className="h-1 bg-gradient-to-r from-sky-500 to-blue-600" />
+
+        <div className="p-5 sm:p-6 flex flex-col justify-between h-full">
+
+          {/* =========================
+              Job Information
+          ========================= */}
+
+          <div>
+
+            {/* Job Title */}
+
+            <div className="flex items-start justify-between gap-3 mb-3">
+
+              <h2 className="text-xl font-bold text-slate-900 leading-tight">
+                {job.title}
+              </h2>
+
+            </div>
+
+            {/* Description */}
+
+            <p className="text-slate-600 text-sm leading-6 mb-5">
+              {job.description}
+            </p>
+
+            {/* =========================
+                Job Details
+            ========================= */}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+
+              {/* District */}
+
+              <div className="bg-slate-50 rounded-lg p-3">
+
+                <p className="text-xs text-slate-500 mb-1">
+                  District
+                </p>
+
+                <p className="font-semibold text-slate-800">
+                  {job.district || "Not specified"}
+                </p>
+
+              </div>
+
+              {/* Work Type */}
+
+              <div className="bg-slate-50 rounded-lg p-3">
+
+                <p className="text-xs text-slate-500 mb-1">
+                  Work Type
+                </p>
+
+                <p className="font-semibold text-slate-800">
+                  {job.workType || "Not specified"}
+                </p>
+
+              </div>
+
+              {/* Amount */}
+
+              <div className="bg-green-50 rounded-lg p-3">
+
+                <p className="text-xs text-green-600 mb-1">
+                  Work Amount
+                </p>
+
+                <p className="text-lg font-bold text-green-700">
+                  ₹{Number(job.amount || 0).toLocaleString("en-IN")}
+                </p>
+
+              </div>
+
+              {/* Posted */}
+
+              {job.createdAt && (
+                <div className="bg-slate-50 rounded-lg p-3">
+
+                  <p className="text-xs text-slate-500 mb-1">
+                    Posted
+                  </p>
+
+                  <p className="font-semibold text-slate-800">
+                    {formatDistanceToNow(
+                      new Date(job.createdAt),
+                      {
+                        addSuffix: true,
+                      }
+                    )}
+                  </p>
+
+                </div>
+              )}
+
+            </div>
+
+          </div>
+
+          {/* =========================
+              Apply Button
+          ========================= */}
+
+          <button
+            onClick={() => setShowApply(true)}
+            className="w-full h-11 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold transition-all duration-200"
+          >
+            Apply Now
+          </button>
+
         </div>
       </div>
 
-      {/* Apply Button */}
-      <button
-        onClick={() => setShowApply(true)}
-        className="w-full bg-black text-white py-2 rounded-lg font-semibold"
-      >
-        Apply Now
-      </button>
+      {/* =========================
+          APPLY MODAL
+      ========================= */}
 
-      {/* Apply Modal */}
       {showApply && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
-          onClick={() => setShowApply(false)}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4 py-6"
+          onClick={closeModal}
         >
+
           <div
-            className="bg-white rounded-lg shadow-md p-5 w-full max-w-md relative"
+            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setShowApply(false)}
-              className="absolute top-3 right-3 text-black hover:text-gray-700 text-xl"
-            >
-              ✕
-            </button>
 
-            <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">
-              Apply for {job.title}
-            </h3>
+            {/* Modal Header */}
 
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={applicantName}
-              onChange={(e) => setApplicantName(e.target.value)}
-              className="w-full mb-3 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-            />
-            <input
-              type="tel"
-              placeholder="Your Phone"
-              value={applicantPhone}
-              onChange={(e) =>
-                setApplicantPhone(
-                  e.target.value.replace(/[^\d]/g, "").slice(0, 10)
-                )
-              }
-              className="w-full mb-3 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              value={applicantEmail}
-              onChange={(e) => setApplicantEmail(e.target.value)}
-              className="w-full mb-3 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-            />
+            <div className="bg-gradient-to-r from-sky-600 to-blue-700 px-6 py-5 text-white">
 
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => setShowApply(false)}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleApply}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-all"
-              >
-                Pay & Apply
-              </button>
+              <div className="flex items-start justify-between gap-4">
+
+                <div>
+
+                  <p className="text-sky-100 text-xs uppercase tracking-wide font-semibold">
+                    Apply for Job
+                  </p>
+
+                  <h3 className="text-xl font-bold mt-1">
+                    {job.title}
+                  </h3>
+
+                </div>
+
+                <button
+                  onClick={closeModal}
+                  disabled={loading}
+                  className="text-white/80 hover:text-white text-2xl leading-none disabled:opacity-50"
+                >
+                  ×
+                </button>
+
+              </div>
+
             </div>
+
+            {/* Modal Body */}
+
+            <div className="p-6">
+
+              {/* Job Summary */}
+
+              <div className="bg-slate-50 rounded-xl p-4 mb-5">
+
+                <div className="flex justify-between items-center">
+
+                  <div>
+
+                    <p className="text-xs text-slate-500">
+                      Work Type
+                    </p>
+
+                    <p className="font-semibold text-slate-800">
+                      {job.workType || "Not specified"}
+                    </p>
+
+                  </div>
+
+                  <div className="text-right">
+
+                    <p className="text-xs text-slate-500">
+                      Amount
+                    </p>
+
+                    <p className="text-lg font-bold text-green-600">
+                      ₹{Number(job.amount || 0).toLocaleString("en-IN")}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Name */}
+
+              <div className="mb-4">
+
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Your Name
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={applicantName}
+                  onChange={(e) =>
+                    setApplicantName(e.target.value)
+                  }
+                  disabled={loading}
+                  className="w-full h-11 px-4 border border-slate-300 rounded-lg outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 disabled:bg-slate-100"
+                />
+
+              </div>
+
+              {/* Phone */}
+
+              <div className="mb-4">
+
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Mobile Number
+                </label>
+
+                <input
+                  type="tel"
+                  placeholder="10 digit mobile number"
+                  value={applicantPhone}
+                  onChange={(e) =>
+                    setApplicantPhone(
+                      e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10)
+                    )
+                  }
+                  maxLength={10}
+                  inputMode="numeric"
+                  disabled={loading}
+                  className="w-full h-11 px-4 border border-slate-300 rounded-lg outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 disabled:bg-slate-100"
+                />
+
+              </div>
+
+              {/* Email */}
+
+              <div className="mb-5">
+
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Email Address
+                </label>
+
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={applicantEmail}
+                  onChange={(e) =>
+                    setApplicantEmail(e.target.value)
+                  }
+                  disabled={loading}
+                  className="w-full h-11 px-4 border border-slate-300 rounded-lg outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 disabled:bg-slate-100"
+                />
+
+              </div>
+
+              {/* Payment Notice */}
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-5">
+
+                <p className="text-sm text-amber-800">
+                  After clicking <strong>Pay & Apply</strong>,
+                  you will be redirected to the secure payment
+                  page.
+                </p>
+
+              </div>
+
+              {/* Buttons */}
+
+              <div className="flex gap-3">
+
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={loading}
+                  className="flex-1 h-11 border border-slate-300 rounded-lg font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleApply}
+                  disabled={loading}
+                  className="flex-1 h-11 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading
+                    ? "Processing..."
+                    : `Pay ₹${Number(
+                        job.amount || 0
+                      ).toLocaleString("en-IN")}`}
+                </button>
+
+              </div>
+
+            </div>
+
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
