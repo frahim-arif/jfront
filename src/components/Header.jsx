@@ -1,39 +1,37 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+const API_URL = "https://jbackend-h963.onrender.com";
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
 
   // =========================
-  // Get Worker Notifications
+  // Fetch Notifications
   // =========================
   const fetchNotifications = async () => {
     try {
       const workerId = localStorage.getItem("workerId");
 
       if (!workerId) {
+        setNotifications([]);
         return;
       }
 
       const response = await fetch(
-        `https://jbackend-h963.onrender.com/notifications/${workerId}`
+        `${API_URL}/notifications/${workerId}`
       );
 
       const result = await response.json();
 
       if (result.success) {
         setNotifications(result.notifications || []);
-        setUnreadCount(result.unreadCount || 0);
       }
     } catch (error) {
-      console.error(
-        "Notification Error:",
-        error
-      );
+      console.error("Notification Error:", error);
     }
   };
 
@@ -43,7 +41,6 @@ export default function Header() {
   useEffect(() => {
     fetchNotifications();
 
-    // Check every 10 seconds
     const interval = setInterval(() => {
       fetchNotifications();
     }, 10000);
@@ -52,21 +49,36 @@ export default function Header() {
   }, []);
 
   // =========================
-  // Mark Notification Read
+  // Unread Count
+  // =========================
+  const unreadCount = notifications.filter(
+    (notification) => !notification.isRead
+  ).length;
+
+  // =========================
+  // Mark One Notification Read
   // =========================
   const markAsRead = async (notification) => {
     try {
-      if (!notification.isRead) {
-        await fetch(
-          `https://jbackend-h963.onrender.com/notifications/${notification._id}/read`,
-          {
-            method: "PATCH",
-          }
-        );
+      if (notification.isRead) {
+        return;
       }
 
-      // Refresh notifications
-      fetchNotifications();
+      await fetch(
+        `${API_URL}/notifications/${notification._id}/read`,
+        {
+          method: "PUT",
+        }
+      );
+
+      // Immediately update UI
+      setNotifications((prev) =>
+        prev.map((item) =>
+          item._id === notification._id
+            ? { ...item, isRead: true }
+            : item
+        )
+      );
     } catch (error) {
       console.error(
         "Mark Notification Error:",
@@ -86,13 +98,19 @@ export default function Header() {
       if (!workerId) return;
 
       await fetch(
-        `https://jbackend-h963.onrender.com/notifications/worker/${workerId}/read-all`,
+        `${API_URL}/notifications/${workerId}/read-all`,
         {
-          method: "PATCH",
+          method: "PUT",
         }
       );
 
-      fetchNotifications();
+      // Immediately update UI
+      setNotifications((prev) =>
+        prev.map((item) => ({
+          ...item,
+          isRead: true,
+        }))
+      );
     } catch (error) {
       console.error(
         "Mark All Notification Error:",
@@ -109,9 +127,12 @@ export default function Header() {
       ========================= */}
 
       <div className="max-w-7xl mx-auto px-4">
+
         <div className="h-20 flex items-center justify-between">
 
-          {/* ========== LOGO ========== */}
+          {/* =========================
+              LOGO
+          ========================= */}
 
           <Link
             to="/"
@@ -122,13 +143,13 @@ export default function Header() {
 
 
           {/* =========================
-              DESKTOP RIGHT
+              DESKTOP
           ========================= */}
 
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden md:flex items-center gap-6">
 
             {/* =========================
-                Notification Bell
+                NOTIFICATION
             ========================= */}
 
             {localStorage.getItem("workerId") && (
@@ -138,13 +159,13 @@ export default function Header() {
                   type="button"
                   onClick={() =>
                     setShowNotifications(
-                      !showNotifications
+                      (prev) => !prev
                     )
                   }
-                  className="relative w-11 h-11 rounded-full hover:bg-gray-100 flex items-center justify-center transition"
+                  className="relative w-11 h-11 rounded-full flex items-center justify-center hover:bg-gray-100 transition"
                 >
 
-                  {/* Bell SVG */}
+                  {/* Bell */}
 
                   <svg
                     className="w-6 h-6 text-gray-700"
@@ -181,11 +202,11 @@ export default function Header() {
 
 
                 {/* =========================
-                    Notification Dropdown
+                    NOTIFICATION DROPDOWN
                 ========================= */}
 
                 {showNotifications && (
-                  <div className="absolute right-0 top-14 w-80 sm:w-96 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+                  <div className="absolute right-0 top-14 w-[340px] bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
 
                     {/* Header */}
 
@@ -197,6 +218,7 @@ export default function Header() {
 
                       {unreadCount > 0 && (
                         <button
+                          type="button"
                           onClick={markAllAsRead}
                           className="text-sm text-sky-600 hover:text-sky-700"
                         >
@@ -207,13 +229,14 @@ export default function Header() {
                     </div>
 
 
-                    {/* Notification List */}
+                    {/* List */}
 
-                    <div className="max-h-96 overflow-y-auto">
+                    <div className="max-h-[400px] overflow-y-auto">
 
                       {notifications.length === 0 ? (
 
-                        <div className="px-4 py-10 text-center text-gray-500">
+                        <div className="py-10 text-center text-gray-500">
+
                           <div className="text-3xl mb-2">
                             🔔
                           </div>
@@ -221,22 +244,23 @@ export default function Header() {
                           <p>
                             No notifications
                           </p>
+
                         </div>
 
                       ) : (
 
                         notifications.map(
                           (notification) => (
-                            <div
-                              key={
-                                notification._id
-                              }
+
+                            <button
+                              key={notification._id}
+                              type="button"
                               onClick={() =>
                                 markAsRead(
                                   notification
                                 )
                               }
-                              className={`px-4 py-4 border-b cursor-pointer hover:bg-gray-50 ${
+                              className={`w-full text-left px-4 py-4 border-b hover:bg-gray-50 transition ${
                                 !notification.isRead
                                   ? "bg-sky-50"
                                   : "bg-white"
@@ -254,27 +278,25 @@ export default function Header() {
 
                                 {/* Content */}
 
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-0">
 
-                                  <div className="flex items-start justify-between gap-2">
+                                  <div className="flex items-center justify-between gap-2">
 
                                     <h4 className="font-semibold text-gray-800 text-sm">
-                                      {
-                                        notification.title
-                                      }
+                                      {notification.title}
                                     </h4>
 
                                     {!notification.isRead && (
-                                      <span className="w-2 h-2 bg-sky-500 rounded-full mt-1 flex-shrink-0" />
+                                      <span className="w-2 h-2 bg-sky-500 rounded-full flex-shrink-0" />
                                     )}
 
                                   </div>
 
+
                                   <p className="text-sm text-gray-600 mt-1">
-                                    {
-                                      notification.message
-                                    }
+                                    {notification.message}
                                   </p>
+
 
                                   <p className="text-xs text-gray-400 mt-2">
                                     {new Date(
@@ -286,7 +308,8 @@ export default function Header() {
 
                               </div>
 
-                            </div>
+                            </button>
+
                           )
                         )
 
@@ -305,7 +328,7 @@ export default function Header() {
                 DESKTOP MENU
             ========================= */}
 
-            <nav className="flex items-center space-x-6">
+            <nav className="flex items-center gap-5">
 
               {[
                 "disclaimer",
@@ -313,16 +336,18 @@ export default function Header() {
                 "terms",
                 "privacy",
                 "pricing",
-              ].map((page, index) => (
+              ].map((page) => (
+
                 <Link
-                  key={index}
+                  key={page}
                   to={`/${page}`}
-                  className="text-gray-700 font-medium hover:text-sky-600 transition-all"
+                  className="text-gray-700 font-medium hover:text-sky-600 transition"
                 >
                   {page
                     .replace("-", " ")
                     .toUpperCase()}
                 </Link>
+
               ))}
 
 
@@ -330,13 +355,9 @@ export default function Header() {
 
               <Link
                 to="/offer-job"
-                className="px-6 py-3 font-semibold rounded-xl shadow-lg text-white relative overflow-hidden text-lg transition-all"
+                className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow transition"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 animate-gradient-x -z-10"></span>
-
-                <span className="relative z-10">
-                  Offer Job
-                </span>
+                Offer Job
               </Link>
 
             </nav>
@@ -350,7 +371,7 @@ export default function Header() {
 
           <div className="flex items-center gap-2 md:hidden">
 
-            {/* Notification Bell */}
+            {/* Notification */}
 
             {localStorage.getItem("workerId") && (
               <div className="relative">
@@ -359,7 +380,7 @@ export default function Header() {
                   type="button"
                   onClick={() =>
                     setShowNotifications(
-                      !showNotifications
+                      (prev) => !prev
                     )
                   }
                   className="relative w-10 h-10 flex items-center justify-center"
@@ -385,8 +406,9 @@ export default function Header() {
                     />
                   </svg>
 
+
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 right-0 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute top-0 right-0 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                       {unreadCount > 99
                         ? "99+"
                         : unreadCount}
@@ -396,19 +418,20 @@ export default function Header() {
                 </button>
 
 
-                {/* Mobile Notification */}
+                {/* Mobile Notification Box */}
 
                 {showNotifications && (
-                  <div className="fixed top-20 left-4 right-4 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+                  <div className="fixed top-20 left-3 right-3 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
 
                     <div className="flex items-center justify-between px-4 py-3 border-b">
 
-                      <h3 className="font-bold">
+                      <h3 className="font-bold text-gray-800">
                         Notifications
                       </h3>
 
                       {unreadCount > 0 && (
                         <button
+                          type="button"
                           onClick={markAllAsRead}
                           className="text-sm text-sky-600"
                         >
@@ -418,13 +441,17 @@ export default function Header() {
 
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto">
+
+                    <div className="max-h-[70vh] overflow-y-auto">
 
                       {notifications.length === 0 ? (
 
-                        <div className="p-8 text-center text-gray-500">
-                          🔔
-                          <p className="mt-2">
+                        <div className="py-10 text-center text-gray-500">
+                          <div className="text-3xl mb-2">
+                            🔔
+                          </div>
+
+                          <p>
                             No notifications
                           </p>
                         </div>
@@ -433,35 +460,50 @@ export default function Header() {
 
                         notifications.map(
                           (notification) => (
-                            <div
-                              key={
-                                notification._id
-                              }
+
+                            <button
+                              key={notification._id}
+                              type="button"
                               onClick={() =>
                                 markAsRead(
                                   notification
                                 )
                               }
-                              className={`p-4 border-b ${
+                              className={`w-full text-left p-4 border-b ${
                                 !notification.isRead
                                   ? "bg-sky-50"
-                                  : ""
+                                  : "bg-white"
                               }`}
                             >
 
-                              <h4 className="font-semibold text-sm">
-                                {
-                                  notification.title
-                                }
-                              </h4>
+                              <div className="flex gap-3">
 
-                              <p className="text-sm text-gray-600 mt-1">
-                                {
-                                  notification.message
-                                }
-                              </p>
+                                <div className="w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
+                                  🔔
+                                </div>
 
-                            </div>
+                                <div>
+
+                                  <h4 className="font-semibold text-sm text-gray-800">
+                                    {notification.title}
+                                  </h4>
+
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {notification.message}
+                                  </p>
+
+                                  <p className="text-xs text-gray-400 mt-2">
+                                    {new Date(
+                                      notification.createdAt
+                                    ).toLocaleString()}
+                                  </p>
+
+                                </div>
+
+                              </div>
+
+                            </button>
+
                           )
                         )
 
@@ -480,23 +522,20 @@ export default function Header() {
 
             <Link
               to="/offer-job"
-              className="px-4 py-2 font-semibold rounded-xl shadow-lg text-white relative overflow-hidden text-sm"
+              className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm shadow"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 animate-gradient-x -z-10"></span>
-
-              <span className="relative z-10">
-                Offer Job
-              </span>
+              Offer Job
             </Link>
 
 
             {/* Hamburger */}
 
             <button
-              className="focus:outline-none"
+              type="button"
               onClick={() =>
-                setIsOpen(!isOpen)
+                setIsOpen((prev) => !prev)
               }
+              className="w-10 h-10 flex items-center justify-center"
             >
 
               {isOpen ? (
@@ -538,6 +577,7 @@ export default function Header() {
           </div>
 
         </div>
+
       </div>
 
 
@@ -546,7 +586,7 @@ export default function Header() {
       ========================= */}
 
       {isOpen && (
-        <div className="md:hidden bg-sky-400/95 backdrop-blur-md border-t border-sky-300 px-4 pt-2 pb-4 space-y-2 shadow-lg">
+        <div className="md:hidden bg-sky-500 px-4 py-4 space-y-3">
 
           {[
             "disclaimer",
@@ -554,51 +594,25 @@ export default function Header() {
             "terms",
             "privacy",
             "pricing",
-          ].map((page, index) => (
+          ].map((page) => (
+
             <Link
-              key={index}
+              key={page}
               to={`/${page}`}
-              className="block text-white/90 hover:text-white text-lg"
               onClick={() =>
                 setIsOpen(false)
               }
+              className="block text-white font-medium"
             >
               {page
                 .replace("-", " ")
                 .toUpperCase()}
             </Link>
+
           ))}
 
         </div>
       )}
-
-
-      {/* =========================
-          Tailwind Animation
-      ========================= */}
-
-      <style>
-        {`
-          @keyframes gradient-x {
-            0% {
-              background-position: 100% 0;
-            }
-
-            50% {
-              background-position: 0 0;
-            }
-
-            100% {
-              background-position: 100% 0;
-            }
-          }
-
-          .animate-gradient-x {
-            background-size: 200% 100%;
-            animation: gradient-x 3s linear infinite;
-          }
-        `}
-      </style>
 
     </header>
   );
