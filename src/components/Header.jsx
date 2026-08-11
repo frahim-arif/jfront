@@ -267,7 +267,6 @@ export default function Header() {
 >
   <img
     src="/logo.png"
-    alt="Jobhir"
     className="h-10 sm:h-12 w-auto object-contain"
   />
 
