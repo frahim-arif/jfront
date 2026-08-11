@@ -200,7 +200,7 @@ export default function App() {
       {/* ---- SCROLLING TIME BAR ---- */}
       <div className="bg-white text-black py-1 overflow-hidden">
         <p className="scroller text-center font-semibold text-xs">
-          {currentTime}  / Find your dream job today !
+          {currentTime}  / Find your dream job today ! 100% Secure & Safe !
         </p>
       </div>
 
