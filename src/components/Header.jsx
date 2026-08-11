@@ -261,16 +261,17 @@ export default function Header() {
           {/* =========================
               LOGO
           ========================= */}
-          <Link
+    <Link
   to="/"
   className="flex items-center gap-2 flex-shrink-0"
 >
   <img
-    src="/logo.png"
+    src="/images/logo.png"
+    alt="Jobhir"
     className="h-10 sm:h-12 w-auto object-contain"
   />
 
-  <span className="hidden sm:inline-flex items-center rounded-full bg-green-50 border border-green-200 px-3 py-1 text-xs font-semibold text-green-700">
+  <span className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2.5 py-1 text-[10px] sm:text-xs font-semibold text-green-700 whitespace-nowrap">
     100% Secure
   </span>
 </Link>
