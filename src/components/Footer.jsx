@@ -15,20 +15,19 @@ export default function Footer() {
     <footer className="mt-10 bg-gradient-to-br from-sky-600 via-sky-700 to-blue-800 text-white">
       <div className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
 
-        {/* Main Footer */}
         <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 lg:grid-cols-4">
 
-          {/* Logo & About */}
+          {/* Logo */}
           <div>
             <Link to="/" className="mb-5 inline-flex items-center gap-3">
               <img
                 src="/images/job.png"
                 alt="Jobhir"
-                className="h-14 w-14 rounded-full border-2 border-white/80 bg-white object-cover shadow-lg"
+                className="h-14 w-14 rounded-full border-2 border-white bg-white object-cover"
               />
 
               <div>
-                <h2 className="text-2xl font-bold tracking-wide">
+                <h2 className="text-2xl font-bold">
                   Jobhir
                 </h2>
 
@@ -38,37 +37,36 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="max-w-sm text-sm leading-7 text-white/80">
+            <p className="text-sm leading-7 text-white/80">
               Jobhir helps job seekers discover genuine job opportunities
               and helps employers connect with the right candidates easily.
             </p>
 
-            {/* Social Icons */}
-            <div className="mt-6 flex gap-3">
+            <div className="mt-5 flex gap-3">
               <a
                 href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-white hover:text-sky-700"
+                className="rounded-full bg-white/10 p-2 transition hover:bg-white hover:text-sky-700"
               >
                 <Facebook size={18} />
               </a>
 
               <a
                 href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-white hover:text-sky-700"
+                className="rounded-full bg-white/10 p-2 transition hover:bg-white hover:text-sky-700"
               >
                 <Instagram size={18} />
               </a>
 
               <a
                 href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-white hover:text-sky-700"
+                className="rounded-full bg-white/10 p-2 transition hover:bg-white hover:text-sky-700"
               >
                 <Linkedin size={18} />
               </a>
 
               <a
                 href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition hover:bg-white hover:text-sky-700"
+                className="rounded-full bg-white/10 p-2 transition hover:bg-white hover:text-sky-700"
               >
                 <Twitter size={18} />
               </a>
@@ -81,39 +79,24 @@ export default function Footer() {
               Quick Links
             </h3>
 
-            <div className="space-y-3">
-              <Link
-                to="/"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+            <div className="space-y-3 text-sm text-white/75">
+              <Link to="/" className="block hover:text-white">
                 Home
               </Link>
 
-              <Link
-                to="/jobs"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/jobs" className="block hover:text-white">
                 Jobs
               </Link>
 
-              <Link
-                to="/offer-job"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/offer-job" className="block hover:text-white">
                 Offer a Job
               </Link>
 
-              <Link
-                to="/pricing"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/pricing" className="block hover:text-white">
                 Pricing
               </Link>
 
-              <Link
-                to="/contact"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/contact" className="block hover:text-white">
                 Contact Us
               </Link>
             </div>
@@ -125,32 +108,20 @@ export default function Footer() {
               Important Links
             </h3>
 
-            <div className="space-y-3">
-              <Link
-                to="/privacy"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+            <div className="space-y-3 text-sm text-white/75">
+              <Link to="/privacy" className="block hover:text-white">
                 Privacy Policy
               </Link>
 
-              <Link
-                to="/terms"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/terms" className="block hover:text-white">
                 Terms & Conditions
               </Link>
 
-              <Link
-                to="/disclaimer"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/disclaimer" className="block hover:text-white">
                 Disclaimer
               </Link>
 
-              <Link
-                to="/refund-policy"
-                className="block text-sm text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/refund-policy" className="block hover:text-white">
                 Refund Policy
               </Link>
             </div>
@@ -162,85 +133,54 @@ export default function Footer() {
               Contact Us
             </h3>
 
-            <div className="space-y-5">
+            <div className="space-y-5 text-sm text-white/80">
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <Mail size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Email
-                  </p>
-
-                  <p className="mt-1 text-sm text-white/85">
-                    support@jobhir.com
-                  </p>
-                </div>
+              <div className="flex items-center gap-3">
+                <Mail size={18} />
+                <span>support@jobhir.com</span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <Phone size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Phone
-                  </p>
-
-                  <p className="mt-1 text-sm text-white/85">
-                    +91 00000 00000
-                  </p>
-                </div>
+              <div className="flex items-center gap-3">
+                <Phone size={18} />
+                <span>+91 00000 00000</span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <MapPin size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Location
-                  </p>
-
-                  <p className="mt-1 text-sm text-white/85">
-                    India
-                  </p>
-                </div>
+              <div className="flex items-center gap-3">
+                <MapPin size={18} />
+                <span>India</span>
               </div>
 
             </div>
           </div>
+
         </div>
 
-        {/* CTA */}
-        <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+        {/* Offer Job */}
+        <div className="mb-8 flex flex-col gap-4 rounded-2xl bg-white/10 p-5 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
             <h3 className="text-lg font-bold">
               Looking for the right candidate?
             </h3>
 
-            <p className="mt-1 text-sm text-white/70">
+            <p className="text-sm text-white/70">
               Post your job and reach suitable candidates.
             </p>
           </div>
 
           <Link
             to="/offer-job"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-sky-700 shadow-lg transition hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 font-bold text-sky-700"
           >
             Offer a Job
             <ArrowRight size={17} />
           </Link>
+
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/15 py-6">
-          <div className="flex flex-col items-center justify-between gap-3 text-center text-xs text-white/60 md:flex-row md:text-left">
+        <div className="border-t border-white/20 py-6">
+          <div className="flex flex-col items-center justify-between gap-3 text-center text-xs text-white/60 md:flex-row">
 
             <p>
               © {new Date().getFullYear()} Jobhir. All Rights Reserved.
