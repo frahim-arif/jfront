@@ -3,269 +3,125 @@ import {
   Facebook,
   Instagram,
   Linkedin,
-  Twitter,
   Mail,
   Phone,
   MapPin,
-  ArrowRight,
 } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="mt-10 bg-gradient-to-br from-sky-600 via-sky-700 to-blue-800 text-white">
-      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
+    <footer className="mt-10 bg-sky-600 text-white">
+      <div className="max-w-7xl mx-auto px-4 py-10">
 
-        {/* Main Footer */}
-        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-          {/* Logo + About */}
+          {/* Logo */}
           <div>
-            <Link
-              to="/"
-              className="mb-5 inline-flex items-center gap-3"
-            >
+            <Link to="/" className="flex items-center gap-3 mb-4">
               <img
                 src="/images/job.png"
-                alt="Jobhir Logo"
-                className="h-14 w-14 rounded-full border-2 border-white bg-white object-cover shadow-lg"
+                alt="Jobhir"
+                className="w-12 h-12 rounded-full border-2 border-white object-cover"
               />
 
-              <div>
-                <h2 className="text-2xl font-bold tracking-wide">
-                  Jobhir
-                </h2>
-
-                <p className="text-xs text-white/70">
-                  Find Your Future
-                </p>
-              </div>
+              <span className="text-2xl font-bold">
+                Jobhir
+              </span>
             </Link>
 
-            <p className="max-w-sm text-sm leading-7 text-white/80">
-              Jobhir helps job seekers discover genuine job opportunities
-              and helps employers connect with the right candidates easily.
+            <p className="text-sm text-white/80">
+              Find genuine job opportunities easily with Jobhir.
             </p>
-
-            {/* Social */}
-            <div className="mt-5 flex gap-3">
-
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:bg-white hover:text-sky-700"
-              >
-                <Facebook size={18} />
-              </a>
-
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:bg-white hover:text-sky-700"
-              >
-                <Instagram size={18} />
-              </a>
-
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:bg-white hover:text-sky-700"
-              >
-                <Linkedin size={18} />
-              </a>
-
-              <a
-                href="#"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-all duration-200 hover:bg-white hover:text-sky-700"
-              >
-                <Twitter size={18} />
-              </a>
-
-            </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Links */}
           <div>
-            <h3 className="mb-5 text-lg font-bold">
+            <h3 className="font-bold text-lg mb-4">
               Quick Links
             </h3>
 
-            <div className="space-y-3 text-sm">
-
-              <Link
-                to="/"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+            <div className="space-y-2 text-sm text-white/80">
+              <Link to="/" className="block hover:text-white">
                 Home
               </Link>
 
-              <Link
-                to="/jobs"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
-                Jobs
-              </Link>
-
-              <Link
-                to="/offer-job"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
-                Offer a Job
-              </Link>
-
-              <Link
-                to="/pricing"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/pricing" className="block hover:text-white">
                 Pricing
               </Link>
 
-              <Link
-                to="/contact"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
-                Contact Us
+              <Link to="/contact" className="block hover:text-white">
+                Contact
               </Link>
 
+              <Link to="/disclaimer" className="block hover:text-white">
+                Disclaimer
+              </Link>
             </div>
           </div>
 
-          {/* Important Links */}
+          {/* Legal */}
           <div>
-            <h3 className="mb-5 text-lg font-bold">
-              Important Links
+            <h3 className="font-bold text-lg mb-4">
+              Legal
             </h3>
 
-            <div className="space-y-3 text-sm">
-
-              <Link
-                to="/privacy"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+            <div className="space-y-2 text-sm text-white/80">
+              <Link to="/privacy" className="block hover:text-white">
                 Privacy Policy
               </Link>
 
-              <Link
-                to="/terms"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
+              <Link to="/terms" className="block hover:text-white">
                 Terms & Conditions
               </Link>
-
-              <Link
-                to="/disclaimer"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
-                Disclaimer
-              </Link>
-
-              <Link
-                to="/refund-policy"
-                className="block text-white/75 transition hover:translate-x-1 hover:text-white"
-              >
-                Refund Policy
-              </Link>
-
             </div>
           </div>
 
           {/* Contact */}
           <div>
-            <h3 className="mb-5 text-lg font-bold">
-              Contact Us
+            <h3 className="font-bold text-lg mb-4">
+              Contact
             </h3>
 
-            <div className="space-y-5 text-sm text-white/80">
+            <div className="space-y-3 text-sm text-white/80">
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <Mail size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Email
-                  </p>
-
-                  <p className="mt-1">
-                    support@jobhir.com
-                  </p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Mail size={17} />
+                <span>support@jobhir.com</span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <Phone size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Phone
-                  </p>
-
-                  <p className="mt-1">
-                    +91 00000 00000
-                  </p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Phone size={17} />
+                <span>+91 00000 00000</span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <MapPin size={17} />
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/50">
-                    Location
-                  </p>
-
-                  <p className="mt-1">
-                    India
-                  </p>
-                </div>
+              <div className="flex items-center gap-2">
+                <MapPin size={17} />
+                <span>India</span>
               </div>
 
             </div>
+
+            {/* Social */}
+            <div className="flex gap-3 mt-5">
+              <a href="#" className="hover:text-gray-200">
+                <Facebook size={20} />
+              </a>
+
+              <a href="#" className="hover:text-gray-200">
+                <Instagram size={20} />
+              </a>
+
+              <a href="#" className="hover:text-gray-200">
+                <Linkedin size={20} />
+              </a>
+            </div>
           </div>
-        </div>
-
-        {/* Job Offer CTA */}
-        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
-
-          <div>
-            <h3 className="text-lg font-bold">
-              Looking for the right candidate?
-            </h3>
-
-            <p className="mt-1 text-sm text-white/70">
-              Post your job and reach suitable candidates.
-            </p>
-          </div>
-
-          <Link
-            to="/offer-job"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-sky-700 shadow-lg transition-all hover:scale-105"
-          >
-            Offer a Job
-            <ArrowRight size={17} />
-          </Link>
 
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/15 py-6">
-
-          <div className="flex flex-col items-center justify-between gap-3 text-center text-xs text-white/60 md:flex-row">
-
-            <p>
-              © {new Date().getFullYear()} Jobhir. All Rights Reserved.
-            </p>
-
-            <p>
-              Designed & Developed by{" "}
-              <span className="font-semibold text-white">
-                Web Core Cube Tech
-              </span>
-            </p>
-
-          </div>
-
+        <div className="border-t border-white/20 mt-8 pt-5 text-center text-sm text-white/70">
+          © {new Date().getFullYear()} Jobhir. All Rights Reserved.
         </div>
 
       </div>
