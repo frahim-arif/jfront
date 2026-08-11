@@ -262,11 +262,19 @@ export default function Header() {
               LOGO
           ========================= */}
           <Link
-            to="/"
-            className="text-2xl sm:text-3xl font-bold text-sky-600 flex-shrink-0"
-          >
-            Jobhir
-          </Link>
+  to="/"
+  className="flex items-center gap-2 flex-shrink-0"
+>
+  <img
+    src="/logo.png"
+    alt="Jobhir"
+    className="h-10 sm:h-12 w-auto object-contain"
+  />
+
+  <span className="hidden sm:inline-flex items-center rounded-full bg-green-50 border border-green-200 px-3 py-1 text-xs font-semibold text-green-700">
+    100% Secure
+  </span>
+</Link>
 
           {/* =========================
               DESKTOP
