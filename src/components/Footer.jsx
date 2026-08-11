@@ -1,19 +1,11 @@
 import { Link } from "react-router-dom";
-import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
 
 export default function Footer() {
   return (
     <footer className="mt-10 bg-sky-600 text-white">
       <div className="max-w-7xl mx-auto px-4 py-10">
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
 
           {/* Logo */}
           <div>
@@ -29,12 +21,12 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="text-sm text-white/80">
+            <p className="text-sm text-white/80 leading-6">
               Find genuine job opportunities easily with Jobhir.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Quick Links */}
           <div>
             <h3 className="font-bold text-lg mb-4">
               Quick Links
@@ -53,8 +45,8 @@ export default function Footer() {
                 Contact
               </Link>
 
-              <Link to="/disclaimer" className="block hover:text-white">
-                Disclaimer
+              <Link to="/offer-job" className="block hover:text-white">
+                Offer a Job
               </Link>
             </div>
           </div>
@@ -73,6 +65,10 @@ export default function Footer() {
               <Link to="/terms" className="block hover:text-white">
                 Terms & Conditions
               </Link>
+
+              <Link to="/disclaimer" className="block hover:text-white">
+                Disclaimer
+              </Link>
             </div>
           </div>
 
@@ -82,38 +78,10 @@ export default function Footer() {
               Contact
             </h3>
 
-            <div className="space-y-3 text-sm text-white/80">
-
-              <div className="flex items-center gap-2">
-                <Mail size={17} />
-                <span>support@jobhir.com</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Phone size={17} />
-                <span>+91 00000 00000</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin size={17} />
-                <span>India</span>
-              </div>
-
-            </div>
-
-            {/* Social */}
-            <div className="flex gap-3 mt-5">
-              <a href="#" className="hover:text-gray-200">
-                <Facebook size={20} />
-              </a>
-
-              <a href="#" className="hover:text-gray-200">
-                <Instagram size={20} />
-              </a>
-
-              <a href="#" className="hover:text-gray-200">
-                <Linkedin size={20} />
-              </a>
+            <div className="space-y-2 text-sm text-white/80">
+              <p>support@jobhir.com</p>
+              <p>+91 00000 00000</p>
+              <p>India</p>
             </div>
           </div>
 
