@@ -3,7 +3,6 @@ import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-
 import {
   MapContainer,
   TileLayer,
@@ -24,6 +23,7 @@ import Footer from "./components/Footer.jsx";
 
 const locationIcon = new L.DivIcon({
   className: "jobhir-location-marker",
+
   html: `
     <div style="
       width: 34px;
@@ -46,6 +46,7 @@ const locationIcon = new L.DivIcon({
       "></div>
     </div>
   `,
+
   iconSize: [34, 34],
   iconAnchor: [17, 34],
   popupAnchor: [0, -34],
@@ -72,6 +73,8 @@ function MapCenter({ position }) {
 // ======================================================
 
 export default function App() {
+  const navigate = useNavigate();
+
   // ====================================================
   // DISTRICTS
   // ====================================================
@@ -86,7 +89,7 @@ export default function App() {
     "Borpeta",
     "Hajo",
   ];
-const navigate = useNavigate();
+
   // ====================================================
   // JOB STATES
   // ====================================================
@@ -95,14 +98,14 @@ const navigate = useNavigate();
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [districtList, setDistrictList] = useState(fixedDistricts);
-  const [selectedDistrict, setSelectedDistrict] = useState("All");
+  const [selectedDistrict, setSelectedDistrict] =
+    useState("All");
 
   // ====================================================
   // MODAL STATES
   // ====================================================
 
   const [selectedJob, setSelectedJob] = useState(null);
-  const [showOfferPopup, setShowOfferPopup] = useState(false);
 
   // ====================================================
   // CUSTOMER / PAYMENT STATES
@@ -125,15 +128,7 @@ const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState("");
 
   // ====================================================
-  // LOCATION STATES
-  // ====================================================
-
-  const [userLocation, setUserLocation] = useState(null);
-  const [locationLoading, setLocationLoading] = useState(false);
-  const [locationError, setLocationError] = useState("");
-
-  // ====================================================
-  // SCROLLER
+  // SCROLLER STYLE
   // ====================================================
 
   useEffect(() => {
@@ -222,12 +217,18 @@ const navigate = useNavigate();
         ];
 
         const mergedDistricts = Array.from(
-          new Set([...fixedDistricts, ...apiDistricts])
+          new Set([
+            ...fixedDistricts,
+            ...apiDistricts,
+          ])
         );
 
         setDistrictList(mergedDistricts);
       } catch (err) {
-        console.error("Error fetching jobs:", err);
+        console.error(
+          "Error fetching jobs:",
+          err
+        );
       } finally {
         setLoadingJobs(false);
       }
@@ -241,7 +242,8 @@ const navigate = useNavigate();
   // ====================================================
 
   useEffect(() => {
-    const mobile = localStorage.getItem("mobileNumber");
+    const mobile =
+      localStorage.getItem("mobileNumber");
 
     if (!mobile) return;
 
@@ -251,9 +253,14 @@ const navigate = useNavigate();
           `https://jbackend-h963.onrender.com/applied-jobs/${mobile}`
         );
 
-        setAppliedJobs(res.data.appliedJobIds || []);
+        setAppliedJobs(
+          res.data.appliedJobIds || []
+        );
       } catch (err) {
-        console.error("Applied jobs fetch error:", err);
+        console.error(
+          "Applied jobs fetch error:",
+          err
+        );
       }
     };
 
@@ -270,7 +277,8 @@ const navigate = useNavigate();
     } else {
       setFilteredJobs(
         jobs.filter(
-          (job) => job.district === selectedDistrict
+          (job) =>
+            job.district === selectedDistrict
         )
       );
     }
@@ -282,7 +290,6 @@ const navigate = useNavigate();
 
   const handleCloseModal = () => {
     setSelectedJob(null);
-    setShowOfferPopup(false);
 
     setCustomerName("");
     setMobileNumber("");
@@ -291,228 +298,6 @@ const navigate = useNavigate();
     setNote("Order for job");
 
     setError("");
-
-    // Location reset
-    setUserLocation(null);
-    setLocationError("");
-    setLocationLoading(false);
-  };
-
-  // ====================================================
-  // CURRENT LOCATION
-  // ====================================================
-
-  const detectCurrentLocation = () => {
-    setLocationError("");
-
-    if (!navigator.geolocation) {
-      setLocationError(
-        "Your browser does not support location detection."
-      );
-      return;
-    }
-
-    setLocationLoading(true);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-
-          // --------------------------------------------
-          // REVERSE GEOCODING
-          // --------------------------------------------
-
-          const response = await axios.get(
-            "https://api.bigdatacloud.net/data/reverse-geocode-client",
-            {
-              params: {
-                latitude,
-                longitude,
-                localityLanguage: "en",
-              },
-            }
-          );
-
-          const data = response.data || {};
-
-          // --------------------------------------------
-          // ADDRESS DATA
-          // --------------------------------------------
-
-          const locality =
-            data.locality ||
-            data.city ||
-            "";
-
-          const village =
-            data.village ||
-            data.locality ||
-            data.city ||
-            "";
-
-          const district =
-            data.city ||
-            data.principalSubdivision ||
-            "";
-
-          const state =
-            data.principalSubdivision ||
-            "Assam";
-
-          const postcode =
-            data.postcode ||
-            "";
-
-          // Try to find neighbourhood / hamlet
-          let detailedLocality = "";
-
-          const informative =
-            data.localityInfo?.informative || [];
-
-          const localityTypes = [
-            "neighbourhood",
-            "neighborhood",
-            "hamlet",
-            "village",
-            "suburb",
-          ];
-
-          const foundLocality = informative.find(
-            (item) =>
-              item?.name &&
-              localityTypes.includes(
-                String(item?.description || "").toLowerCase()
-              )
-          );
-
-          if (foundLocality?.name) {
-            detailedLocality = foundLocality.name;
-          }
-
-          // --------------------------------------------
-          // FINAL ADDRESS
-          // --------------------------------------------
-
-          const addressParts = [
-            detailedLocality,
-            village,
-            district,
-            state,
-            postcode,
-          ].filter(Boolean);
-
-          const uniqueAddressParts = [
-            ...new Set(addressParts),
-          ];
-
-          const address = uniqueAddressParts.join(", ");
-
-          // --------------------------------------------
-          // SAVE LOCATION
-          // --------------------------------------------
-
-          const locationData = {
-            latitude,
-            longitude,
-            address:
-              address || "Current Location",
-            village: village || "",
-            locality:
-              detailedLocality ||
-              locality ||
-              "",
-            district: district || "",
-            state: state || "Assam",
-            postcode: postcode || "",
-          };
-
-          setUserLocation(locationData);
-
-          // --------------------------------------------
-          // AUTO DISTRICT
-          // --------------------------------------------
-
-          const matchedDistrict =
-            fixedDistricts.find(
-              (item) =>
-                item.toLowerCase() ===
-                String(district).toLowerCase()
-            );
-
-          if (matchedDistrict) {
-            // We don't change the job filter.
-            // This is only useful information for location.
-            console.log(
-              "Detected district:",
-              matchedDistrict
-            );
-          }
-        } catch (err) {
-          console.error(
-            "Reverse geocoding error:",
-            err
-          );
-
-          const latitude =
-            position.coords.latitude;
-
-          const longitude =
-            position.coords.longitude;
-
-          setUserLocation({
-            latitude,
-            longitude,
-            address: "Current Location",
-            village: "",
-            locality: "",
-            district: "",
-            state: "Assam",
-            postcode: "",
-          });
-
-          setLocationError(
-            "Map found, but detailed address could not be detected."
-          );
-        } finally {
-          setLocationLoading(false);
-        }
-      },
-
-      (error) => {
-        console.error(
-          "Current location error:",
-          error
-        );
-
-        setLocationLoading(false);
-
-        if (error.code === 1) {
-          setLocationError(
-            "Location permission denied. Please allow location access."
-          );
-        } else if (error.code === 2) {
-          setLocationError(
-            "Unable to detect your location."
-          );
-        } else if (error.code === 3) {
-          setLocationError(
-            "Location request timed out. Please try again."
-          );
-        } else {
-          setLocationError(
-            "Unable to detect your current location."
-          );
-        }
-      },
-
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
-      }
-    );
   };
 
   // ====================================================
@@ -529,10 +314,22 @@ const navigate = useNavigate();
       return;
     }
 
-    // Location required
-    if (!userLocation) {
+    // ==================================================
+    // IMPORTANT
+    // Worker ki location required nahi hai.
+    // Employer ki job location use hogi.
+    // ==================================================
+
+    if (
+      selectedJob &&
+      (
+        !selectedJob.location ||
+        selectedJob.location.latitude === undefined ||
+        selectedJob.location.longitude === undefined
+      )
+    ) {
       alert(
-        "Please select your current location before continuing."
+        "This job does not have a valid job location."
       );
       return;
     }
@@ -542,8 +339,11 @@ const navigate = useNavigate();
       setLoading(true);
 
       const amount =
-        Math.round(Number(amountInRupees) * 100);
+        Math.round(
+          Number(amountInRupees) * 100
+        );
 
+      // Save worker mobile
       localStorage.setItem(
         "mobileNumber",
         mobileNumber
@@ -553,16 +353,26 @@ const navigate = useNavigate();
         "https://jbackend-h963.onrender.com/create-order",
         {
           amount,
+
           customerName,
+
           mobileNumber,
+
           email,
+
           note,
 
           jobId:
-            selectedJob?._id || "offer_job",
+            selectedJob?._id ||
+            "offer_job",
 
-          // LOCATION
-          location: userLocation,
+          // =================================================
+          // VERY IMPORTANT
+          // Employer ki location backend ko jayegi
+          // =================================================
+
+          location:
+            selectedJob?.location || null,
         }
       );
 
@@ -600,23 +410,36 @@ const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-100 text-black">
 
-      {/* HEADER */}
-      <Header
-  onOfferJobClick={() => navigate("/offer-job")}
-/>
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
-      {/* SCROLLING TIME BAR */}
+      <Header
+        onOfferJobClick={() =>
+          navigate("/offer-job")
+        }
+      />
+
+      {/* =================================================
+          SCROLLING TIME BAR
+      ================================================= */}
+
       <div className="bg-white py-1 overflow-hidden">
         <p className="scroller text-center font-semibold text-xs">
           {currentTime} / Find your dream job today!
-          {" "}100% Secure & Safe!
+          {" "}
+          100% Secure & Safe!
         </p>
       </div>
 
-      {/* REGISTER + DISTRICT FILTER */}
+      {/* =================================================
+          REGISTER + DISTRICT FILTER
+      ================================================= */}
+
       <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-end items-center gap-2">
 
         {/* REGISTER */}
+
         <button
           onClick={() => {
             window.location.href =
@@ -628,10 +451,13 @@ const navigate = useNavigate();
         </button>
 
         {/* DESKTOP DISTRICT */}
+
         <select
           value={selectedDistrict}
           onChange={(e) =>
-            setSelectedDistrict(e.target.value)
+            setSelectedDistrict(
+              e.target.value
+            )
           }
           className="hidden sm:inline-block w-32 h-10 px-3 bg-[#E8E0CF] text-[#333333] font-semibold border border-[#D5C9B0] hover:bg-[#DDD3C0] transition-colors duration-200 focus:outline-none"
         >
@@ -652,6 +478,7 @@ const navigate = useNavigate();
         </select>
 
         {/* MOBILE DISTRICT */}
+
         <div className="sm:hidden">
           <select
             value={selectedDistrict}
@@ -680,7 +507,10 @@ const navigate = useNavigate();
         </div>
       </div>
 
-      {/* JOB CARDS */}
+      {/* =================================================
+          JOB CARDS
+      ================================================= */}
+
       <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7 px-4">
 
         {loadingJobs ? (
@@ -697,7 +527,6 @@ const navigate = useNavigate();
               </div>
 
             </div>
-
           </div>
         ) : filteredJobs.length === 0 ? (
           <p className="text-center col-span-full text-lg font-semibold text-gray-700">
@@ -706,6 +535,7 @@ const navigate = useNavigate();
         ) : null}
 
         {/* JOB LIST */}
+
         {filteredJobs
           .filter(
             (job) =>
@@ -718,6 +548,7 @@ const navigate = useNavigate();
               key={job._id}
               className="relative rounded-2xl p-1 shadow-2xl hover:scale-105 transition-all duration-300"
             >
+
               <div className="bg-white rounded-2xl p-5 flex flex-col justify-between">
 
                 <h2 className="text-xl font-bold mb-2 text-gray-900">
@@ -744,7 +575,8 @@ const navigate = useNavigate();
                     {job.district}
                   </li>
 
-                  {/* LOCATION PREVIEW */}
+                  {/* EMPLOYER JOB LOCATION */}
+
                   {job.location?.address && (
                     <li>
                       <strong className="text-red-500">
@@ -769,20 +601,19 @@ const navigate = useNavigate();
                       )}
                     </li>
                   )}
-
                 </ul>
 
                 <button
                   onClick={() => {
                     setSelectedJob(job);
-                    setShowOfferPopup(false);
+
                     setAmountInRupees(10);
+
                     setNote(
                       `Applying for ${job.title}`
                     );
 
-                    setUserLocation(null);
-                    setLocationError("");
+                    setError("");
                   }}
                   className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-gray-800 transition blink"
                 >
@@ -795,10 +626,10 @@ const navigate = useNavigate();
       </div>
 
       {/* ==================================================
-          APPLY / OFFER MODAL
+          APPLY MODAL
       ================================================== */}
 
-      {(selectedJob || showOfferPopup) && (
+      {selectedJob && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-6 overflow-y-auto"
           onClick={handleCloseModal}
@@ -812,6 +643,7 @@ const navigate = useNavigate();
           >
 
             {/* CLOSE */}
+
             <button
               onClick={handleCloseModal}
               className="absolute top-3 right-3 text-black hover:text-gray-700 text-xl"
@@ -820,15 +652,16 @@ const navigate = useNavigate();
             </button>
 
             {/* TITLE */}
+
             <h2 className="text-2xl font-bold text-center mb-5 text-black pr-6">
-              {selectedJob
-                ? `Apply for ${selectedJob.title}`
-                : "Offer a Job"}
+              Apply for{" "}
+              {selectedJob.title}
             </h2>
 
             <div className="grid gap-4">
 
               {/* NAME */}
+
               <input
                 type="text"
                 value={customerName}
@@ -842,6 +675,7 @@ const navigate = useNavigate();
               />
 
               {/* MOBILE */}
+
               <input
                 type="tel"
                 value={mobileNumber}
@@ -859,193 +693,209 @@ const navigate = useNavigate();
               />
 
               {/* EMAIL */}
+
               <input
                 type="email"
                 value={email}
                 onChange={(e) =>
-                  setEmail(e.target.value)
+                  setEmail(
+                    e.target.value
+                  )
                 }
                 placeholder="Email"
                 className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:border-blue-500"
               />
 
               {/* =================================================
-                  CURRENT LOCATION
-              ================================================== */}
+                  EMPLOYER JOB LOCATION
+                  Worker ki current location nahi
+              ================================================= */}
 
               <div className="border border-gray-200 rounded-xl p-3 bg-gray-50">
 
-                <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-start gap-3">
 
-                  <div>
+                  <div className="text-red-500 text-xl">
+                    📍
+                  </div>
+
+                  <div className="min-w-0">
+
                     <p className="font-semibold text-gray-800 text-sm">
-                      📍 Current Location
+                      Job Location
                     </p>
 
                     <p className="text-xs text-gray-500 mt-1">
-                      Use your current village or locality
+                      Location provided by the job poster
                     </p>
-                  </div>
 
-                  <button
-                    type="button"
-                    onClick={
-                      detectCurrentLocation
-                    }
-                    disabled={
-                      locationLoading
-                    }
-                    className="shrink-0 px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {locationLoading
-                      ? "Detecting..."
-                      : userLocation
-                      ? "Update"
-                      : "Detect"}
-                  </button>
+                  </div>
+                </div>
+
+                {/* ADDRESS */}
+
+                <div className="mt-3 bg-white rounded-lg p-3 border border-gray-100">
+
+                  <p className="text-xs text-gray-400 mb-1">
+                    Address
+                  </p>
+
+                  <p className="text-sm font-medium text-gray-700 leading-5">
+                    {selectedJob.location?.address ||
+                      "Job location not available"}
+                  </p>
 
                 </div>
 
-                {/* ERROR */}
-                {locationError && (
-                  <div className="mb-3 rounded-lg bg-red-50 border border-red-100 p-2">
-                    <p className="text-xs text-red-600">
-                      {locationError}
-                    </p>
-                  </div>
-                )}
+                {/* LOCATION DETAILS */}
 
-                {/* MAP */}
-                {userLocation && (
-                  <div className="overflow-hidden rounded-xl border border-gray-200">
+                <div className="grid grid-cols-2 gap-2 mt-3">
 
-                    <div className="h-52 w-full">
+                  {selectedJob.location?.village && (
+                    <div className="bg-white rounded-lg p-2">
+                      <p className="text-[10px] text-gray-400">
+                        Village
+                      </p>
 
-                      <MapContainer
-                        center={[
-                          userLocation.latitude,
-                          userLocation.longitude,
-                        ]}
-                        zoom={16}
-                        scrollWheelZoom={false}
-                        className="h-full w-full"
-                      >
+                      <p className="text-xs font-medium text-gray-700">
+                        {
+                          selectedJob.location
+                            .village
+                        }
+                      </p>
+                    </div>
+                  )}
 
-                        <TileLayer
-                          attribution="&copy; OpenStreetMap contributors"
-                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
+                  {selectedJob.location?.locality && (
+                    <div className="bg-white rounded-lg p-2">
+                      <p className="text-[10px] text-gray-400">
+                        Locality / Mohalla
+                      </p>
 
-                        <MapCenter
-                          position={[
-                            userLocation.latitude,
-                            userLocation.longitude,
+                      <p className="text-xs font-medium text-gray-700">
+                        {
+                          selectedJob.location
+                            .locality
+                        }
+                      </p>
+                    </div>
+                  )}
+
+                  {(selectedJob.location?.district ||
+                    selectedJob.district) && (
+                    <div className="bg-white rounded-lg p-2">
+                      <p className="text-[10px] text-gray-400">
+                        District
+                      </p>
+
+                      <p className="text-xs font-medium text-gray-700">
+                        {
+                          selectedJob.location
+                            ?.district ||
+                          selectedJob.district
+                        }
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedJob.location?.postcode && (
+                    <div className="bg-white rounded-lg p-2">
+                      <p className="text-[10px] text-gray-400">
+                        PIN
+                      </p>
+
+                      <p className="text-xs font-medium text-gray-700">
+                        {
+                          selectedJob.location
+                            .postcode
+                        }
+                      </p>
+                    </div>
+                  )}
+
+                </div>
+
+                {/* =================================================
+                    EMPLOYER LOCATION MAP
+                ================================================= */}
+
+                {selectedJob.location?.latitude != null &&
+                  selectedJob.location?.longitude != null && (
+                    <div className="mt-3 overflow-hidden rounded-xl border border-gray-200">
+
+                      <div className="h-52 w-full">
+
+                        <MapContainer
+                          center={[
+                            Number(
+                              selectedJob.location
+                                .latitude
+                            ),
+                            Number(
+                              selectedJob.location
+                                .longitude
+                            ),
                           ]}
-                        />
-
-                        <Marker
-                          position={[
-                            userLocation.latitude,
-                            userLocation.longitude,
-                          ]}
-                          icon={locationIcon}
+                          zoom={16}
+                          scrollWheelZoom={false}
+                          className="h-full w-full"
                         >
-                          <Popup>
-                            <strong>
-                              Current Location
-                            </strong>
-                            <br />
-                            {userLocation.address}
-                          </Popup>
-                        </Marker>
 
-                      </MapContainer>
+                          <TileLayer
+                            attribution="&copy; OpenStreetMap contributors"
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                          />
 
-                    </div>
+                          <MapCenter
+                            position={[
+                              Number(
+                                selectedJob.location
+                                  .latitude
+                              ),
+                              Number(
+                                selectedJob.location
+                                  .longitude
+                              ),
+                            ]}
+                          />
 
-                    {/* LOCATION INFORMATION */}
-                    <div className="p-3 bg-white">
+                          <Marker
+                            position={[
+                              Number(
+                                selectedJob.location
+                                  .latitude
+                              ),
+                              Number(
+                                selectedJob.location
+                                  .longitude
+                              ),
+                            ]}
+                            icon={locationIcon}
+                          >
+                            <Popup>
+                              <strong>
+                                Job Location
+                              </strong>
 
-                      <div className="flex gap-2">
+                              <br />
 
-                        <div className="text-red-500 text-lg">
-                          📍
-                        </div>
+                              {selectedJob.location
+                                .address ||
+                                "Job Location"}
+                            </Popup>
+                          </Marker>
 
-                        <div className="min-w-0">
-
-                          <p className="font-semibold text-gray-800 text-sm">
-                            Location Selected
-                          </p>
-
-                          <p className="text-xs text-gray-600 mt-1 leading-5">
-                            {userLocation.address}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      {/* DETAILS */}
-                      <div className="grid grid-cols-2 gap-2 mt-3">
-
-                        {userLocation.village && (
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <p className="text-[10px] text-gray-400">
-                              Village
-                            </p>
-
-                            <p className="text-xs font-medium text-gray-700">
-                              {userLocation.village}
-                            </p>
-                          </div>
-                        )}
-
-                        {userLocation.locality && (
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <p className="text-[10px] text-gray-400">
-                              Locality / Mohalla
-                            </p>
-
-                            <p className="text-xs font-medium text-gray-700">
-                              {userLocation.locality}
-                            </p>
-                          </div>
-                        )}
-
-                        {userLocation.district && (
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <p className="text-[10px] text-gray-400">
-                              District
-                            </p>
-
-                            <p className="text-xs font-medium text-gray-700">
-                              {userLocation.district}
-                            </p>
-                          </div>
-                        )}
-
-                        {userLocation.postcode && (
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <p className="text-[10px] text-gray-400">
-                              PIN
-                            </p>
-
-                            <p className="text-xs font-medium text-gray-700">
-                              {userLocation.postcode}
-                            </p>
-                          </div>
-                        )}
+                        </MapContainer>
 
                       </div>
 
                     </div>
-                  </div>
-                )}
+                  )}
 
               </div>
 
               {/* AMOUNT */}
+
               <input
                 type="number"
                 value={amountInRupees}
@@ -1059,11 +909,14 @@ const navigate = useNavigate();
               />
 
               {/* NOTE */}
+
               <input
                 type="text"
                 value={note}
                 onChange={(e) =>
-                  setNote(e.target.value)
+                  setNote(
+                    e.target.value
+                  )
                 }
                 placeholder="Note"
                 className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:border-blue-500"
@@ -1072,6 +925,7 @@ const navigate = useNavigate();
             </div>
 
             {/* ERROR */}
+
             {error && (
               <p className="text-red-600 mt-2 text-sm">
                 {error}
@@ -1079,6 +933,7 @@ const navigate = useNavigate();
             )}
 
             {/* SUBMIT */}
+
             <button
               onClick={createOrder}
               disabled={loading}
@@ -1086,14 +941,16 @@ const navigate = useNavigate();
             >
               {loading
                 ? "Processing..."
-                : selectedJob
-                ? "Pay & Apply"
-                : "Submit Job Offer"}
+                : "Pay & Apply"}
             </button>
 
           </div>
         </div>
       )}
+
+      {/* =================================================
+          FOOTER
+      ================================================= */}
 
       <Footer />
 
