@@ -668,7 +668,6 @@ export default function OfferJob() {
                   className="h-11 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                 />
               </div>
-
               {/* Email */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
