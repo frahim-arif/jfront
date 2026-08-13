@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 import {
   MapContainer,
@@ -84,7 +85,7 @@ export default function App() {
     "Borpeta",
     "Hajo",
   ];
-
+const navigate = useNavigate();
   // ====================================================
   // JOB STATES
   // ====================================================
@@ -600,10 +601,8 @@ export default function App() {
 
       {/* HEADER */}
       <Header
-        onOfferJobClick={() =>
-          setShowOfferPopup(true)
-        }
-      />
+  onOfferJobClick={() => navigate("/offer-job")}
+/>
 
       {/* SCROLLING TIME BAR */}
       <div className="bg-white py-1 overflow-hidden">

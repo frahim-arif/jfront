@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 import {
   MapContainer,
   TileLayer,
@@ -8,31 +9,35 @@ import {
   Popup,
   useMap,
 } from "react-leaflet";
+
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Leaflet marker icon fix
+// ======================================================
+// LOCATION MARKER
+// ======================================================
+
 const locationIcon = new L.DivIcon({
   className: "custom-location-marker",
   html: `
     <div style="
-      width: 34px;
-      height: 34px;
-      background: #ef4444;
-      border: 3px solid white;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      position: relative;
+      width:34px;
+      height:34px;
+      background:#ef4444;
+      border:3px solid white;
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      box-shadow:0 3px 10px rgba(0,0,0,.35);
+      position:relative;
     ">
       <div style="
-        width: 10px;
-        height: 10px;
-        background: white;
-        border-radius: 50%;
-        position: absolute;
-        top: 9px;
-        left: 9px;
+        width:10px;
+        height:10px;
+        background:white;
+        border-radius:50%;
+        position:absolute;
+        top:9px;
+        left:9px;
       "></div>
     </div>
   `,
@@ -41,7 +46,10 @@ const locationIcon = new L.DivIcon({
   popupAnchor: [0, -34],
 });
 
-// Map ko new location par move karne ke liye
+// ======================================================
+// MAP CENTER
+// ======================================================
+
 function MapCenter({ position }) {
   const map = useMap();
 
@@ -51,6 +59,10 @@ function MapCenter({ position }) {
 
   return null;
 }
+
+// ======================================================
+// OFFER JOB
+// ======================================================
 
 export default function OfferJob() {
   const navigate = useNavigate();
@@ -63,7 +75,7 @@ export default function OfferJob() {
   const [jobPhone, setJobPhone] = useState("");
   const [jobEmail, setJobEmail] = useState("");
 
-  // Location states
+  // Location
   const [location, setLocation] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
@@ -92,9 +104,10 @@ export default function OfferJob() {
     "Other",
   ];
 
-  // =========================
-  // CURRENT LOCATION
-  // =========================
+  // ====================================================
+  // DETECT LOCATION
+  // ====================================================
+
   const detectLocation = () => {
     setLocationError("");
 
@@ -109,11 +122,10 @@ export default function OfferJob() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        try {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
-          // Reverse Geocoding
+        try {
           const response = await axios.get(
             "https://api.bigdatacloud.net/data/reverse-geocode-client",
             {
@@ -125,77 +137,94 @@ export default function OfferJob() {
             }
           );
 
-          const data = response.data;
+          const data = response.data || {};
 
-          const address = data.localityInfo?.administrative || [];
+          const informative =
+            data.localityInfo?.informative || [];
 
-          const district =
-            data.city ||
-            data.locality ||
-            data.principalSubdivision ||
-            "";
+          // Find village / mohalla / neighbourhood
+          const detail = informative.find((item) => {
+            const description =
+              String(item?.description || "").toLowerCase();
+
+            return (
+              item?.name &&
+              [
+                "village",
+                "hamlet",
+                "neighbourhood",
+                "neighborhood",
+                "suburb",
+              ].includes(description)
+            );
+          });
 
           const village =
-            data.locality ||
             data.village ||
-            data.city ||
+            data.locality ||
             "";
 
           const locality =
-            data.localityInfo?.informative?.find(
-              (item) =>
-                item.name &&
-                ["hamlet", "village", "neighbourhood", "suburb"].includes(
-                  item.description?.toLowerCase()
-                )
-            )?.name || "";
+            detail?.name ||
+            data.locality ||
+            "";
+
+          const district =
+            data.city ||
+            data.county ||
+            data.locality ||
+            "";
 
           const state =
-            data.principalSubdivision || "Assam";
+            data.principalSubdivision ||
+            "Assam";
 
           const postcode =
             data.postcode || "";
 
-          const fullAddress = [
-            locality || village,
+          const address = [
+            locality,
+            village,
             district,
             state,
             postcode,
           ]
             .filter(Boolean)
             .filter(
-              (value, index, array) =>
-                array.indexOf(value) === index
+              (item, index, arr) =>
+                arr.indexOf(item) === index
             )
             .join(", ");
 
           setLocation({
             latitude,
             longitude,
-            village: village || locality || "",
-            locality: locality || "",
+            village,
+            locality,
             district,
             state,
             postcode,
-            address: fullAddress,
+            address:
+              address || "Current Location",
           });
 
-          // District automatically select
+          // Auto-select district
           const matchedDistrict = districts.find(
             (item) =>
-              item.toLowerCase() === district.toLowerCase()
+              item.toLowerCase() ===
+              String(district).toLowerCase()
           );
 
           if (matchedDistrict) {
             setJobDistrict(matchedDistrict);
           }
         } catch (error) {
-          console.error("Reverse geocoding error:", error);
+          console.error(
+            "Reverse geocoding error:",
+            error
+          );
 
-          // GPS mil gaya ho to bhi location save kar sakte hain
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-
+          // GPS still available
           setLocation({
             latitude,
             longitude,
@@ -204,7 +233,7 @@ export default function OfferJob() {
             district: "",
             state: "Assam",
             postcode: "",
-            address: "Current location",
+            address: "Current Location",
           });
 
           setLocationError(
@@ -216,7 +245,7 @@ export default function OfferJob() {
       },
 
       (error) => {
-        console.error("Location Error:", error);
+        console.error("Location error:", error);
 
         setLocationLoading(false);
 
@@ -234,7 +263,7 @@ export default function OfferJob() {
           );
         } else {
           setLocationError(
-            "Unable to detect current location."
+            "Unable to detect your current location."
           );
         }
       },
@@ -247,9 +276,10 @@ export default function OfferJob() {
     );
   };
 
-  // =========================
-  // SUBMIT JOB
-  // =========================
+  // ====================================================
+  // SUBMIT
+  // ====================================================
+
   const submitJob = async (e) => {
     e.preventDefault();
 
@@ -283,7 +313,6 @@ export default function OfferJob() {
       return;
     }
 
-    // Location required
     if (!location) {
       alert("Please select your current location.");
       return;
@@ -300,15 +329,16 @@ export default function OfferJob() {
           amount: Number(jobAmount),
           district: jobDistrict,
           workType: jobWorkType,
+
           postedByPhone: jobPhone,
           postedByEmail: jobEmail.trim(),
 
-          // LOCATION
           location: {
             address: location.address,
             village: location.village,
             locality: location.locality,
-            district: location.district || jobDistrict,
+            district:
+              location.district || jobDistrict,
             state: location.state,
             postcode: location.postcode,
             latitude: location.latitude,
@@ -326,19 +356,13 @@ export default function OfferJob() {
             : "Job posted successfully!\nNo matching workers found."
         );
 
-        setJobTitle("");
-        setJobDescription("");
-        setJobAmount("");
-        setJobDistrict("");
-        setJobWorkType("");
-        setJobPhone("");
-        setJobEmail("");
-        setLocation(null);
-
         navigate("/");
       }
     } catch (error) {
-      console.error("Job Posting Error:", error);
+      console.error(
+        "Job Posting Error:",
+        error
+      );
 
       alert(
         error.response?.data?.message ||
@@ -349,12 +373,18 @@ export default function OfferJob() {
     }
   };
 
+  // ====================================================
+  // UI
+  // ====================================================
+
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-10">
+    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+
       <div className="mx-auto w-full max-w-2xl">
 
-        {/* Header */}
-        <div className="mb-6 text-center">
+        {/* HEADER */}
+        <div className="mb-7 text-center">
+
           <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
             Offer a Job
           </h1>
@@ -362,34 +392,40 @@ export default function OfferJob() {
           <p className="mt-2 text-sm text-slate-500 sm:text-base">
             Find a suitable worker for your job.
           </p>
+
         </div>
 
-        {/* Form */}
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+        {/* CARD */}
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
           <form
             onSubmit={submitJob}
             className="space-y-5 p-5 sm:p-7"
           >
 
-            {/* Job Title */}
+            {/* JOB TITLE */}
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Job Title <span className="text-red-500">*</span>
+                Job Title{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <input
                 type="text"
                 value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
+                onChange={(e) =>
+                  setJobTitle(e.target.value)
+                }
                 placeholder="e.g. Electrician Required"
-                className="h-11 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                className="h-11 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
               />
             </div>
 
-            {/* Description */}
+            {/* DESCRIPTION */}
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Job Description <span className="text-red-500">*</span>
+                Job Description{" "}
+                <span className="text-red-500">*</span>
               </label>
 
               <textarea
@@ -399,14 +435,14 @@ export default function OfferJob() {
                 }
                 placeholder="Describe the work..."
                 rows={4}
-                className="w-full resize-none rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                className="w-full resize-none rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
               />
             </div>
 
-            {/* Amount + District */}
+            {/* AMOUNT + DISTRICT */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-              {/* Amount */}
+              {/* AMOUNT */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Work Amount{" "}
@@ -414,6 +450,7 @@ export default function OfferJob() {
                 </label>
 
                 <div className="relative">
+
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-slate-500">
                     ₹
                   </span>
@@ -428,10 +465,11 @@ export default function OfferJob() {
                     placeholder="500"
                     className="h-11 w-full rounded-lg border border-slate-300 pl-9 pr-4 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                   />
+
                 </div>
               </div>
 
-              {/* District */}
+              {/* DISTRICT */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   District{" "}
@@ -459,10 +497,12 @@ export default function OfferJob() {
                   ))}
                 </select>
               </div>
+
             </div>
 
-            {/* Work Type */}
+            {/* WORK TYPE */}
             <div>
+
               <label className="mb-2 block text-sm font-semibold text-slate-700">
                 Work Type{" "}
                 <span className="text-red-500">*</span>
@@ -485,12 +525,15 @@ export default function OfferJob() {
                   </option>
                 ))}
               </select>
+
             </div>
 
-            {/* ========================= */}
-            {/* CURRENT LOCATION */}
-            {/* ========================= */}
+            {/* =================================================
+                LOCATION
+            ================================================= */}
+
             <div>
+
               <label className="mb-2 block text-sm font-semibold text-slate-700">
                 Job Location{" "}
                 <span className="text-red-500">*</span>
@@ -500,28 +543,31 @@ export default function OfferJob() {
                 type="button"
                 onClick={detectLocation}
                 disabled={locationLoading}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 text-sm font-semibold text-sky-700 transition hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 text-sm font-semibold text-sky-700 hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <span className="text-lg">📍</span>
+                <span className="text-lg">
+                  📍
+                </span>
 
                 {locationLoading
                   ? "Detecting Current Location..."
                   : location
-                  ? "Detect Current Location Again"
+                  ? "Update Current Location"
                   : "Use Current Location"}
               </button>
 
               {locationError && (
-                <p className="mt-2 text-xs text-red-500">
+                <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs text-red-600">
                   {locationError}
                 </p>
               )}
 
               {/* MAP */}
               {location && (
-                <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
 
                   <div className="h-56 w-full sm:h-64">
+
                     <MapContainer
                       center={[
                         location.latitude,
@@ -531,8 +577,9 @@ export default function OfferJob() {
                       scrollWheelZoom={false}
                       className="h-full w-full"
                     >
+
                       <TileLayer
-                        attribution='&copy; OpenStreetMap contributors'
+                        attribution="&copy; OpenStreetMap contributors"
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
 
@@ -558,18 +605,22 @@ export default function OfferJob() {
                           {location.address}
                         </Popup>
                       </Marker>
+
                     </MapContainer>
+
                   </div>
 
                   {/* LOCATION DETAILS */}
-                  <div className="p-4">
+                  <div className="bg-white p-4">
 
                     <div className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50 text-lg">
+
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-lg">
                         📍
                       </div>
 
                       <div className="min-w-0">
+
                         <p className="text-sm font-semibold text-slate-800">
                           Current Location
                         </p>
@@ -577,76 +628,76 @@ export default function OfferJob() {
                         <p className="mt-1 text-sm leading-5 text-slate-600">
                           {location.address}
                         </p>
+
                       </div>
+
                     </div>
 
-                    {/* Details */}
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                    {/* DETAILS */}
+                    <div className="mt-4 grid grid-cols-2 gap-2">
 
                       {location.village && (
-                        <div className="rounded-lg bg-slate-50 p-2">
-                          <span className="text-slate-400">
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <p className="text-[11px] text-slate-400">
                             Village
-                          </span>
-                          <p className="font-medium text-slate-700">
+                          </p>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-700">
                             {location.village}
                           </p>
                         </div>
                       )}
 
                       {location.locality && (
-                        <div className="rounded-lg bg-slate-50 p-2">
-                          <span className="text-slate-400">
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <p className="text-[11px] text-slate-400">
                             Locality / Mohalla
-                          </span>
-                          <p className="font-medium text-slate-700">
+                          </p>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-700">
                             {location.locality}
                           </p>
                         </div>
                       )}
 
                       {location.district && (
-                        <div className="rounded-lg bg-slate-50 p-2">
-                          <span className="text-slate-400">
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <p className="text-[11px] text-slate-400">
                             District
-                          </span>
-                          <p className="font-medium text-slate-700">
+                          </p>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-700">
                             {location.district}
                           </p>
                         </div>
                       )}
 
                       {location.postcode && (
-                        <div className="rounded-lg bg-slate-50 p-2">
-                          <span className="text-slate-400">
-                            PIN
-                          </span>
-                          <p className="font-medium text-slate-700">
+                        <div className="rounded-lg bg-slate-50 p-3">
+                          <p className="text-[11px] text-slate-400">
+                            PIN Code
+                          </p>
+
+                          <p className="mt-1 text-xs font-semibold text-slate-700">
                             {location.postcode}
                           </p>
                         </div>
                       )}
+
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        alert("Location selected successfully.");
-                      }}
-                      className="mt-4 h-10 w-full rounded-lg bg-slate-900 text-sm font-semibold text-white transition hover:bg-slate-800"
-                    >
-                      ✓ Use This Location
-                    </button>
                   </div>
+
                 </div>
               )}
+
             </div>
 
-            {/* Phone + Email */}
+            {/* PHONE + EMAIL */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-              {/* Phone */}
               <div>
+
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Phone Number{" "}
                   <span className="text-red-500">*</span>
@@ -667,9 +718,11 @@ export default function OfferJob() {
                   inputMode="numeric"
                   className="h-11 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                 />
+
               </div>
-              {/* Email */}
+
               <div>
+
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Email{" "}
                   <span className="font-normal text-slate-400">
@@ -686,22 +739,28 @@ export default function OfferJob() {
                   placeholder="your@email.com"
                   className="h-11 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                 />
+
               </div>
+
             </div>
 
-            {/* Submit */}
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
-              className="h-11 w-full rounded-lg bg-sky-600 font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 w-full rounded-lg bg-sky-600 font-semibold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading
                 ? "Posting Job..."
                 : "Post Job"}
             </button>
+
           </form>
+
         </div>
+
       </div>
+
     </div>
   );
 }
