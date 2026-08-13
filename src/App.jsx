@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import OfferJob from "./app/components/OfferJob.jsx";
+import OfferJob from "./app/components/OfferJob";
 
 import {
   MapContainer,
