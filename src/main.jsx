@@ -59,5 +59,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Route
+  path="/offer-job"
+  element={<OfferJob />}
+/>
   </StrictMode>
 )
