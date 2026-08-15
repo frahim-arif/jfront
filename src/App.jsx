@@ -632,40 +632,55 @@ export default function App() {
         </select>
       </div>
 
-      {/* =================================================
-          SELECTED STATE INFO
-      ================================================= */}
+     {/* =================================================
+    SELECTED STATE INFO
+================================================= */}
 
-      <div className="max-w-7xl mx-auto px-4 mt-4">
-        <div className="bg-white border border-gray-200 rounded-xl px-4 py-3">
+<div className="max-w-7xl mx-auto px-4 mt-3 sm:mt-4">
+  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-3 py-2 sm:px-4 sm:py-3">
 
-          <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center justify-between gap-3">
 
-            <div>
-              <p className="text-xs text-gray-500">
-                Showing jobs from
-              </p>
+      {/* STATE */}
+      <div className="min-w-0">
+        <p className="text-[10px] sm:text-xs text-gray-400 font-medium">
+          Showing jobs from
+        </p>
 
-              <p className="font-bold text-gray-800">
-                {selectedState === "All"
-                  ? "All India"
-                  : selectedState}
-              </p>
-            </div>
+        <div className="flex items-center gap-1.5 mt-0.5">
+          <span className="text-sm sm:text-base">
+            🇮🇳
+          </span>
 
-            <div className="text-right">
-              <p className="text-xs text-gray-500">
-                Available Jobs
-              </p>
-
-              <p className="font-bold text-blue-600">
-                {filteredJobs.length}
-              </p>
-            </div>
-
-          </div>
+          <p className="font-bold text-gray-800 text-sm sm:text-base truncate">
+            {selectedState === "All"
+              ? "All India"
+              : selectedState}
+          </p>
         </div>
       </div>
+
+      {/* JOB COUNT */}
+      <div className="flex items-center gap-2 shrink-0">
+
+        <div className="hidden sm:block text-right">
+          <p className="text-xs text-gray-400 font-medium">
+            Available Jobs
+          </p>
+        </div>
+
+        <div className="min-w-[38px] h-8 sm:h-9 px-2.5 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+          <span className="font-bold text-blue-600 text-sm sm:text-base">
+            {filteredJobs.length}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
 
       {/* =================================================
           JOB CARDS
