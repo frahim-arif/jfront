@@ -576,22 +576,19 @@ export default function Header() {
           ================================================= */}
 
           <Link
-            to="/"
-            onClick={() =>
-              setShowNotifications(false)
-            }
-            className="flex min-w-0 flex-shrink-0 items-center gap-2"
-          >
-            <img
-              src="/images/logo.png"
-              alt="Jobhir"
-              className="h-9 w-auto object-contain sm:h-12"
-            />
+  to="/"
+  className="flex flex-shrink-0 flex-col items-start"
+>
+  <img
+    src="/images/logo.png"
+    alt="Jobhir"
+    className="h-10 w-auto object-contain sm:h-12"
+  />
 
-            <span className="inline-flex whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-2 py-1 text-[9px] font-semibold text-green-700 sm:px-2.5 sm:py-1 sm:text-xs">
-              100% Secure
-            </span>
-          </Link>
+  <span className="mt-0.5 inline-flex whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[9px] font-semibold leading-tight text-green-700 sm:text-[10px]">
+    100% Secure
+  </span>
+</Link>
 
           {/* =================================================
               DESKTOP
