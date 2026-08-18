@@ -157,76 +157,65 @@ export default function JobCard({ job }) {
               {job.description}
             </p>
 
-            {/* =========================
-                Job Details
-            ========================= */}
+          {/*  JOB DETAILS */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
 
-              {/* District */}
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
 
-              <div className="bg-slate-50 rounded-lg p-3">
+  {/* Location */}
+  <div className="bg-slate-50 rounded-lg p-3">
+    <p className="text-xs text-slate-500 mb-1">
+      Location
+    </p>
 
-                <p className="text-xs text-slate-500 mb-1">
-                  District
-                </p>
+    <p className="font-semibold text-slate-800">
+      {job.district
+        ? `${job.district}${job.state ? `, ${job.state}` : ""}`
+        : job.state || "Not specified"}
+    </p>
+  </div>
 
-                <p className="font-semibold text-slate-800">
-                  {job.district || "Not specified"}
-                </p>
+  {/* Work Type */}
+  <div className="bg-slate-50 rounded-lg p-3">
+    <p className="text-xs text-slate-500 mb-1">
+      Work Type
+    </p>
 
-              </div>
+    <p className="font-semibold text-slate-800">
+      {job.workType || "Not specified"}
+    </p>
+  </div>
 
-              {/* Work Type */}
+  {/* Amount */}
+  <div className="bg-green-50 rounded-lg p-3">
+    <p className="text-xs text-green-600 mb-1">
+      Work Amount
+    </p>
 
-              <div className="bg-slate-50 rounded-lg p-3">
+    <p className="text-lg font-bold text-green-700">
+      ₹{Number(job.amount || 0).toLocaleString("en-IN")}
+    </p>
+  </div>
 
-                <p className="text-xs text-slate-500 mb-1">
-                  Work Type
-                </p>
+  {/* Posted */}
+  {job.createdAt && (
+    <div className="bg-slate-50 rounded-lg p-3">
+      <p className="text-xs text-slate-500 mb-1">
+        Posted
+      </p>
 
-                <p className="font-semibold text-slate-800">
-                  {job.workType || "Not specified"}
-                </p>
+      <p className="font-semibold text-slate-800">
+        {formatDistanceToNow(
+          new Date(job.createdAt),
+          {
+            addSuffix: true,
+          }
+        )}
+      </p>
+    </div>
+  )}
 
-              </div>
-
-              {/* Amount */}
-
-              <div className="bg-green-50 rounded-lg p-3">
-
-                <p className="text-xs text-green-600 mb-1">
-                  Work Amount
-                </p>
-
-                <p className="text-lg font-bold text-green-700">
-                  ₹{Number(job.amount || 0).toLocaleString("en-IN")}
-                </p>
-
-              </div>
-
-              {/* Posted */}
-
-              {job.createdAt && (
-                <div className="bg-slate-50 rounded-lg p-3">
-
-                  <p className="text-xs text-slate-500 mb-1">
-                    Posted
-                  </p>
-
-                  <p className="font-semibold text-slate-800">
-                    {formatDistanceToNow(
-                      new Date(job.createdAt),
-                      {
-                        addSuffix: true,
-                      }
-                    )}
-                  </p>
-
-                </div>
-              )}
-
-            </div>
+</div>
 
           </div>
 
