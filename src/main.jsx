@@ -21,6 +21,7 @@ import Contact from "./App/Contact/page.jsx";
 import Disclaimer from "./App/Disclaimer/page.jsx";
 import Admin from "./App/Admin/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
+import WorkerLogin from "./pages/WorkerLogin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,12 @@ const router = createBrowserRouter([
     path: "/offer-job",
     element: <OfferJob />,
   },
+// WORKER LOGIN
+{
+  path: "/worker-login",
+  element: <WorkerLogin />,
+},
+ 
 
   // WORKER REGISTER
   {

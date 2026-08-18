@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const API_URL = "https://jbackend-h963.onrender.com";
@@ -11,11 +11,14 @@ export default function Header() {
   );
 
   const [notifications, setNotifications] = useState([]);
+
   const [showNotifications, setShowNotifications] =
     useState(false);
 
   const [loadingNotifications, setLoadingNotifications] =
     useState(false);
+
+  const notificationRef = useRef(null);
 
   // =====================================================
   // GET WORKER ID
@@ -23,6 +26,25 @@ export default function Header() {
 
   const getWorkerId = () => {
     return localStorage.getItem("workerId");
+  };
+
+  // =====================================================
+  // LOAD WORKER
+  // =====================================================
+
+  const loadWorker = () => {
+    const id = localStorage.getItem("workerId");
+
+    console.log("Header Worker ID:", id);
+
+    setWorkerId(id);
+
+    if (!id) {
+      setNotifications([]);
+      setShowNotifications(false);
+    }
+
+    return id;
   };
 
   // =====================================================
@@ -50,6 +72,7 @@ export default function Header() {
           headers: {
             Accept: "application/json",
           },
+          cache: "no-store",
         }
       );
 
@@ -71,11 +94,13 @@ export default function Header() {
       }
 
       if (result.success) {
-        setNotifications(
-          Array.isArray(result.notifications)
-            ? result.notifications
-            : []
-        );
+        const list = Array.isArray(
+          result.notifications
+        )
+          ? result.notifications
+          : [];
+
+        setNotifications(list);
       } else {
         setNotifications([]);
       }
@@ -94,7 +119,11 @@ export default function Header() {
   // =====================================================
 
   useEffect(() => {
-    fetchNotifications();
+    const id = loadWorker();
+
+    if (id) {
+      fetchNotifications();
+    }
 
     const interval = setInterval(() => {
       fetchNotifications();
@@ -106,14 +135,16 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // DETECT LOCAL STORAGE WORKER ID
+  // WORKER LOGIN / REGISTER EVENT
   // =====================================================
 
   useEffect(() => {
-    const checkWorker = () => {
-      const id = localStorage.getItem("workerId");
+    const handleWorkerChange = () => {
+      console.log(
+        "Worker login/register event received"
+      );
 
-      setWorkerId(id);
+      const id = loadWorker();
 
       if (id) {
         fetchNotifications();
@@ -121,43 +152,133 @@ export default function Header() {
     };
 
     window.addEventListener(
-      "storage",
-      checkWorker
+      "workerRegistered",
+      handleWorkerChange
     );
 
     window.addEventListener(
-      "workerRegistered",
-      checkWorker
+      "workerLoggedIn",
+      handleWorkerChange
     );
 
     return () => {
       window.removeEventListener(
-        "storage",
-        checkWorker
+        "workerRegistered",
+        handleWorkerChange
       );
 
       window.removeEventListener(
-        "workerRegistered",
-        checkWorker
+        "workerLoggedIn",
+        handleWorkerChange
       );
     };
   }, []);
 
   // =====================================================
+  // STORAGE EVENT
+  // =====================================================
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === "workerId") {
+        const id = event.newValue;
+
+        console.log(
+          "Worker ID changed:",
+          id
+        );
+
+        setWorkerId(id);
+
+        if (id) {
+          fetchNotifications();
+        } else {
+          setNotifications([]);
+          setShowNotifications(false);
+        }
+      }
+    };
+
+    window.addEventListener(
+      "storage",
+      handleStorage
+    );
+
+    return () => {
+      window.removeEventListener(
+        "storage",
+        handleStorage
+      );
+    };
+  }, []);
+
+  // =====================================================
+  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
+  // =====================================================
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(
+          event.target
+        )
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    }
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, [showNotifications]);
+
+  // =====================================================
   // UNREAD COUNT
   // =====================================================
 
-  const unreadCount = notifications.filter(
-    (notification) =>
-      !notification.isRead
-  ).length;
+  const unreadCount =
+    notifications.filter(
+      (notification) =>
+        notification &&
+        notification.isRead === false
+    ).length;
+
+  // =====================================================
+  // TOGGLE NOTIFICATIONS
+  // =====================================================
+
+  const toggleNotifications = () => {
+    setShowNotifications(
+      (previous) => !previous
+    );
+
+    // Refresh immediately when opening
+    if (!showNotifications) {
+      fetchNotifications();
+    }
+  };
 
   // =====================================================
   // MARK ONE AS READ
   // =====================================================
 
-  const markAsRead = async (notification) => {
-    if (!notification?._id) return;
+  const markAsRead = async (
+    notification
+  ) => {
+    if (!notification?._id) {
+      return;
+    }
 
     if (notification.isRead) {
       return;
@@ -168,20 +289,29 @@ export default function Header() {
         `${API_URL}/notifications/${notification._id}/read`,
         {
           method: "PATCH",
+          headers: {
+            Accept: "application/json",
+          },
         }
       );
 
+      const result =
+        await response.json().catch(
+          () => null
+        );
+
       if (!response.ok) {
         console.error(
-          "Mark as read failed:",
-          response.status
+          "Mark Notification Failed:",
+          response.status,
+          result
         );
 
         return;
       }
 
-      setNotifications((prev) =>
-        prev.map((item) =>
+      setNotifications((previous) =>
+        previous.map((item) =>
           item._id === notification._id
             ? {
                 ...item,
@@ -205,27 +335,38 @@ export default function Header() {
   const markAllAsRead = async () => {
     const id = getWorkerId();
 
-    if (!id) return;
+    if (!id) {
+      return;
+    }
 
     try {
       const response = await fetch(
         `${API_URL}/notifications/worker/${id}/read-all`,
         {
           method: "PATCH",
+          headers: {
+            Accept: "application/json",
+          },
         }
       );
 
+      const result =
+        await response.json().catch(
+          () => null
+        );
+
       if (!response.ok) {
         console.error(
-          "Mark all read failed:",
-          response.status
+          "Mark All Read Failed:",
+          response.status,
+          result
         );
 
         return;
       }
 
-      setNotifications((prev) =>
-        prev.map((item) => ({
+      setNotifications((previous) =>
+        previous.map((item) => ({
           ...item,
           isRead: true,
         }))
@@ -242,177 +383,187 @@ export default function Header() {
   // NOTIFICATION BUTTON
   // =====================================================
 
-  const NotificationButton = () => (
-    <button
-      type="button"
-      aria-label="Notifications"
-      onClick={() =>
-        setShowNotifications(
-          (prev) => !prev
-        )
-      }
-      className="relative flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-gray-100"
-    >
-      {/* Bell */}
-      <svg
-        className="h-6 w-6 text-gray-700"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
+  const NotificationButton = () => {
+    return (
+      <button
+        type="button"
+        onClick={toggleNotifications}
+        aria-label="Notifications"
+        aria-expanded={showNotifications}
+        className="relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white transition hover:bg-gray-50 active:scale-95"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
-        />
+        {/* Bell */}
+        <svg
+          className={`h-6 w-6 ${
+            unreadCount > 0
+              ? "text-sky-600"
+              : "text-gray-700"
+          }`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+          />
 
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M10 21h4"
-        />
-      </svg>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 21h4"
+          />
+        </svg>
 
-      {/* UNREAD BADGE */}
-      {unreadCount > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 flex min-h-[19px] min-w-[19px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm">
-          {unreadCount > 99
-            ? "99+"
-            : unreadCount}
-        </span>
-      )}
-    </button>
-  );
+        {/* Unread Badge */}
+        {unreadCount > 0 && (
+          <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white shadow">
+            {unreadCount > 99
+              ? "99+"
+              : unreadCount}
+          </span>
+        )}
+      </button>
+    );
+  };
 
   // =====================================================
   // NOTIFICATION LIST
   // =====================================================
 
-  const NotificationList = () => (
-    <div className="w-full bg-white">
-      {/* HEADER */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
-        <div>
-          <h3 className="font-bold text-gray-800">
-            Notifications
-          </h3>
+  const NotificationList = () => {
+    return (
+      <div className="w-full bg-white">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-4 py-3">
+          <div>
+            <h3 className="text-sm font-bold text-gray-800">
+              Notifications
+            </h3>
+
+            {unreadCount > 0 && (
+              <p className="mt-0.5 text-xs text-gray-500">
+                {unreadCount} unread
+              </p>
+            )}
+          </div>
 
           {unreadCount > 0 && (
-            <p className="mt-0.5 text-xs text-gray-500">
-              {unreadCount} unread notification
-              {unreadCount > 1 ? "s" : ""}
-            </p>
+            <button
+              type="button"
+              onClick={markAllAsRead}
+              className="text-xs font-semibold text-sky-600 hover:text-sky-700"
+            >
+              Mark all read
+            </button>
           )}
         </div>
 
-        {unreadCount > 0 && (
-          <button
-            type="button"
-            onClick={markAllAsRead}
-            className="text-xs font-medium text-sky-600 hover:text-sky-700"
-          >
-            Mark all read
-          </button>
-        )}
-      </div>
+        {/* Notification Body */}
+        <div className="max-h-[420px] overflow-y-auto">
+          {loadingNotifications &&
+          notifications.length === 0 ? (
+            <div className="px-5 py-10 text-center">
+              <div className="mb-2 text-3xl">
+                🔔
+              </div>
 
-      {/* BODY */}
-      <div className="max-h-[400px] overflow-y-auto">
-        {loadingNotifications &&
-        notifications.length === 0 ? (
-          <div className="py-10 text-center text-gray-500">
-            <div className="mb-2 animate-pulse text-3xl">
-              🔔
+              <p className="text-sm text-gray-500">
+                Loading notifications...
+              </p>
             </div>
+          ) : notifications.length ===
+            0 ? (
+            <div className="px-5 py-10 text-center">
+              <div className="mb-2 text-3xl">
+                🔔
+              </div>
 
-            <p className="text-sm">
-              Loading notifications...
-            </p>
-          </div>
-        ) : notifications.length === 0 ? (
-          <div className="py-10 text-center text-gray-500">
-            <div className="mb-2 text-3xl">
-              🔔
+              <p className="text-sm font-semibold text-gray-700">
+                No notifications
+              </p>
+
+              <p className="mt-1 text-xs leading-5 text-gray-400">
+                New job opportunities matching
+                your work type and location will
+                appear here.
+              </p>
             </div>
-
-            <p className="text-sm font-medium">
-              No notifications
-            </p>
-
-            <p className="mt-1 px-5 text-xs text-gray-400">
-              New job opportunities will appear
-              here.
-            </p>
-          </div>
-        ) : (
-          notifications.map(
-            (notification) => (
-              <button
-                key={notification._id}
-                type="button"
-                onClick={() =>
-                  markAsRead(notification)
-                }
-                className={`w-full border-b p-4 text-left transition hover:bg-gray-50 ${
-                  !notification.isRead
-                    ? "bg-sky-50"
-                    : "bg-white"
-                }`}
-              >
-                <div className="flex gap-3">
-                  {/* ICON */}
-                  <div
-                    className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${
-                      !notification.isRead
-                        ? "bg-sky-100"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    🔔
-                  </div>
-
-                  {/* CONTENT */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-gray-800">
-                        {notification.title ||
-                          "New Notification"}
-                      </h4>
-
-                      {!notification.isRead && (
-                        <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-sky-500" />
-                      )}
+          ) : (
+            notifications.map(
+              (notification) => (
+                <button
+                  key={
+                    notification._id
+                  }
+                  type="button"
+                  onClick={() =>
+                    markAsRead(
+                      notification
+                    )
+                  }
+                  className={`w-full border-b p-4 text-left transition ${
+                    !notification.isRead
+                      ? "bg-sky-50 hover:bg-sky-100"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex gap-3">
+                    {/* Icon */}
+                    <div
+                      className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+                        !notification.isRead
+                          ? "bg-sky-100"
+                          : "bg-gray-100"
+                      }`}
+                    >
+                      🔔
                     </div>
 
-                    <p className="mt-1 text-sm leading-5 text-gray-600">
-                      {notification.message ||
-                        "You have a new notification."}
-                    </p>
+                    {/* Content */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-sm font-semibold text-gray-800">
+                          {notification.title ||
+                            "New Notification"}
+                        </h4>
 
-                    {notification.createdAt && (
-                      <p className="mt-2 text-xs text-gray-400">
-                        {new Date(
-                          notification.createdAt
-                        ).toLocaleString()}
+                        {!notification.isRead && (
+                          <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
+                        )}
+                      </div>
+
+                      <p className="mt-1 text-sm leading-5 text-gray-600">
+                        {notification.message ||
+                          "You have a new notification."}
                       </p>
-                    )}
+
+                      {notification.createdAt && (
+                        <p className="mt-2 text-[11px] text-gray-400">
+                          {new Date(
+                            notification.createdAt
+                          ).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </button>
+                </button>
+              )
             )
-          )
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // =====================================================
   // RETURN
   // =====================================================
 
   return (
-    <header className="relative z-50 bg-white shadow-md">
+    <header className="relative z-50 border-b border-gray-100 bg-white shadow-sm">
       {/* =================================================
           MAIN HEADER
       ================================================= */}
@@ -426,15 +577,18 @@ export default function Header() {
 
           <Link
             to="/"
-            className="flex flex-shrink-0 items-center gap-2"
+            onClick={() =>
+              setShowNotifications(false)
+            }
+            className="flex min-w-0 flex-shrink-0 items-center gap-2"
           >
             <img
               src="/images/logo.png"
               alt="Jobhir"
-              className="h-10 w-auto object-contain sm:h-12"
+              className="h-9 w-auto object-contain sm:h-12"
             />
 
-            <span className="inline-flex whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-[10px] font-semibold text-green-700 sm:text-xs">
+            <span className="inline-flex whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-2 py-1 text-[9px] font-semibold text-green-700 sm:px-2.5 sm:py-1 sm:text-xs">
               100% Secure
             </span>
           </Link>
@@ -443,24 +597,35 @@ export default function Header() {
               DESKTOP
           ================================================= */}
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-5 md:flex">
 
-            {/* NOTIFICATION */}
-
+            {/* Notification */}
             {workerId && (
-              <div className="relative">
+              <div
+                ref={notificationRef}
+                className="relative"
+              >
                 <NotificationButton />
 
                 {showNotifications && (
-                  <div className="absolute right-0 top-12 w-[350px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl">
+                  <div className="absolute right-0 top-14 w-[360px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
                     <NotificationList />
                   </div>
                 )}
               </div>
             )}
 
-            {/* MENU */}
+            {/* Worker Login */}
+            {!workerId && (
+              <Link
+                to="/worker-login"
+                className="font-semibold text-gray-700 transition hover:text-sky-600"
+              >
+                Worker Login
+              </Link>
+            )}
 
+            {/* Menu */}
             <nav className="flex items-center gap-5">
               {[
                 "disclaimer",
@@ -482,7 +647,7 @@ export default function Header() {
 
               <Link
                 to="/offer-job"
-                className="rounded-xl bg-sky-500 px-5 py-2.5 font-semibold text-white shadow transition hover:bg-sky-600"
+                className="rounded-xl bg-sky-500 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-sky-600"
               >
                 Offer Job
               </Link>
@@ -495,30 +660,40 @@ export default function Header() {
 
           <div className="flex items-center gap-1 md:hidden">
 
-            {/* NOTIFICATION */}
-
+            {/* Notification */}
             {workerId && (
-              <div className="relative">
+              <div
+                ref={notificationRef}
+                className="relative"
+              >
                 <NotificationButton />
               </div>
             )}
 
-            {/* OFFER JOB */}
+            {/* Login */}
+            {!workerId && (
+              <Link
+                to="/worker-login"
+                className="rounded-lg px-2 py-2 text-xs font-semibold text-sky-600"
+              >
+                Login
+              </Link>
+            )}
 
+            {/* Offer Job */}
             <Link
               to="/offer-job"
-              className="rounded-lg bg-sky-500 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-600"
+              className="rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-600"
             >
               Offer Job
             </Link>
 
-            {/* MENU BUTTON */}
-
+            {/* Menu */}
             <button
               type="button"
               onClick={() =>
                 setIsOpen(
-                  (prev) => !prev
+                  (previous) => !previous
                 )
               }
               className="flex h-10 w-10 items-center justify-center"
@@ -564,7 +739,10 @@ export default function Header() {
 
       {showNotifications &&
         workerId && (
-          <div className="fixed left-3 right-3 top-16 z-[100] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl md:hidden">
+          <div
+            ref={notificationRef}
+            className="fixed left-3 right-3 top-[68px] z-[100] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl md:hidden"
+          >
             <NotificationList />
           </div>
         )}
@@ -574,7 +752,8 @@ export default function Header() {
       ================================================= */}
 
       {isOpen && (
-        <div className="space-y-3 bg-sky-500 px-4 py-4 md:hidden">
+        <div className="space-y-3 border-t border-white/10 bg-sky-500 px-4 py-4 md:hidden">
+
           {[
             "disclaimer",
             "contact",
@@ -595,6 +774,18 @@ export default function Header() {
                 .toUpperCase()}
             </Link>
           ))}
+
+          {!workerId && (
+            <Link
+              to="/worker-login"
+              onClick={() =>
+                setIsOpen(false)
+              }
+              className="block font-semibold text-white"
+            >
+              WORKER LOGIN
+            </Link>
+          )}
         </div>
       )}
     </header>
