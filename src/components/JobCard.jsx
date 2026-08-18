@@ -163,17 +163,22 @@ export default function JobCard({ job }) {
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
 
   {/* Location */}
-  <div className="bg-slate-50 rounded-lg p-3">
-    <p className="text-xs text-slate-500 mb-1">
-      Location
-    </p>
+  {/* Location */}
+<div className="bg-slate-50 rounded-lg p-3">
+  <p className="text-xs text-slate-500 mb-1">
+    Location
+  </p>
 
-    <p className="font-semibold text-slate-800">
-      {job.district
-        ? `${job.district}${job.state ? `, ${job.state}` : ""}`
-        : job.state || "Not specified"}
-    </p>
-  </div>
+  <p className="font-semibold text-slate-800">
+    {[
+      job.location?.address,
+      job.location?.district || job.district,
+      job.location?.state || job.state,
+    ]
+      .filter(Boolean)
+      .join(", ") || "Not specified"}
+  </p>
+</div>
 
   {/* Work Type */}
   <div className="bg-slate-50 rounded-lg p-3">
