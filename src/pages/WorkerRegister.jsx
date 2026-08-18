@@ -320,18 +320,46 @@ export default function WorkerRegister() {
       console.log("Worker Status:", response.status);
       console.log("Worker Response:", result);
 
-      if (!response.ok) {
-        alert(
-          result.message ||
-            `Registration failed. Error ${response.status}`
-        );
-        return;
-      }
+     if (!response.ok) {
+  alert(
+    result.message ||
+      `Registration failed. Error ${response.status}`
+  );
+  return;
+}
 
-      alert(
-        result.message ||
-          "Registration submitted successfully!"
-      );
+// =====================================================
+// SAVE WORKER ID FOR NOTIFICATIONS
+// =====================================================
+
+const registeredWorkerId =
+  result.worker?._id ||
+  result.worker?.id ||
+  result.workerId ||
+  result.data?._id ||
+  result.data?.workerId;
+
+if (registeredWorkerId) {
+  localStorage.setItem(
+    "workerId",
+    registeredWorkerId
+  );
+
+  console.log(
+    "Worker ID saved for notifications:",
+    registeredWorkerId
+  );
+} else {
+  console.warn(
+    "Worker ID was not found in registration response:",
+    result
+  );
+}
+
+alert(
+  result.message ||
+    "Registration submitted successfully!"
+);
 
       // Reset
       setFormData({
