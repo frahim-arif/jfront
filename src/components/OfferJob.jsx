@@ -886,9 +886,6 @@ const INDIA_LOCATIONS = {
 };
 
 // ======================================================
-// WORK TYPES
-// ======================================================
-
 const WORK_TYPES = [
   "Mason",
   "Carpenter",
@@ -905,6 +902,8 @@ const WORK_TYPES = [
   "Mechanic",
   "Tiles Worker",
   "Furniture Worker",
+  "Home Care",
+  "Graphic Designer",
   "Other",
 ];
 
