@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -8,7 +9,8 @@ export default function Header() {
   const [workerId, setWorkerId] = useState(null);
 
   const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] =
+    useState(false);
   const [loadingNotifications, setLoadingNotifications] =
     useState(false);
 
@@ -66,6 +68,7 @@ export default function Header() {
 
       console.log(
         "🔔 Notification Response:",
+        response.status,
         result
       );
 
@@ -76,12 +79,7 @@ export default function Header() {
           result
         );
 
-        if (
-          response.status === 403 ||
-          response.status === 404
-        ) {
-          setNotifications([]);
-        }
+        setNotifications([]);
 
         return;
       }
@@ -127,6 +125,9 @@ export default function Header() {
     if (id) {
       setWorkerId(id);
       fetchNotifications(id);
+    } else {
+      setWorkerId(null);
+      setNotifications([]);
     }
   }, []);
 
@@ -139,7 +140,7 @@ export default function Header() {
       const id = getWorkerId();
 
       console.log(
-        "👷 Worker change event:",
+        "👷 Worker/payment change:",
         id
       );
 
@@ -196,17 +197,13 @@ export default function Header() {
         return;
       }
 
-      if (id !== workerId) {
-        setWorkerId(id);
-      }
-
       fetchNotifications(id);
     }, 10000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [workerId]);
+  }, []);
 
   // =====================================================
   // CLOSE WHEN CLICK OUTSIDE
@@ -280,7 +277,7 @@ export default function Header() {
       const response = await fetch(
         `${API_URL}/notifications/${notification._id}/read`,
         {
-          method: "PATCH",
+          method: "PUT",
           headers: {
             Accept: "application/json",
           },
@@ -331,9 +328,9 @@ export default function Header() {
 
     try {
       const response = await fetch(
-        `${API_URL}/notifications/worker/${id}/read-all`,
+        `${API_URL}/notifications/${id}/read-all`,
         {
-          method: "PATCH",
+          method: "PUT",
           headers: {
             Accept: "application/json",
           },
@@ -421,7 +418,6 @@ export default function Header() {
     <div className="w-full bg-white">
 
       <div className="flex items-center justify-between border-b px-4 py-3">
-
         <div>
           <h3 className="text-sm font-bold text-gray-800">
             Job Notifications
@@ -443,7 +439,6 @@ export default function Header() {
             Mark all read
           </button>
         )}
-
       </div>
 
       <div className="max-h-[420px] overflow-y-auto">
@@ -451,7 +446,6 @@ export default function Header() {
         {loadingNotifications &&
         notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
-
             <div className="mb-2 text-3xl">
               🔔
             </div>
@@ -459,11 +453,9 @@ export default function Header() {
             <p className="text-sm text-gray-500">
               Loading notifications...
             </p>
-
           </div>
         ) : notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
-
             <div className="mb-2 text-3xl">
               🔔
             </div>
@@ -476,69 +468,68 @@ export default function Header() {
               New jobs matching your work type
               and district will appear here.
             </p>
-
           </div>
         ) : (
-          notifications.map((notification) => (
-            <button
-              key={notification._id}
-              type="button"
-              onClick={() =>
-                markAsRead(notification)
-              }
-              className={`w-full border-b p-4 text-left transition ${
-                !notification.isRead
-                  ? "bg-sky-50 hover:bg-sky-100"
-                  : "bg-white hover:bg-gray-50"
-              }`}
-            >
-              <div className="flex gap-3">
+          notifications.map(
+            (notification) => (
+              <button
+                key={notification._id}
+                type="button"
+                onClick={() =>
+                  markAsRead(notification)
+                }
+                className={`w-full border-b p-4 text-left transition ${
+                  !notification.isRead
+                    ? "bg-sky-50 hover:bg-sky-100"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex gap-3">
 
-                <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
-                    !notification.isRead
-                      ? "bg-sky-100"
-                      : "bg-gray-100"
-                  }`}
-                >
-                  🔔
-                </div>
+                  <div
+                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+                      !notification.isRead
+                        ? "bg-sky-100"
+                        : "bg-gray-100"
+                    }`}
+                  >
+                    🔔
+                  </div>
 
-                <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1">
 
-                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-2">
 
-                    <h4 className="text-sm font-semibold text-gray-800">
-                      {notification.title ||
-                        "New Job Available"}
-                    </h4>
+                      <h4 className="text-sm font-semibold text-gray-800">
+                        {notification.title ||
+                          "New Job Available"}
+                      </h4>
 
-                    {!notification.isRead && (
-                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
+                      {!notification.isRead && (
+                        <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
+                      )}
+
+                    </div>
+
+                    <p className="mt-1 text-sm leading-5 text-gray-600">
+                      {notification.message ||
+                        "You have a new job notification."}
+                    </p>
+
+                    {notification.createdAt && (
+                      <p className="mt-2 text-[11px] text-gray-400">
+                        {new Date(
+                          notification.createdAt
+                        ).toLocaleString()}
+                      </p>
                     )}
 
                   </div>
-
-                  <p className="mt-1 text-sm leading-5 text-gray-600">
-                    {notification.message ||
-                      "You have a new job notification."}
-                  </p>
-
-                  {notification.createdAt && (
-                    <p className="mt-2 text-[11px] text-gray-400">
-                      {new Date(
-                        notification.createdAt
-                      ).toLocaleString()}
-                    </p>
-                  )}
-
                 </div>
-
-              </div>
-            </button>
-          ))
+              </button>
+            )
+          )
         )}
-
       </div>
     </div>
   );
@@ -723,3 +714,4 @@ export default function Header() {
     </header>
   );
 }
+
