@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.jsx";
@@ -8,20 +9,11 @@ const API_URL =
 export default function WorkerLogin() {
   const navigate = useNavigate();
 
-  const [mobile, setMobile] =
-    useState("");
-
-  const [otp, setOtp] =
-    useState("");
-
-  const [otpSent, setOtpSent] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [message, setMessage] =
-    useState("");
+  const [mobile, setMobile] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   // =====================================================
   // MOBILE
@@ -58,8 +50,7 @@ export default function WorkerLogin() {
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -68,8 +59,7 @@ export default function WorkerLogin() {
         }
       );
 
-      const result =
-        await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
         setMessage(
@@ -85,14 +75,15 @@ export default function WorkerLogin() {
       setMessage(
         "OTP sent successfully."
       );
-
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Send OTP Error:",
+        error
+      );
 
       setMessage(
         "Unable to connect with server."
       );
-
     } finally {
       setLoading(false);
     }
@@ -121,8 +112,7 @@ export default function WorkerLogin() {
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -140,6 +130,10 @@ export default function WorkerLogin() {
         result
       );
 
+      // =================================================
+      // API ERROR
+      // =================================================
+
       if (!response.ok) {
         setMessage(
           result.message ||
@@ -150,44 +144,115 @@ export default function WorkerLogin() {
       }
 
       // =================================================
-      // SAVE WORKER ID
+      // WORKER CHECK
       // =================================================
 
-      if (result.worker?._id) {
-        localStorage.setItem(
-          "workerId",
-          result.worker._id
+      const worker = result.worker;
+
+      if (!worker?._id) {
+        console.error(
+          "Worker ID missing:",
+          result
         );
+
+        setMessage(
+          "Worker account information not found."
+        );
+
+        return;
       }
 
-      // Save mobile as well
+      console.log(
+        "Logged in Worker:",
+        worker
+      );
+
+      // =================================================
+      // PAYMENT CHECK
+      // =================================================
+
+      if (
+        worker.paymentStatus !== "PAID" ||
+        worker.status !== "Active"
+      ) {
+        console.log(
+          "⛔ Worker is not active/paid:",
+          {
+            paymentStatus:
+              worker.paymentStatus,
+            status: worker.status,
+          }
+        );
+
+        // Remove any old active login
+        localStorage.removeItem(
+          "workerId"
+        );
+
+        localStorage.removeItem(
+          "workerMobile"
+        );
+
+        setMessage(
+          "Your ₹250 registration payment is not completed. Please complete registration payment first."
+        );
+
+        return;
+      }
+
+      // =================================================
+      // SAVE ACTIVE WORKER
+      // =================================================
+
+      localStorage.setItem(
+        "workerId",
+        worker._id
+      );
+
       localStorage.setItem(
         "workerMobile",
         mobile
       );
 
-      // Tell Header immediately
-      window.dispatchEvent(
-        new Event("workerRegistered")
+      console.log(
+        "✅ Worker ID saved:",
+        worker._id
       );
+
+      // =================================================
+      // TELL HEADER
+      // =================================================
+
+      window.dispatchEvent(
+        new Event("workerLoggedIn")
+      );
+
+      // =================================================
+      // SUCCESS
+      // =================================================
 
       setMessage(
         "Login successful."
       );
 
       navigate("/");
-
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Verify OTP Error:",
+        error
+      );
 
       setMessage(
         "Unable to connect with server."
       );
-
     } finally {
       setLoading(false);
     }
   };
+
+  // =====================================================
+  // RETURN
+  // =====================================================
 
   return (
     <>
@@ -195,6 +260,10 @@ export default function WorkerLogin() {
 
       <main className="min-h-screen bg-slate-50 px-4 py-10">
         <div className="mx-auto max-w-md">
+
+          {/* =================================================
+              TITLE
+          ================================================= */}
 
           <div className="mb-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-sky-100 text-2xl">
@@ -210,6 +279,10 @@ export default function WorkerLogin() {
             </p>
           </div>
 
+          {/* =================================================
+              FORM
+          ================================================= */}
+
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
             {!otpSent ? (
@@ -221,9 +294,7 @@ export default function WorkerLogin() {
                 <input
                   type="tel"
                   value={mobile}
-                  onChange={
-                    handleMobileChange
-                  }
+                  onChange={handleMobileChange}
                   maxLength={10}
                   inputMode="numeric"
                   placeholder="10 digit mobile number"
@@ -291,6 +362,10 @@ export default function WorkerLogin() {
               </>
             )}
 
+            {/* =================================================
+                MESSAGE
+            ================================================= */}
+
             {message && (
               <p className="mt-4 text-center text-sm text-slate-600">
                 {message}
@@ -307,3 +382,4 @@ export default function WorkerLogin() {
     </>
   );
 }
+
