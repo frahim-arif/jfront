@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,18 +5,20 @@ const API_URL = "https://jbackend-h963.onrender.com";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+
   const [workerId, setWorkerId] = useState(() =>
     localStorage.getItem("workerId")
   );
 
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [loadingNotifications, setLoadingNotifications] =
+    useState(false);
 
   const notificationRef = useRef(null);
 
   // =====================================================
-  // GET WORKER ID
+  // GET ACTIVE WORKER ID
   // =====================================================
 
   const getWorkerId = () => {
@@ -55,7 +56,7 @@ export default function Header() {
         }
       );
 
-      const result = await response.json();
+      const result = await response.json().catch(() => null);
 
       console.log("🔔 Notification Response:", result);
 
@@ -66,10 +67,15 @@ export default function Header() {
           result
         );
 
+        // Worker inactive / unpaid
+        if (response.status === 403 || response.status === 404) {
+          setNotifications([]);
+        }
+
         return;
       }
 
-      if (result.success) {
+      if (result?.success) {
         const list = Array.isArray(result.notifications)
           ? result.notifications
           : [];
@@ -94,7 +100,7 @@ export default function Header() {
   };
 
   // =====================================================
-  // INITIAL LOAD + 10 SECOND POLLING
+  // INITIAL LOAD
   // =====================================================
 
   useEffect(() => {
@@ -112,7 +118,14 @@ export default function Header() {
       setWorkerId(null);
       setNotifications([]);
     }
+  }, []);
 
+  // =====================================================
+  // NOTIFICATION POLLING
+  // EVERY 10 SECONDS
+  // =====================================================
+
+  useEffect(() => {
     const interval = setInterval(() => {
       const currentId = getWorkerId();
 
@@ -137,7 +150,7 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // LOGIN / REGISTER / PAYMENT SUCCESS EVENTS
+  // WORKER REGISTER / PAYMENT SUCCESS EVENT
   // =====================================================
 
   useEffect(() => {
@@ -145,7 +158,7 @@ export default function Header() {
       const id = getWorkerId();
 
       console.log(
-        "👤 Worker event received:",
+        "👷 Worker change event:",
         id
       );
 
@@ -160,11 +173,6 @@ export default function Header() {
     };
 
     window.addEventListener(
-      "workerLoggedIn",
-      handleWorkerChange
-    );
-
-    window.addEventListener(
       "workerRegistered",
       handleWorkerChange
     );
@@ -175,11 +183,6 @@ export default function Header() {
     );
 
     return () => {
-      window.removeEventListener(
-        "workerLoggedIn",
-        handleWorkerChange
-      );
-
       window.removeEventListener(
         "workerRegistered",
         handleWorkerChange
@@ -193,7 +196,7 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // SAME TAB STORAGE CHECK
+  // SAME TAB WORKER ID CHECK
   // =====================================================
 
   useEffect(() => {
@@ -230,7 +233,7 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // CLOSE WHEN CLICK OUTSIDE
+  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
   // =====================================================
 
   useEffect(() => {
@@ -271,7 +274,7 @@ export default function Header() {
   ).length;
 
   // =====================================================
-  // TOGGLE
+  // TOGGLE NOTIFICATIONS
   // =====================================================
 
   const toggleNotifications = () => {
@@ -285,7 +288,7 @@ export default function Header() {
   };
 
   // =====================================================
-  // MARK ONE READ
+  // MARK ONE AS READ
   // =====================================================
 
   const markAsRead = async (notification) => {
@@ -339,7 +342,7 @@ export default function Header() {
   };
 
   // =====================================================
-  // MARK ALL READ
+  // MARK ALL AS READ
   // =====================================================
 
   const markAllAsRead = async () => {
@@ -439,10 +442,11 @@ export default function Header() {
 
   const NotificationList = () => (
     <div className="w-full bg-white">
+
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div>
           <h3 className="text-sm font-bold text-gray-800">
-            Notifications
+            Job Notifications
           </h3>
 
           {unreadCount > 0 && (
@@ -464,9 +468,11 @@ export default function Header() {
       </div>
 
       <div className="max-h-[420px] overflow-y-auto">
+
         {loadingNotifications &&
         notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
+
             <div className="mb-2 text-3xl">
               🔔
             </div>
@@ -474,22 +480,24 @@ export default function Header() {
             <p className="text-sm text-gray-500">
               Loading notifications...
             </p>
+
           </div>
         ) : notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
+
             <div className="mb-2 text-3xl">
               🔔
             </div>
 
             <p className="text-sm font-semibold text-gray-700">
-              No notifications
+              No job notifications
             </p>
 
             <p className="mt-1 text-xs leading-5 text-gray-400">
-              New job opportunities matching your
-              work type and location will appear
-              here.
+              New jobs matching your work type
+              and district will appear here.
             </p>
+
           </div>
         ) : (
           notifications.map((notification) => (
@@ -506,6 +514,7 @@ export default function Header() {
               }`}
             >
               <div className="flex gap-3">
+
                 <div
                   className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
                     !notification.isRead
@@ -517,20 +526,23 @@ export default function Header() {
                 </div>
 
                 <div className="min-w-0 flex-1">
+
                   <div className="flex items-start justify-between gap-2">
+
                     <h4 className="text-sm font-semibold text-gray-800">
                       {notification.title ||
-                        "New Notification"}
+                        "New Job Available"}
                     </h4>
 
                     {!notification.isRead && (
                       <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
                     )}
+
                   </div>
 
                   <p className="mt-1 text-sm leading-5 text-gray-600">
                     {notification.message ||
-                      "You have a new notification."}
+                      "You have a new job notification."}
                   </p>
 
                   {notification.createdAt && (
@@ -540,11 +552,14 @@ export default function Header() {
                       ).toLocaleString()}
                     </p>
                   )}
+
                 </div>
+
               </div>
             </button>
           ))
         )}
+
       </div>
     </div>
   );
@@ -555,10 +570,15 @@ export default function Header() {
 
   return (
     <header className="relative z-50 border-b border-gray-100 bg-white shadow-sm">
+
       <div className="mx-auto max-w-7xl px-3 sm:px-4">
+
         <div className="flex h-16 items-center justify-between sm:h-20">
 
-          {/* LOGO */}
+          {/* =================================================
+              LOGO
+          ================================================= */}
+
           <Link
             to="/"
             className="flex flex-shrink-0 flex-col items-start"
@@ -574,8 +594,14 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* DESKTOP */}
+          {/* =================================================
+              DESKTOP
+          ================================================= */}
+
           <div className="hidden items-center gap-5 md:flex">
+
+            {/* NOTIFICATION */}
+
             {workerId && (
               <div
                 ref={notificationRef}
@@ -591,16 +617,8 @@ export default function Header() {
               </div>
             )}
 
-            {!workerId && (
-              <Link
-                to="/worker-login"
-                className="font-semibold text-gray-700 hover:text-sky-600"
-              >
-                Worker Login
-              </Link>
-            )}
-
             <nav className="flex items-center gap-5">
+
               {[
                 "disclaimer",
                 "contact",
@@ -625,11 +643,18 @@ export default function Header() {
               >
                 Offer Job
               </Link>
+
             </nav>
           </div>
 
-          {/* MOBILE */}
+          {/* =================================================
+              MOBILE
+          ================================================= */}
+
           <div className="flex items-center gap-1 md:hidden">
+
+            {/* NOTIFICATION */}
+
             {workerId && (
               <div
                 ref={notificationRef}
@@ -645,14 +670,7 @@ export default function Header() {
               </div>
             )}
 
-            {!workerId && (
-              <Link
-                to="/worker-login"
-                className="rounded-lg px-2 py-2 text-xs font-semibold text-sky-600"
-              >
-                Login
-              </Link>
-            )}
+            {/* OFFER JOB */}
 
             <Link
               to="/offer-job"
@@ -660,6 +678,8 @@ export default function Header() {
             >
               Offer Job
             </Link>
+
+            {/* MENU */}
 
             <button
               type="button"
@@ -699,13 +719,19 @@ export default function Header() {
                 </svg>
               )}
             </button>
+
           </div>
+
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* =====================================================
+          MOBILE MENU
+      ===================================================== */}
+
       {isOpen && (
         <div className="space-y-3 border-t bg-sky-500 px-4 py-4 md:hidden">
+
           {[
             "disclaimer",
             "contact",
@@ -727,20 +753,9 @@ export default function Header() {
             </Link>
           ))}
 
-          {!workerId && (
-            <Link
-              to="/worker-login"
-              onClick={() =>
-                setIsOpen(false)
-              }
-              className="block font-semibold text-white"
-            >
-              WORKER LOGIN
-            </Link>
-          )}
         </div>
       )}
+
     </header>
   );
 }
-

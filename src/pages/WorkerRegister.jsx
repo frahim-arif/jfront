@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "../components/Header.jsx";
 
@@ -174,6 +173,7 @@ export default function WorkerRegister() {
       return;
     }
 
+    // ALLOWED FILE TYPES
     const allowedTypes = [
       "image/jpeg",
       "image/png",
@@ -216,7 +216,9 @@ export default function WorkerRegister() {
     }
 
     if (!/^\d{10}$/.test(formData.mobile)) {
-      alert("Please enter a valid 10 digit mobile number.");
+      alert(
+        "Please enter a valid 10 digit mobile number."
+      );
       return;
     }
 
@@ -246,19 +248,29 @@ export default function WorkerRegister() {
           ? "Please enter your PAN number."
           : "Please enter your Aadhaar number."
       );
+
       return;
     }
 
-    // Aadhaar
+    // =====================================================
+    // AADHAAR VALIDATION
+    // =====================================================
+
     if (
       formData.kycType === "Aadhaar" &&
-      formData.kycNumber.length !== 12
+      !/^\d{12}$/.test(formData.kycNumber)
     ) {
-      alert("Please enter a valid 12 digit Aadhaar number.");
+      alert(
+        "Please enter a valid 12 digit Aadhaar number."
+      );
+
       return;
     }
 
-    // PAN
+    // =====================================================
+    // PAN VALIDATION
+    // =====================================================
+
     if (
       formData.kycType === "PAN" &&
       !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(
@@ -269,6 +281,10 @@ export default function WorkerRegister() {
       return;
     }
 
+    // =====================================================
+    // DOCUMENT VALIDATION
+    // =====================================================
+
     if (!formData.document) {
       alert("Please upload your KYC document.");
       return;
@@ -278,19 +294,51 @@ export default function WorkerRegister() {
       setLoading(true);
 
       // =====================================================
-      // STEP 1: REGISTER WORKER
+      // STEP 1
+      // REGISTER WORKER
       // =====================================================
 
       const data = new FormData();
 
-      data.append("name", formData.name.trim());
-      data.append("mobile", formData.mobile);
-      data.append("state", formData.state);
-      data.append("district", formData.district.trim());
-      data.append("workType", formData.workType);
-      data.append("kycType", formData.kycType);
-      data.append("kycNumber", formData.kycNumber);
-      data.append("kycDocument", formData.document);
+      data.append(
+        "name",
+        formData.name.trim()
+      );
+
+      data.append(
+        "mobile",
+        formData.mobile
+      );
+
+      data.append(
+        "state",
+        formData.state
+      );
+
+      data.append(
+        "district",
+        formData.district.trim()
+      );
+
+      data.append(
+        "workType",
+        formData.workType
+      );
+
+      data.append(
+        "kycType",
+        formData.kycType
+      );
+
+      data.append(
+        "kycNumber",
+        formData.kycNumber
+      );
+
+      data.append(
+        "kycDocument",
+        formData.document
+      );
 
       const response = await fetch(
         `${API_BASE_URL}/workers/register`,
@@ -300,7 +348,8 @@ export default function WorkerRegister() {
         }
       );
 
-      const responseText = await response.text();
+      const responseText =
+        await response.text();
 
       let result;
 
@@ -310,35 +359,60 @@ export default function WorkerRegister() {
         result = {
           success: false,
           message:
-            responseText || "Invalid server response.",
+            responseText ||
+            "Invalid server response.",
         };
       }
 
-      console.log("Worker Registration Status:", response.status);
-      console.log("Worker Registration Response:", result);
+      console.log(
+        "Worker Registration Status:",
+        response.status
+      );
+
+      console.log(
+        "Worker Registration Response:",
+        result
+      );
+
+      // =====================================================
+      // REGISTRATION ERROR
+      // =====================================================
 
       if (!response.ok) {
+        // Agar registration already started hai
+        // aur workerId mil raha hai to usko continue
+        // payment ke liye use kar sakte hain.
+
+        if (result?.workerId) {
+          localStorage.setItem(
+            "pendingWorkerId",
+            String(result.workerId)
+          );
+        }
+
         alert(
-          result.message ||
+          result?.message ||
             `Registration failed. Error ${response.status}`
         );
+
         return;
       }
 
       // =====================================================
-      // STEP 2: GET WORKER ID
+      // STEP 2
+      // GET WORKER ID
       // =====================================================
 
       const registeredWorkerId =
-        result.worker?._id ||
-        result.worker?.id ||
-        result.workerId ||
-        result.data?._id ||
-        result.data?.workerId;
+        result?.worker?._id ||
+        result?.worker?.id ||
+        result?.workerId ||
+        result?.data?._id ||
+        result?.data?.workerId;
 
       if (!registeredWorkerId) {
         console.error(
-          "Worker ID missing from registration response:",
+          "❌ Worker ID missing:",
           result
         );
 
@@ -350,46 +424,53 @@ export default function WorkerRegister() {
       }
 
       console.log(
-        "Registered Worker ID:",
+        "✅ Registered Worker ID:",
         registeredWorkerId
       );
 
       // =====================================================
       // IMPORTANT
-      // DO NOT SAVE workerId YET
-      //
-      // Worker is allowed to receive jobs only after
-      // ₹250 payment is successfully completed.
+      // PAYMENT SE PEHLE workerId SAVE NAHI KARNA
       // =====================================================
 
       localStorage.setItem(
         "pendingWorkerId",
-        registeredWorkerId
+        String(registeredWorkerId)
       );
 
       // =====================================================
-      // STEP 3: CREATE ₹250 PHONEPE PAYMENT
+      // STEP 3
+      // CREATE ₹250 PHONEPE PAYMENT
       // =====================================================
 
-      const paymentResponse = await fetch(
-        `${API_BASE_URL}/workers/payment/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            workerId: registeredWorkerId,
-          }),
-        }
-      );
+      const paymentResponse =
+        await fetch(
+          `${API_BASE_URL}/workers/payment/create`,
+          {
+            method: "POST",
 
-      const paymentText = await paymentResponse.text();
+            headers: {
+              "Content-Type":
+                "application/json",
+              Accept:
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              workerId:
+                registeredWorkerId,
+            }),
+          }
+        );
+
+      const paymentText =
+        await paymentResponse.text();
 
       let paymentResult;
 
       try {
-        paymentResult = JSON.parse(paymentText);
+        paymentResult =
+          JSON.parse(paymentText);
       } catch {
         paymentResult = {
           success: false,
@@ -409,13 +490,17 @@ export default function WorkerRegister() {
         paymentResult
       );
 
+      // =====================================================
+      // PAYMENT CREATE ERROR
+      // =====================================================
+
       if (
         !paymentResponse.ok ||
-        !paymentResult.success ||
-        !paymentResult.checkoutPageUrl
+        !paymentResult?.success ||
+        !paymentResult?.checkoutPageUrl
       ) {
         alert(
-          paymentResult.message ||
+          paymentResult?.message ||
             "Unable to create registration payment. Please try again."
         );
 
@@ -423,26 +508,36 @@ export default function WorkerRegister() {
       }
 
       // =====================================================
-      // STEP 4: SAVE PENDING PAYMENT INFORMATION
+      // STEP 4
+      // SAVE MERCHANT ORDER ID
       // =====================================================
 
-      if (paymentResult.merchantOrderId) {
+      if (
+        paymentResult?.merchantOrderId
+      ) {
         localStorage.setItem(
           "workerMerchantOrderId",
-          paymentResult.merchantOrderId
+          String(
+            paymentResult.merchantOrderId
+          )
         );
       }
 
       // =====================================================
-      // STEP 5: OPEN PHONEPE CHECKOUT
+      // STEP 5
+      // PHONEPE CHECKOUT
       // =====================================================
+
+      console.log(
+        "➡️ Redirecting to PhonePe..."
+      );
 
       window.location.href =
         paymentResult.checkoutPageUrl;
 
     } catch (error) {
       console.error(
-        "Worker Registration Error:",
+        "❌ Worker Registration Error:",
         error
       );
 
@@ -512,7 +607,8 @@ export default function WorkerRegister() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                  disabled={loading}
+                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                 />
 
               </div>
@@ -535,7 +631,8 @@ export default function WorkerRegister() {
                   placeholder="10 digit mobile number"
                   maxLength={10}
                   inputMode="numeric"
-                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                  disabled={loading}
+                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                 />
 
               </div>
@@ -559,21 +656,24 @@ export default function WorkerRegister() {
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
-                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                    disabled={loading}
+                    className="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                   >
 
                     <option value="">
                       Select State
                     </option>
 
-                    {INDIAN_STATES.map((state) => (
-                      <option
-                        key={state}
-                        value={state}
-                      >
-                        {state}
-                      </option>
-                    ))}
+                    {INDIAN_STATES.map(
+                      (state) => (
+                        <option
+                          key={state}
+                          value={state}
+                        >
+                          {state}
+                        </option>
+                      )
+                    )}
 
                   </select>
 
@@ -593,10 +693,15 @@ export default function WorkerRegister() {
                   <input
                     type="text"
                     name="district"
-                    value={formData.district}
-                    onChange={handleChange}
+                    value={
+                      formData.district
+                    }
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Enter district"
-                    className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                    disabled={loading}
+                    className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                   />
 
                   <p className="mt-1 text-xs text-slate-400">
@@ -620,29 +725,36 @@ export default function WorkerRegister() {
 
                 <select
                   name="workType"
-                  value={formData.workType}
-                  onChange={handleChange}
-                  className="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                  value={
+                    formData.workType
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  disabled={loading}
+                  className="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                 >
 
                   <option value="">
                     Select Work Type
                   </option>
 
-                  {WORK_TYPES.map((type) => (
-                    <option
-                      key={type}
-                      value={type}
-                    >
-                      {type}
-                    </option>
-                  ))}
+                  {WORK_TYPES.map(
+                    (type) => (
+                      <option
+                        key={type}
+                        value={type}
+                      >
+                        {type}
+                      </option>
+                    )
+                  )}
 
                 </select>
 
               </div>
 
-              {/* KYC */}
+              {/* KYC TYPE */}
 
               <div>
 
@@ -657,7 +769,8 @@ export default function WorkerRegister() {
 
                   <label
                     className={`flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm font-medium transition ${
-                      formData.kycType === "Aadhaar"
+                      formData.kycType ===
+                      "Aadhaar"
                         ? "border-[#9B845E] bg-[#9B845E]/5 text-[#806D4E]"
                         : "border-slate-200 hover:bg-slate-50"
                     }`}
@@ -674,6 +787,7 @@ export default function WorkerRegister() {
                       onChange={
                         handleKycTypeChange
                       }
+                      disabled={loading}
                     />
 
                     Aadhaar
@@ -682,7 +796,8 @@ export default function WorkerRegister() {
 
                   <label
                     className={`flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm font-medium transition ${
-                      formData.kycType === "PAN"
+                      formData.kycType ===
+                      "PAN"
                         ? "border-[#9B845E] bg-[#9B845E]/5 text-[#806D4E]"
                         : "border-slate-200 hover:bg-slate-50"
                     }`}
@@ -693,11 +808,13 @@ export default function WorkerRegister() {
                       name="kycType"
                       value="PAN"
                       checked={
-                        formData.kycType === "PAN"
+                        formData.kycType ===
+                        "PAN"
                       }
                       onChange={
                         handleKycTypeChange
                       }
+                      disabled={loading}
                     />
 
                     PAN
@@ -714,7 +831,8 @@ export default function WorkerRegister() {
 
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
 
-                  {formData.kycType === "PAN"
+                  {formData.kycType ===
+                  "PAN"
                     ? "PAN Number"
                     : "Aadhaar Number"}
 
@@ -726,22 +844,29 @@ export default function WorkerRegister() {
 
                 <input
                   type="text"
-                  value={formData.kycNumber}
+                  value={
+                    formData.kycNumber
+                  }
                   onChange={
                     handleKycNumberChange
                   }
                   placeholder={
-                    formData.kycType === "PAN"
+                    formData.kycType ===
+                    "PAN"
                       ? "Enter PAN number"
                       : "Enter 12 digit Aadhaar number"
                   }
                   maxLength={
-                    formData.kycType === "PAN"
+                    formData.kycType ===
+                    "PAN"
                       ? 10
                       : 12
                   }
-                  disabled={!formData.kycType}
-                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm uppercase outline-none transition disabled:cursor-not-allowed disabled:bg-slate-100 focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10"
+                  disabled={
+                    !formData.kycType ||
+                    loading
+                  }
+                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm uppercase outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:cursor-not-allowed disabled:bg-slate-100"
                 />
 
               </div>
@@ -763,7 +888,8 @@ export default function WorkerRegister() {
                   onChange={
                     handleDocumentChange
                   }
-                  className="w-full cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm"
+                  disabled={loading}
+                  className="w-full cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm disabled:cursor-not-allowed"
                 />
 
                 <p className="mt-1 text-xs text-slate-400">
@@ -772,7 +898,11 @@ export default function WorkerRegister() {
 
                 {formData.document && (
                   <div className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-                    ✓ {formData.document.name}
+                    ✓{" "}
+                    {
+                      formData.document
+                        .name
+                    }
                   </div>
                 )}
 
@@ -787,28 +917,30 @@ export default function WorkerRegister() {
                 </p>
 
                 <p className="mt-1 text-xs leading-5 text-amber-700">
-                  After submitting your registration,
-                  you will be redirected to PhonePe to
-                  complete the one-time ₹250 registration
-                  payment.
+                  After submitting your
+                  registration, you will be
+                  redirected to PhonePe to
+                  complete the one-time ₹250
+                  registration payment.
                 </p>
 
                 <p className="mt-1 text-xs leading-5 text-amber-700">
-                  Your account will become active only
-                  after the payment is successfully
-                  verified.
+                  Your account will become
+                  active only after the payment
+                  is successfully verified.
                 </p>
 
               </div>
 
-              {/* INFORMATION */}
+              {/* JOB NOTIFICATION INFORMATION */}
 
               <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
 
                 <p className="text-xs leading-5 text-blue-700">
-                  Your State, District and Work Type
-                  will be used to send you relevant
-                  job notifications in your area.
+                  Your State, District and
+                  Work Type will be used to
+                  send you relevant job
+                  notifications in your area.
                 </p>
 
               </div>
@@ -839,4 +971,3 @@ export default function WorkerRegister() {
     </>
   );
 }
-
