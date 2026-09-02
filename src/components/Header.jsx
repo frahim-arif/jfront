@@ -6,7 +6,6 @@ const API_URL = "https://jbackend-h963.onrender.com";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-
   const [workerId, setWorkerId] = useState(() =>
     localStorage.getItem("workerId")
   );
@@ -15,7 +14,6 @@ export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  // Only one notification wrapper/ref
   const notificationRef = useRef(null);
 
   // =====================================================
@@ -41,10 +39,7 @@ export default function Header() {
       return;
     }
 
-    // Keep React state synced with localStorage
-    setWorkerId((previousId) =>
-      previousId === id ? previousId : id
-    );
+    setWorkerId(id);
 
     try {
       setLoadingNotifications(true);
@@ -99,29 +94,30 @@ export default function Header() {
   };
 
   // =====================================================
-  // INITIAL LOAD + AUTO REFRESH
+  // INITIAL LOAD + 10 SECOND POLLING
   // =====================================================
 
   useEffect(() => {
-    // Initial notification load
-    const id = getWorkerId();
+    const initialId = getWorkerId();
 
-    console.log("🔑 Header Worker ID:", id);
+    console.log(
+      "🔑 Header Worker ID:",
+      initialId
+    );
 
-    if (id) {
-      setWorkerId(id);
+    if (initialId) {
+      setWorkerId(initialId);
       fetchNotifications();
     } else {
       setWorkerId(null);
       setNotifications([]);
     }
 
-    // Refresh every 10 seconds
     const interval = setInterval(() => {
       const currentId = getWorkerId();
 
       console.log(
-        "⏱️ Notification auto-refresh. Worker:",
+        "⏱️ Notification refresh:",
         currentId
       );
 
@@ -131,12 +127,7 @@ export default function Header() {
         return;
       }
 
-      setWorkerId((previousId) =>
-        previousId === currentId
-          ? previousId
-          : currentId
-      );
-
+      setWorkerId(currentId);
       fetchNotifications();
     }, 10000);
 
@@ -146,7 +137,7 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // WORKER LOGIN / REGISTER / PAYMENT SUCCESS EVENT
+  // LOGIN / REGISTER / PAYMENT SUCCESS EVENTS
   // =====================================================
 
   useEffect(() => {
@@ -154,7 +145,7 @@ export default function Header() {
       const id = getWorkerId();
 
       console.log(
-        "👤 Worker event received. Worker ID:",
+        "👤 Worker event received:",
         id
       );
 
@@ -169,12 +160,12 @@ export default function Header() {
     };
 
     window.addEventListener(
-      "workerRegistered",
+      "workerLoggedIn",
       handleWorkerChange
     );
 
     window.addEventListener(
-      "workerLoggedIn",
+      "workerRegistered",
       handleWorkerChange
     );
 
@@ -185,12 +176,12 @@ export default function Header() {
 
     return () => {
       window.removeEventListener(
-        "workerRegistered",
+        "workerLoggedIn",
         handleWorkerChange
       );
 
       window.removeEventListener(
-        "workerLoggedIn",
+        "workerRegistered",
         handleWorkerChange
       );
 
@@ -202,54 +193,53 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // STORAGE EVENT
+  // SAME TAB STORAGE CHECK
   // =====================================================
 
   useEffect(() => {
-    const handleStorage = (event) => {
-      if (event.key !== "workerId") {
-        return;
-      }
+    const checkWorker = () => {
+      const id = getWorkerId();
 
-      const id = event.newValue;
+      setWorkerId((previous) => {
+        if (previous !== id) {
+          console.log(
+            "🔄 Worker ID changed:",
+            id
+          );
 
-      console.log(
-        "💾 Worker ID changed in storage:",
-        id
-      );
+          if (id) {
+            fetchNotifications();
+          } else {
+            setNotifications([]);
+            setShowNotifications(false);
+          }
+        }
 
-      setWorkerId(id);
-
-      if (id) {
-        fetchNotifications();
-      } else {
-        setNotifications([]);
-        setShowNotifications(false);
-      }
+        return id;
+      });
     };
 
-    window.addEventListener(
-      "storage",
-      handleStorage
+    const interval = setInterval(
+      checkWorker,
+      1000
     );
 
     return () => {
-      window.removeEventListener(
-        "storage",
-        handleStorage
-      );
+      clearInterval(interval);
     };
   }, []);
 
   // =====================================================
-  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
+  // CLOSE WHEN CLICK OUTSIDE
   // =====================================================
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
         notificationRef.current &&
-        !notificationRef.current.contains(event.target)
+        !notificationRef.current.contains(
+          event.target
+        )
       ) {
         setShowNotifications(false);
       }
@@ -281,7 +271,7 @@ export default function Header() {
   ).length;
 
   // =====================================================
-  // TOGGLE NOTIFICATIONS
+  // TOGGLE
   // =====================================================
 
   const toggleNotifications = () => {
@@ -295,15 +285,14 @@ export default function Header() {
   };
 
   // =====================================================
-  // MARK ONE AS READ
+  // MARK ONE READ
   // =====================================================
 
   const markAsRead = async (notification) => {
-    if (!notification?._id) {
-      return;
-    }
-
-    if (notification.isRead) {
+    if (
+      !notification?._id ||
+      notification.isRead
+    ) {
       return;
     }
 
@@ -323,7 +312,7 @@ export default function Header() {
 
       if (!response.ok) {
         console.error(
-          "❌ Mark Notification Failed:",
+          "❌ Mark read failed:",
           response.status,
           result
         );
@@ -343,14 +332,14 @@ export default function Header() {
       );
     } catch (error) {
       console.error(
-        "❌ Mark Notification Error:",
+        "❌ Mark read error:",
         error
       );
     }
   };
 
   // =====================================================
-  // MARK ALL AS READ
+  // MARK ALL READ
   // =====================================================
 
   const markAllAsRead = async () => {
@@ -376,7 +365,7 @@ export default function Header() {
 
       if (!response.ok) {
         console.error(
-          "❌ Mark All Read Failed:",
+          "❌ Mark all read failed:",
           response.status,
           result
         );
@@ -392,7 +381,7 @@ export default function Header() {
       );
     } catch (error) {
       console.error(
-        "❌ Mark All Notification Error:",
+        "❌ Mark all read error:",
         error
       );
     }
@@ -402,167 +391,163 @@ export default function Header() {
   // NOTIFICATION BUTTON
   // =====================================================
 
-  const NotificationButton = () => {
-    return (
-      <button
-        type="button"
-        onClick={toggleNotifications}
-        aria-label="Notifications"
-        aria-expanded={showNotifications}
-        className="relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white transition hover:bg-gray-50 active:scale-95"
+  const NotificationButton = () => (
+    <button
+      type="button"
+      onClick={toggleNotifications}
+      aria-label="Notifications"
+      aria-expanded={showNotifications}
+      className="relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white transition hover:bg-gray-50 active:scale-95"
+    >
+      <svg
+        className={`h-6 w-6 ${
+          unreadCount > 0
+            ? "text-sky-600"
+            : "text-gray-700"
+        }`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
       >
-        <svg
-          className={`h-6 w-6 ${
-            unreadCount > 0
-              ? "text-sky-600"
-              : "text-gray-700"
-          }`}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
-          />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+        />
 
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10 21h4"
-          />
-        </svg>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10 21h4"
+        />
+      </svg>
 
-        {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white shadow">
-            {unreadCount > 99
-              ? "99+"
-              : unreadCount}
-          </span>
-        )}
-      </button>
-    );
-  };
+      {unreadCount > 0 && (
+        <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white shadow">
+          {unreadCount > 99
+            ? "99+"
+            : unreadCount}
+        </span>
+      )}
+    </button>
+  );
 
   // =====================================================
   // NOTIFICATION LIST
   // =====================================================
 
-  const NotificationList = () => {
-    return (
-      <div className="w-full bg-white">
-        <div className="flex items-center justify-between border-b px-4 py-3">
-          <div>
-            <h3 className="text-sm font-bold text-gray-800">
-              Notifications
-            </h3>
-
-            {unreadCount > 0 && (
-              <p className="mt-0.5 text-xs text-gray-500">
-                {unreadCount} unread
-              </p>
-            )}
-          </div>
+  const NotificationList = () => (
+    <div className="w-full bg-white">
+      <div className="flex items-center justify-between border-b px-4 py-3">
+        <div>
+          <h3 className="text-sm font-bold text-gray-800">
+            Notifications
+          </h3>
 
           {unreadCount > 0 && (
-            <button
-              type="button"
-              onClick={markAllAsRead}
-              className="text-xs font-semibold text-sky-600 hover:text-sky-700"
-            >
-              Mark all read
-            </button>
+            <p className="mt-0.5 text-xs text-gray-500">
+              {unreadCount} unread
+            </p>
           )}
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto">
-          {loadingNotifications &&
-          notifications.length === 0 ? (
-            <div className="px-5 py-10 text-center">
-              <div className="mb-2 text-3xl">
-                🔔
-              </div>
+        {unreadCount > 0 && (
+          <button
+            type="button"
+            onClick={markAllAsRead}
+            className="text-xs font-semibold text-sky-600"
+          >
+            Mark all read
+          </button>
+        )}
+      </div>
 
-              <p className="text-sm text-gray-500">
-                Loading notifications...
-              </p>
+      <div className="max-h-[420px] overflow-y-auto">
+        {loadingNotifications &&
+        notifications.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <div className="mb-2 text-3xl">
+              🔔
             </div>
-          ) : notifications.length === 0 ? (
-            <div className="px-5 py-10 text-center">
-              <div className="mb-2 text-3xl">
-                🔔
-              </div>
 
-              <p className="text-sm font-semibold text-gray-700">
-                No notifications
-              </p>
-
-              <p className="mt-1 text-xs leading-5 text-gray-400">
-                New job opportunities matching
-                your work type and location will
-                appear here.
-              </p>
+            <p className="text-sm text-gray-500">
+              Loading notifications...
+            </p>
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <div className="mb-2 text-3xl">
+              🔔
             </div>
-          ) : (
-            notifications.map((notification) => (
-              <button
-                key={notification._id}
-                type="button"
-                onClick={() =>
-                  markAsRead(notification)
-                }
-                className={`w-full border-b p-4 text-left transition ${
-                  !notification.isRead
-                    ? "bg-sky-50 hover:bg-sky-100"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex gap-3">
-                  <div
-                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
-                      !notification.isRead
-                        ? "bg-sky-100"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    🔔
-                  </div>
 
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-gray-800">
-                        {notification.title ||
-                          "New Notification"}
-                      </h4>
+            <p className="text-sm font-semibold text-gray-700">
+              No notifications
+            </p>
 
-                      {!notification.isRead && (
-                        <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
-                      )}
-                    </div>
+            <p className="mt-1 text-xs leading-5 text-gray-400">
+              New job opportunities matching your
+              work type and location will appear
+              here.
+            </p>
+          </div>
+        ) : (
+          notifications.map((notification) => (
+            <button
+              key={notification._id}
+              type="button"
+              onClick={() =>
+                markAsRead(notification)
+              }
+              className={`w-full border-b p-4 text-left transition ${
+                !notification.isRead
+                  ? "bg-sky-50 hover:bg-sky-100"
+                  : "bg-white hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex gap-3">
+                <div
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+                    !notification.isRead
+                      ? "bg-sky-100"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  🔔
+                </div>
 
-                    <p className="mt-1 text-sm leading-5 text-gray-600">
-                      {notification.message ||
-                        "You have a new notification."}
-                    </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-gray-800">
+                      {notification.title ||
+                        "New Notification"}
+                    </h4>
 
-                    {notification.createdAt && (
-                      <p className="mt-2 text-[11px] text-gray-400">
-                        {new Date(
-                          notification.createdAt
-                        ).toLocaleString()}
-                      </p>
+                    {!notification.isRead && (
+                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
                     )}
                   </div>
+
+                  <p className="mt-1 text-sm leading-5 text-gray-600">
+                    {notification.message ||
+                      "You have a new notification."}
+                  </p>
+
+                  {notification.createdAt && (
+                    <p className="mt-2 text-[11px] text-gray-400">
+                      {new Date(
+                        notification.createdAt
+                      ).toLocaleString()}
+                    </p>
+                  )}
                 </div>
-              </button>
-            ))
-          )}
-        </div>
+              </div>
+            </button>
+          ))
+        )}
       </div>
-    );
-  };
+    </div>
+  );
 
   // =====================================================
   // RETURN
@@ -591,7 +576,6 @@ export default function Header() {
 
           {/* DESKTOP */}
           <div className="hidden items-center gap-5 md:flex">
-
             {workerId && (
               <div
                 ref={notificationRef}
@@ -610,7 +594,7 @@ export default function Header() {
             {!workerId && (
               <Link
                 to="/worker-login"
-                className="font-semibold text-gray-700 transition hover:text-sky-600"
+                className="font-semibold text-gray-700 hover:text-sky-600"
               >
                 Worker Login
               </Link>
@@ -627,7 +611,7 @@ export default function Header() {
                 <Link
                   key={page}
                   to={`/${page}`}
-                  className="font-medium text-gray-700 transition hover:text-sky-600"
+                  className="font-medium text-gray-700 hover:text-sky-600"
                 >
                   {page
                     .replace("-", " ")
@@ -637,7 +621,7 @@ export default function Header() {
 
               <Link
                 to="/offer-job"
-                className="rounded-xl bg-sky-500 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-sky-600"
+                className="rounded-xl bg-sky-500 px-5 py-2.5 font-semibold text-white shadow-sm hover:bg-sky-600"
               >
                 Offer Job
               </Link>
@@ -646,7 +630,6 @@ export default function Header() {
 
           {/* MOBILE */}
           <div className="flex items-center gap-1 md:hidden">
-
             {workerId && (
               <div
                 ref={notificationRef}
@@ -673,7 +656,7 @@ export default function Header() {
 
             <Link
               to="/offer-job"
-              className="rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-600"
+              className="rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-sky-600"
             >
               Offer Job
             </Link>
@@ -722,7 +705,7 @@ export default function Header() {
 
       {/* MOBILE MENU */}
       {isOpen && (
-        <div className="space-y-3 border-t border-white/10 bg-sky-500 px-4 py-4 md:hidden">
+        <div className="space-y-3 border-t bg-sky-500 px-4 py-4 md:hidden">
           {[
             "disclaimer",
             "contact",
