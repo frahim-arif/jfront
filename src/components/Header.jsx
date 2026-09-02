@@ -12,13 +12,10 @@ export default function Header() {
   );
 
   const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  const [showNotifications, setShowNotifications] =
-    useState(false);
-
-  const [loadingNotifications, setLoadingNotifications] =
-    useState(false);
-
+  // Only one notification wrapper/ref
   const notificationRef = useRef(null);
 
   // =====================================================
@@ -27,25 +24,6 @@ export default function Header() {
 
   const getWorkerId = () => {
     return localStorage.getItem("workerId");
-  };
-
-  // =====================================================
-  // LOAD WORKER
-  // =====================================================
-
-  const loadWorker = () => {
-    const id = getWorkerId();
-
-    console.log("🔑 Header Worker ID:", id);
-
-    setWorkerId(id);
-
-    if (!id) {
-      setNotifications([]);
-      setShowNotifications(false);
-    }
-
-    return id;
   };
 
   // =====================================================
@@ -63,7 +41,10 @@ export default function Header() {
       return;
     }
 
-    setWorkerId(id);
+    // Keep React state synced with localStorage
+    setWorkerId((previousId) =>
+      previousId === id ? previousId : id
+    );
 
     try {
       setLoadingNotifications(true);
@@ -122,51 +103,68 @@ export default function Header() {
   // =====================================================
 
   useEffect(() => {
-    const id = loadWorker();
+    // Initial notification load
+    const id = getWorkerId();
+
+    console.log("🔑 Header Worker ID:", id);
 
     if (id) {
+      setWorkerId(id);
       fetchNotifications();
+    } else {
+      setWorkerId(null);
+      setNotifications([]);
     }
 
+    // Refresh every 10 seconds
     const interval = setInterval(() => {
       const currentId = getWorkerId();
 
-      // Detect worker login/register/payment success
-      if (currentId !== workerId) {
-        console.log(
-          "🔄 Worker ID changed:",
-          currentId
-        );
+      console.log(
+        "⏱️ Notification auto-refresh. Worker:",
+        currentId
+      );
 
-        setWorkerId(currentId);
-      }
-
-      if (currentId) {
-        fetchNotifications();
-      } else {
+      if (!currentId) {
+        setWorkerId(null);
         setNotifications([]);
+        return;
       }
+
+      setWorkerId((previousId) =>
+        previousId === currentId
+          ? previousId
+          : currentId
+      );
+
+      fetchNotifications();
     }, 10000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [workerId]);
+  }, []);
 
   // =====================================================
-  // WORKER LOGIN / REGISTER EVENT
+  // WORKER LOGIN / REGISTER / PAYMENT SUCCESS EVENT
   // =====================================================
 
   useEffect(() => {
     const handleWorkerChange = () => {
+      const id = getWorkerId();
+
       console.log(
-        "👤 Worker login/register event received"
+        "👤 Worker event received. Worker ID:",
+        id
       );
 
-      const id = loadWorker();
+      setWorkerId(id);
 
       if (id) {
         fetchNotifications();
+      } else {
+        setNotifications([]);
+        setShowNotifications(false);
       }
     };
 
@@ -180,6 +178,11 @@ export default function Header() {
       handleWorkerChange
     );
 
+    window.addEventListener(
+      "workerPaymentSuccess",
+      handleWorkerChange
+    );
+
     return () => {
       window.removeEventListener(
         "workerRegistered",
@@ -188,6 +191,11 @@ export default function Header() {
 
       window.removeEventListener(
         "workerLoggedIn",
+        handleWorkerChange
+      );
+
+      window.removeEventListener(
+        "workerPaymentSuccess",
         handleWorkerChange
       );
     };
@@ -199,22 +207,24 @@ export default function Header() {
 
   useEffect(() => {
     const handleStorage = (event) => {
-      if (event.key === "workerId") {
-        const id = event.newValue;
+      if (event.key !== "workerId") {
+        return;
+      }
 
-        console.log(
-          "💾 Worker ID changed in storage:",
-          id
-        );
+      const id = event.newValue;
 
-        setWorkerId(id);
+      console.log(
+        "💾 Worker ID changed in storage:",
+        id
+      );
 
-        if (id) {
-          fetchNotifications();
-        } else {
-          setNotifications([]);
-          setShowNotifications(false);
-        }
+      setWorkerId(id);
+
+      if (id) {
+        fetchNotifications();
+      } else {
+        setNotifications([]);
+        setShowNotifications(false);
       }
     };
 
@@ -239,9 +249,7 @@ export default function Header() {
     const handleOutsideClick = (event) => {
       if (
         notificationRef.current &&
-        !notificationRef.current.contains(
-          event.target
-        )
+        !notificationRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
       }
@@ -277,11 +285,11 @@ export default function Header() {
   // =====================================================
 
   const toggleNotifications = () => {
-    const newState = !showNotifications;
+    const nextState = !showNotifications;
 
-    setShowNotifications(newState);
+    setShowNotifications(nextState);
 
-    if (newState) {
+    if (nextState) {
       fetchNotifications();
     }
   };
@@ -403,7 +411,6 @@ export default function Header() {
         aria-expanded={showNotifications}
         className="relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white transition hover:bg-gray-50 active:scale-95"
       >
-        {/* Bell */}
         <svg
           className={`h-6 w-6 ${
             unreadCount > 0
@@ -428,7 +435,6 @@ export default function Header() {
           />
         </svg>
 
-        {/* Unread Badge */}
         {unreadCount > 0 && (
           <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white shadow">
             {unreadCount > 99
@@ -447,7 +453,6 @@ export default function Header() {
   const NotificationList = () => {
     return (
       <div className="w-full bg-white">
-        {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div>
             <h3 className="text-sm font-bold text-gray-800">
@@ -472,7 +477,6 @@ export default function Header() {
           )}
         </div>
 
-        {/* Notification Body */}
         <div className="max-h-[420px] overflow-y-auto">
           {loadingNotifications &&
           notifications.length === 0 ? (
@@ -516,7 +520,6 @@ export default function Header() {
                 }`}
               >
                 <div className="flex gap-3">
-                  {/* Icon */}
                   <div
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
                       !notification.isRead
@@ -527,7 +530,6 @@ export default function Header() {
                     🔔
                   </div>
 
-                  {/* Content */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <h4 className="text-sm font-semibold text-gray-800">
@@ -568,18 +570,10 @@ export default function Header() {
 
   return (
     <header className="relative z-50 border-b border-gray-100 bg-white shadow-sm">
-
-      {/* =================================================
-          MAIN HEADER
-      ================================================= */}
-
       <div className="mx-auto max-w-7xl px-3 sm:px-4">
         <div className="flex h-16 items-center justify-between sm:h-20">
 
-          {/* =================================================
-              LOGO
-          ================================================= */}
-
+          {/* LOGO */}
           <Link
             to="/"
             className="flex flex-shrink-0 flex-col items-start"
@@ -595,13 +589,9 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* =================================================
-              DESKTOP
-          ================================================= */}
-
+          {/* DESKTOP */}
           <div className="hidden items-center gap-5 md:flex">
 
-            {/* Notification */}
             {workerId && (
               <div
                 ref={notificationRef}
@@ -617,7 +607,6 @@ export default function Header() {
               </div>
             )}
 
-            {/* Worker Login */}
             {!workerId && (
               <Link
                 to="/worker-login"
@@ -627,7 +616,6 @@ export default function Header() {
               </Link>
             )}
 
-            {/* Menu */}
             <nav className="flex items-center gap-5">
               {[
                 "disclaimer",
@@ -656,13 +644,9 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* =================================================
-              MOBILE
-          ================================================= */}
-
+          {/* MOBILE */}
           <div className="flex items-center gap-1 md:hidden">
 
-            {/* Notification */}
             {workerId && (
               <div
                 ref={notificationRef}
@@ -670,7 +654,6 @@ export default function Header() {
               >
                 <NotificationButton />
 
-                {/* Mobile Notification Panel */}
                 {showNotifications && (
                   <div className="fixed left-3 right-3 top-[68px] z-[100] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
                     <NotificationList />
@@ -679,7 +662,6 @@ export default function Header() {
               </div>
             )}
 
-            {/* Login */}
             {!workerId && (
               <Link
                 to="/worker-login"
@@ -689,7 +671,6 @@ export default function Header() {
               </Link>
             )}
 
-            {/* Offer Job */}
             <Link
               to="/offer-job"
               className="rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-sky-600"
@@ -697,7 +678,6 @@ export default function Header() {
               Offer Job
             </Link>
 
-            {/* Menu */}
             <button
               type="button"
               onClick={() =>
@@ -740,13 +720,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* =================================================
-          MOBILE MENU
-      ================================================= */}
-
+      {/* MOBILE MENU */}
       {isOpen && (
         <div className="space-y-3 border-t border-white/10 bg-sky-500 px-4 py-4 md:hidden">
-
           {[
             "disclaimer",
             "contact",
