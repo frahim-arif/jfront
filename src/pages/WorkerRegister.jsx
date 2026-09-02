@@ -1,5 +1,5 @@
+
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header.jsx";
 
 const INDIAN_STATES = [
@@ -62,9 +62,9 @@ const WORK_TYPES = [
   "Other",
 ];
 
-export default function WorkerRegister() {
-  const navigate = useNavigate();
+const API_BASE_URL = "https://jbackend-h963.onrender.com";
 
+export default function WorkerRegister() {
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -206,9 +206,9 @@ export default function WorkerRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // -------------------------------
+    // =====================================================
     // VALIDATION
-    // -------------------------------
+    // =====================================================
 
     if (!formData.name.trim()) {
       alert("Please enter your full name.");
@@ -277,28 +277,23 @@ export default function WorkerRegister() {
     try {
       setLoading(true);
 
+      // =====================================================
+      // STEP 1: REGISTER WORKER
+      // =====================================================
+
       const data = new FormData();
 
       data.append("name", formData.name.trim());
       data.append("mobile", formData.mobile);
       data.append("state", formData.state);
-      data.append(
-        "district",
-        formData.district.trim()
-      );
+      data.append("district", formData.district.trim());
       data.append("workType", formData.workType);
       data.append("kycType", formData.kycType);
       data.append("kycNumber", formData.kycNumber);
-
-      // Backend:
-      // upload.single("kycDocument")
-      data.append(
-        "kycDocument",
-        formData.document
-      );
+      data.append("kycDocument", formData.document);
 
       const response = await fetch(
-        "https://jbackend-h963.onrender.com/workers/register",
+        `${API_BASE_URL}/workers/register`,
         {
           method: "POST",
           body: data,
@@ -315,68 +310,136 @@ export default function WorkerRegister() {
         result = {
           success: false,
           message:
-            responseText ||
-            "Invalid server response.",
+            responseText || "Invalid server response.",
         };
       }
 
-      console.log("Worker Status:", response.status);
-      console.log("Worker Response:", result);
+      console.log("Worker Registration Status:", response.status);
+      console.log("Worker Registration Response:", result);
 
-     if (!response.ok) {
-  alert(
-    result.message ||
-      `Registration failed. Error ${response.status}`
-  );
-  return;
-}
+      if (!response.ok) {
+        alert(
+          result.message ||
+            `Registration failed. Error ${response.status}`
+        );
+        return;
+      }
 
-// =====================================================
-// SAVE WORKER ID FOR NOTIFICATIONS
-// =====================================================
+      // =====================================================
+      // STEP 2: GET WORKER ID
+      // =====================================================
 
-const registeredWorkerId =
-  result.worker?._id ||
-  result.worker?.id ||
-  result.workerId ||
-  result.data?._id ||
-  result.data?.workerId;
+      const registeredWorkerId =
+        result.worker?._id ||
+        result.worker?.id ||
+        result.workerId ||
+        result.data?._id ||
+        result.data?.workerId;
 
-if (registeredWorkerId) {
-  localStorage.setItem(
-    "workerId",
-    registeredWorkerId
-  );
+      if (!registeredWorkerId) {
+        console.error(
+          "Worker ID missing from registration response:",
+          result
+        );
 
-  console.log(
-    "Worker ID saved for notifications:",
-    registeredWorkerId
-  );
-} else {
-  console.warn(
-    "Worker ID was not found in registration response:",
-    result
-  );
-}
+        alert(
+          "Registration completed but Worker ID was not received. Please contact support."
+        );
 
-alert(
-  result.message ||
-    "Registration submitted successfully!"
-);
+        return;
+      }
 
-      // Reset
-      setFormData({
-        name: "",
-        mobile: "",
-        state: "",
-        district: "",
-        workType: "",
-        kycType: "",
-        kycNumber: "",
-        document: null,
-      });
+      console.log(
+        "Registered Worker ID:",
+        registeredWorkerId
+      );
 
-      navigate("/");
+      // =====================================================
+      // IMPORTANT
+      // DO NOT SAVE workerId YET
+      //
+      // Worker is allowed to receive jobs only after
+      // ₹250 payment is successfully completed.
+      // =====================================================
+
+      localStorage.setItem(
+        "pendingWorkerId",
+        registeredWorkerId
+      );
+
+      // =====================================================
+      // STEP 3: CREATE ₹250 PHONEPE PAYMENT
+      // =====================================================
+
+      const paymentResponse = await fetch(
+        `${API_BASE_URL}/workers/payment/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            workerId: registeredWorkerId,
+          }),
+        }
+      );
+
+      const paymentText = await paymentResponse.text();
+
+      let paymentResult;
+
+      try {
+        paymentResult = JSON.parse(paymentText);
+      } catch {
+        paymentResult = {
+          success: false,
+          message:
+            paymentText ||
+            "Invalid payment server response.",
+        };
+      }
+
+      console.log(
+        "Worker Payment Status:",
+        paymentResponse.status
+      );
+
+      console.log(
+        "Worker Payment Response:",
+        paymentResult
+      );
+
+      if (
+        !paymentResponse.ok ||
+        !paymentResult.success ||
+        !paymentResult.checkoutPageUrl
+      ) {
+        alert(
+          paymentResult.message ||
+            "Unable to create registration payment. Please try again."
+        );
+
+        return;
+      }
+
+      // =====================================================
+      // STEP 4: SAVE PENDING PAYMENT INFORMATION
+      // =====================================================
+
+      if (paymentResult.merchantOrderId) {
+        localStorage.setItem(
+          "workerMerchantOrderId",
+          paymentResult.merchantOrderId
+        );
+      }
+
+      // =====================================================
+      // STEP 5: OPEN PHONEPE CHECKOUT
+      // =====================================================
+
+      window.location.href =
+        paymentResult.checkoutPageUrl;
+
     } catch (error) {
       console.error(
         "Worker Registration Error:",
@@ -384,7 +447,7 @@ alert(
       );
 
       alert(
-        "Unable to connect with server. Please try again."
+        "Unable to connect with server. Please check your internet connection and try again."
       );
     } finally {
       setLoading(false);
@@ -400,7 +463,6 @@ alert(
       <Header />
 
       <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
-
         <div className="mx-auto w-full max-w-2xl">
 
           {/* HEADER */}
@@ -615,6 +677,7 @@ alert(
                     />
 
                     Aadhaar
+
                   </label>
 
                   <label
@@ -638,6 +701,7 @@ alert(
                     />
 
                     PAN
+
                   </label>
 
                 </div>
@@ -649,6 +713,7 @@ alert(
               <div>
 
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
+
                   {formData.kycType === "PAN"
                     ? "PAN Number"
                     : "Aadhaar Number"}
@@ -656,6 +721,7 @@ alert(
                   <span className="ml-1 text-red-500">
                     *
                   </span>
+
                 </label>
 
                 <input
@@ -712,6 +778,29 @@ alert(
 
               </div>
 
+              {/* PAYMENT INFORMATION */}
+
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+
+                <p className="text-sm font-semibold text-amber-800">
+                  Worker Registration Fee: ₹250
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-amber-700">
+                  After submitting your registration,
+                  you will be redirected to PhonePe to
+                  complete the one-time ₹250 registration
+                  payment.
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-amber-700">
+                  Your account will become active only
+                  after the payment is successfully
+                  verified.
+                </p>
+
+              </div>
+
               {/* INFORMATION */}
 
               <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
@@ -732,8 +821,8 @@ alert(
                 className="h-12 w-full rounded-lg bg-[#9B845E] font-semibold text-white transition hover:bg-[#866F4D] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
-                  ? "Submitting Registration..."
-                  : "Register as Worker"}
+                  ? "Creating Registration & Payment..."
+                  : "Register & Pay ₹250"}
               </button>
 
             </form>
@@ -746,8 +835,8 @@ alert(
           </p>
 
         </div>
-
       </main>
     </>
   );
 }
+
