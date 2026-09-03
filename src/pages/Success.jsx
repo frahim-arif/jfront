@@ -9,76 +9,125 @@ function Success() {
 
   const merchantOrderId = params.get("merchantOrderId");
 
-  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [workerActivated, setWorkerActivated] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let mounted = true;
 
-    async function fetchOrder() {
-      if (!merchantOrderId) {
-        setError("Payment order ID not found.");
-        setLoading(false);
-        return;
-      }
-
+    async function activateWorker() {
       try {
-        const { data } = await axios.get(
-          `${API_URL}/order/${merchantOrderId}`
+        // ============================================
+        // GET PENDING WORKER ID
+        // ============================================
+
+        const pendingWorkerId =
+          localStorage.getItem("pendingWorkerId");
+
+        const savedMerchantOrderId =
+          localStorage.getItem("workerMerchantOrderId");
+
+        console.log(
+          "👷 Pending Worker ID:",
+          pendingWorkerId
         );
 
-        console.log("✅ Order response:", data);
+        console.log(
+          "💳 Current Merchant Order ID:",
+          merchantOrderId
+        );
 
-        if (!mounted) return;
+        console.log(
+          "💳 Saved Merchant Order ID:",
+          savedMerchantOrderId
+        );
 
-        setOrder(data);
+        if (!pendingWorkerId) {
+          console.warn(
+            "⚠️ pendingWorkerId not found"
+          );
 
-        /*
-         * IMPORTANT:
-         * Payment successful hone ke baad hi
-         * pendingWorkerId ko active workerId banayenge.
-         */
-        const pendingWorkerId = localStorage.getItem("pendingWorkerId");
+          setError(
+            "Worker registration information not found."
+          );
 
-        console.log("👷 Pending Worker ID:", pendingWorkerId);
-        console.log("💳 Payment Status:", data?.status);
+          return;
+        }
+
+        // ============================================
+        // VERIFY THAT THIS IS THE SAME PAYMENT
+        // ============================================
 
         if (
-          pendingWorkerId &&
-          (
-            data?.status === "COMPLETED" ||
-            data?.status === "SUCCESS" ||
-            data?.status === "PAID"
-          )
+          merchantOrderId &&
+          savedMerchantOrderId &&
+          merchantOrderId !== savedMerchantOrderId
         ) {
-          // Active worker ID save karo
-          localStorage.setItem(
-            "workerId",
-            String(pendingWorkerId)
+          console.error(
+            "❌ Merchant Order ID mismatch"
           );
 
-          // Pending ID ab zaroorat nahi
-          localStorage.removeItem("pendingWorkerId");
-
-          console.log(
-            "✅ Worker activated:",
-            pendingWorkerId
+          setError(
+            "Payment order verification failed."
           );
 
-          /*
-           * Header ko turant batayega ki
-           * payment successful ho gaya hai.
-           */
-          window.dispatchEvent(
-            new Event("workerPaymentSuccess")
-          );
+          return;
         }
-      } catch (e) {
-        console.error("❌ Order fetch error:", e);
+
+        // ============================================
+        // PAYMENT CALLBACK ALREADY VERIFIED PAYMENT
+        // ============================================
+        //
+        // Backend /worker-payment/check-status
+        // PhonePe se status verify karta hai.
+        //
+        // Agar status COMPLETED hai to backend already:
+        //
+        // worker.paymentStatus = "PAID"
+        // worker.status = "Active"
+        //
+        // kar chuka hai.
+        //
+        // Isliye ab browser mein workerId activate karenge.
+        // ============================================
+
+        localStorage.setItem(
+          "workerId",
+          String(pendingWorkerId)
+        );
+
+        localStorage.removeItem(
+          "pendingWorkerId"
+        );
+
+        console.log(
+          "✅ Worker activated in browser:",
+          pendingWorkerId
+        );
+
+        // ============================================
+        // HEADER KO IMMEDIATELY NOTIFY
+        // ============================================
+
+        window.dispatchEvent(
+          new Event("workerPaymentSuccess")
+        );
 
         if (mounted) {
-          setError("Unable to fetch order details");
+          setWorkerActivated(true);
+        }
+
+      } catch (error) {
+        console.error(
+          "❌ Worker activation error:",
+          error
+        );
+
+        if (mounted) {
+          setError(
+            "Unable to activate worker registration."
+          );
         }
       } finally {
         if (mounted) {
@@ -87,7 +136,7 @@ function Success() {
       }
     }
 
-    fetchOrder();
+    activateWorker();
 
     return () => {
       mounted = false;
@@ -96,9 +145,13 @@ function Success() {
 
   return (
     <div className="min-h-screen bg-green-50 flex items-center justify-center p-6">
+
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-md border border-green-100 p-8 text-center">
 
+        {/* ICON */}
+
         <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -111,14 +164,18 @@ function Success() {
               clipRule="evenodd"
             />
           </svg>
+
         </div>
+
+        {/* TITLE */}
 
         <h1 className="text-2xl font-bold text-gray-900">
           Payment Successful
         </h1>
 
         <p className="text-gray-600 mt-1">
-          Thank you! Your payment has been processed.
+          Thank you! Your worker registration payment
+          has been successfully processed.
         </p>
 
         {merchantOrderId && (
@@ -130,64 +187,62 @@ function Success() {
           </p>
         )}
 
-        {loading ? (
-          <p className="text-sm text-gray-500 mt-4">
-            Loading order details...
-          </p>
-        ) : error ? (
-          <p className="text-sm text-red-600 mt-4">
-            {error}
-          </p>
-        ) : order ? (
-          <div className="mt-6 text-left bg-gray-50 rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-2 text-sm">
+        {/* LOADING */}
 
-              <div className="text-gray-500">
-                Customer
-              </div>
+        {loading && (
+          <div className="mt-6 rounded-lg bg-blue-50 p-4">
 
-              <div className="font-medium">
-                {order.customerName}
-              </div>
+            <p className="text-sm text-blue-700">
+              Activating your worker registration...
+            </p>
 
-              <div className="text-gray-500">
-                Mobile
-              </div>
-
-              <div className="font-medium">
-                {order.mobileNumber}
-              </div>
-
-              <div className="text-gray-500">
-                Amount
-              </div>
-
-              <div className="font-medium">
-                ₹{(order.amount / 100).toFixed(2)}
-              </div>
-
-              <div className="text-gray-500">
-                Status
-              </div>
-
-              <div className="font-medium text-green-700">
-                {order.status}
-              </div>
-
-            </div>
           </div>
-        ) : null}
+        )}
+
+        {/* SUCCESS */}
+
+        {!loading && workerActivated && (
+          <div className="mt-6 rounded-lg bg-green-50 border border-green-200 p-4">
+
+            <p className="font-semibold text-green-700">
+              ✓ Worker Registration Activated
+            </p>
+
+            <p className="mt-1 text-sm text-green-600">
+              You will now receive job notifications
+              matching your district and work type.
+            </p>
+
+          </div>
+        )}
+
+        {/* ERROR */}
+
+        {!loading && error && (
+          <div className="mt-6 rounded-lg bg-red-50 border border-red-200 p-4">
+
+            <p className="font-semibold text-red-700">
+              {error}
+            </p>
+
+          </div>
+        )}
+
+        {/* BACK */}
 
         <div className="mt-8">
+
           <Link
             to="/"
             className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
           >
             Back to Home
           </Link>
+
         </div>
 
       </div>
+
     </div>
   );
 }
