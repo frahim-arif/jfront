@@ -32,15 +32,19 @@ export default function Footer() {
           </Link>
 
           {/* Company */}
-          <div className="text-center">
-            <p className="text-sm text-white/70">
-              Powered & Developed by
-            </p>
+          
 
-            <p className="font-bold">
-              Web Core Cube Tech
-            </p>
-          </div>
+          {/* Phone */}
+          <a
+            href="tel:9058596626"
+            className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20"
+          >
+            <Phone size={16} />
+            +91 7002298053
+          </a>
+
+        </div>
+         </div>
 
           {/* Phone */}
           <a
@@ -52,6 +56,15 @@ export default function Footer() {
           </a>
 
         </div>
+        <div className="text-center">
+            <p className="text-sm text-white/70">
+              Powered & Developed by
+            </p>
+
+            <p className="font-bold">
+              Web Core Cube Tech
+            </p>
+          </div>
 
         {/* Bottom */}
         <div className="mt-5 border-t border-white/20 pt-4 text-center text-xs text-white/70">
