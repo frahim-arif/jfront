@@ -9,10 +9,8 @@ export default function Header() {
   const [workerId, setWorkerId] = useState(null);
 
   const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] =
-    useState(false);
-  const [loadingNotifications, setLoadingNotifications] =
-    useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   const notificationRef = useRef(null);
 
@@ -24,7 +22,7 @@ export default function Header() {
     try {
       return localStorage.getItem("workerId");
     } catch (error) {
-      console.error("LocalStorage Error:", error);
+      console.error("❌ LocalStorage Error:", error);
       return null;
     }
   };
@@ -33,13 +31,10 @@ export default function Header() {
   // FETCH NOTIFICATIONS
   // =====================================================
 
-  const fetchNotifications = async (id = null) => {
+  const fetchNotifications = async (id) => {
     const currentWorkerId = id || getWorkerId();
 
-    console.log(
-      "🔔 Fetching notifications for:",
-      currentWorkerId
-    );
+    console.log("🔔 Fetching notifications for:", currentWorkerId);
 
     if (!currentWorkerId) {
       setWorkerId(null);
@@ -63,8 +58,7 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response.json().catch(() => null);
 
       console.log(
         "🔔 Notification Response:",
@@ -80,31 +74,22 @@ export default function Header() {
         );
 
         setNotifications([]);
-
         return;
       }
 
       if (result?.success) {
-        const list = Array.isArray(
-          result.notifications
-        )
+        const list = Array.isArray(result.notifications)
           ? result.notifications
           : [];
 
-        console.log(
-          "✅ Notifications received:",
-          list.length
-        );
+        console.log("✅ Notifications received:", list.length);
 
         setNotifications(list);
       } else {
         setNotifications([]);
       }
     } catch (error) {
-      console.error(
-        "❌ Notification Fetch Error:",
-        error
-      );
+      console.error("❌ Notification Fetch Error:", error);
     } finally {
       setLoadingNotifications(false);
     }
@@ -117,10 +102,7 @@ export default function Header() {
   useEffect(() => {
     const id = getWorkerId();
 
-    console.log(
-      "🔑 Header Worker ID:",
-      id
-    );
+    console.log("🔑 Initial Header Worker ID:", id);
 
     if (id) {
       setWorkerId(id);
@@ -132,17 +114,14 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // PAYMENT SUCCESS / WORKER CHANGE
+  // WORKER / PAYMENT CHANGE
   // =====================================================
 
   useEffect(() => {
     const handleWorkerChange = () => {
       const id = getWorkerId();
 
-      console.log(
-        "👷 Worker/payment change:",
-        id
-      );
+      console.log("👷 Worker/payment change:", id);
 
       if (id) {
         setWorkerId(id);
@@ -178,44 +157,56 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // POLLING
-  // EVERY 10 SECONDS
+  // CHECK WORKER ID + REFRESH EVERY 10 SECONDS
   // =====================================================
 
   useEffect(() => {
     const interval = setInterval(() => {
       const id = getWorkerId();
 
-      console.log(
-        "⏱️ Notification refresh:",
-        id
-      );
+      console.log("⏱️ Worker ID check:", id);
 
-      if (!id) {
-        setWorkerId(null);
-        setNotifications([]);
+      // Worker ID changed
+      if (id !== workerId) {
+        console.log(
+          "🔄 Worker ID changed:",
+          workerId,
+          "→",
+          id
+        );
+
+        if (id) {
+          setWorkerId(id);
+          fetchNotifications(id);
+        } else {
+          setWorkerId(null);
+          setNotifications([]);
+          setShowNotifications(false);
+        }
+
         return;
       }
 
-      fetchNotifications(id);
+      // Same worker → refresh notifications
+      if (id) {
+        fetchNotifications(id);
+      }
     }, 10000);
 
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [workerId]);
 
   // =====================================================
-  // CLOSE WHEN CLICK OUTSIDE
+  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
   // =====================================================
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
         notificationRef.current &&
-        !notificationRef.current.contains(
-          event.target
-        )
+        !notificationRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
       }
@@ -242,8 +233,7 @@ export default function Header() {
 
   const unreadCount = notifications.filter(
     (notification) =>
-      notification &&
-      notification.isRead === false
+      notification && notification.isRead === false
   ).length;
 
   // =====================================================
@@ -251,18 +241,21 @@ export default function Header() {
   // =====================================================
 
   const toggleNotifications = () => {
-    const nextState =
-      !showNotifications;
+    const nextState = !showNotifications;
 
     setShowNotifications(nextState);
 
     if (nextState) {
-      fetchNotifications();
+      const id = getWorkerId();
+
+      if (id) {
+        fetchNotifications(id);
+      }
     }
   };
 
   // =====================================================
-  // MARK ONE READ
+  // MARK ONE AS READ
   // =====================================================
 
   const markAsRead = async (notification) => {
@@ -284,8 +277,7 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
         console.error(
@@ -308,10 +300,7 @@ export default function Header() {
         )
       );
     } catch (error) {
-      console.error(
-        "❌ Mark read error:",
-        error
-      );
+      console.error("❌ Mark read error:", error);
     }
   };
 
@@ -337,8 +326,7 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
         console.error(
@@ -357,10 +345,7 @@ export default function Header() {
         }))
       );
     } catch (error) {
-      console.error(
-        "❌ Mark all read error:",
-        error
-      );
+      console.error("❌ Mark all read error:", error);
     }
   };
 
@@ -402,9 +387,7 @@ export default function Header() {
 
       {unreadCount > 0 && (
         <span className="absolute -right-1 -top-1 flex min-h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white shadow">
-          {unreadCount > 99
-            ? "99+"
-            : unreadCount}
+          {unreadCount > 99 ? "99+" : unreadCount}
         </span>
       )}
     </button>
@@ -416,7 +399,6 @@ export default function Header() {
 
   const NotificationList = () => (
     <div className="w-full bg-white">
-
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div>
           <h3 className="text-sm font-bold text-gray-800">
@@ -442,7 +424,6 @@ export default function Header() {
       </div>
 
       <div className="max-h-[420px] overflow-y-auto">
-
         {loadingNotifications &&
         notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
@@ -470,65 +451,56 @@ export default function Header() {
             </p>
           </div>
         ) : (
-          notifications.map(
-            (notification) => (
-              <button
-                key={notification._id}
-                type="button"
-                onClick={() =>
-                  markAsRead(notification)
-                }
-                className={`w-full border-b p-4 text-left transition ${
-                  !notification.isRead
-                    ? "bg-sky-50 hover:bg-sky-100"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex gap-3">
-
-                  <div
-                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
-                      !notification.isRead
-                        ? "bg-sky-100"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    🔔
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-
-                    <div className="flex items-start justify-between gap-2">
-
-                      <h4 className="text-sm font-semibold text-gray-800">
-                        {notification.title ||
-                          "New Job Available"}
-                      </h4>
-
-                      {!notification.isRead && (
-                        <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
-                      )}
-
-                    </div>
-
-                    <p className="mt-1 text-sm leading-5 text-gray-600">
-                      {notification.message ||
-                        "You have a new job notification."}
-                    </p>
-
-                    {notification.createdAt && (
-                      <p className="mt-2 text-[11px] text-gray-400">
-                        {new Date(
-                          notification.createdAt
-                        ).toLocaleString()}
-                      </p>
-                    )}
-
-                  </div>
+          notifications.map((notification) => (
+            <button
+              key={notification._id}
+              type="button"
+              onClick={() => markAsRead(notification)}
+              className={`w-full border-b p-4 text-left transition ${
+                !notification.isRead
+                  ? "bg-sky-50 hover:bg-sky-100"
+                  : "bg-white hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex gap-3">
+                <div
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+                    !notification.isRead
+                      ? "bg-sky-100"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  🔔
                 </div>
-              </button>
-            )
-          )
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-sm font-semibold text-gray-800">
+                      {notification.title ||
+                        "New Job Available"}
+                    </h4>
+
+                    {!notification.isRead && (
+                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-sky-500" />
+                    )}
+                  </div>
+
+                  <p className="mt-1 text-sm leading-5 text-gray-600">
+                    {notification.message ||
+                      "You have a new job notification."}
+                  </p>
+
+                  {notification.createdAt && (
+                    <p className="mt-2 text-[11px] text-gray-400">
+                      {new Date(
+                        notification.createdAt
+                      ).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))
         )}
       </div>
     </div>
@@ -540,9 +512,7 @@ export default function Header() {
 
   return (
     <header className="relative z-50 border-b border-gray-100 bg-white shadow-sm">
-
       <div className="mx-auto max-w-7xl px-3 sm:px-4">
-
         <div className="flex h-16 items-center justify-between sm:h-20">
 
           {/* LOGO */}
@@ -565,7 +535,6 @@ export default function Header() {
           {/* DESKTOP */}
 
           <div className="hidden items-center gap-5 md:flex">
-
             {workerId && (
               <div
                 ref={notificationRef}
@@ -582,7 +551,6 @@ export default function Header() {
             )}
 
             <nav className="flex items-center gap-5">
-
               {[
                 "disclaimer",
                 "contact",
@@ -607,14 +575,12 @@ export default function Header() {
               >
                 Offer Job
               </Link>
-
             </nav>
           </div>
 
           {/* MOBILE */}
 
           <div className="flex items-center gap-1 md:hidden">
-
             {workerId && (
               <div
                 ref={notificationRef}
@@ -640,9 +606,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() =>
-                setIsOpen(
-                  (previous) => !previous
-                )
+                setIsOpen((previous) => !previous)
               }
               className="flex h-10 w-10 items-center justify-center"
               aria-label="Menu"
@@ -677,7 +641,6 @@ export default function Header() {
                 </svg>
               )}
             </button>
-
           </div>
         </div>
       </div>
@@ -686,7 +649,6 @@ export default function Header() {
 
       {isOpen && (
         <div className="space-y-3 border-t bg-sky-500 px-4 py-4 md:hidden">
-
           {[
             "disclaimer",
             "contact",
@@ -697,9 +659,7 @@ export default function Header() {
             <Link
               key={page}
               to={`/${page}`}
-              onClick={() =>
-                setIsOpen(false)
-              }
+              onClick={() => setIsOpen(false)}
               className="block font-medium text-white"
             >
               {page
@@ -707,10 +667,8 @@ export default function Header() {
                 .toUpperCase()}
             </Link>
           ))}
-
         </div>
       )}
-
     </header>
   );
 }
