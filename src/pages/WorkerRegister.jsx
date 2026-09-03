@@ -379,24 +379,37 @@ export default function WorkerRegister() {
       // =====================================================
 
       if (!response.ok) {
-        // Agar registration already started hai
-        // aur workerId mil raha hai to usko continue
-        // payment ke liye use kar sakte hain.
+  // Registration already started hai
+  // aur backend ne existing workerId diya hai
+  if (result?.workerId) {
+    localStorage.setItem(
+      "workerId",
+      String(result.workerId)
+    );
 
-        if (result?.workerId) {
-          localStorage.setItem(
-            "pendingWorkerId",
-            String(result.workerId)
-          );
-        }
+    localStorage.setItem(
+      "pendingWorkerId",
+      String(result.workerId)
+    );
 
-        alert(
-          result?.message ||
-            `Registration failed. Error ${response.status}`
-        );
+    console.log(
+      "💾 Existing workerId SAVED:",
+      localStorage.getItem("workerId")
+    );
 
-        return;
-      }
+    console.log(
+      "💾 Existing pendingWorkerId SAVED:",
+      localStorage.getItem("pendingWorkerId")
+    );
+  }
+
+  alert(
+    result?.message ||
+      `Registration failed. Error ${response.status}`
+  );
+
+  return;
+}
 
       // =====================================================
       // STEP 2
@@ -559,8 +572,7 @@ console.log(
   "🚀 Redirecting to PhonePe..."
 );
 
-window.location.href =
-  paymentResult.checkoutPageUrl;
+
 
       window.location.href =
         paymentResult.checkoutPageUrl;
