@@ -18,12 +18,6 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 
 // ======================================================
-// API
-// ======================================================
-
-const API_URL = "https://jbackend-h963.onrender.com";
-
-// ======================================================
 // LEAFLET LOCATION MARKER
 // ======================================================
 
@@ -34,11 +28,11 @@ const locationIcon = new L.DivIcon({
     <div style="
       width:34px;
       height:34px;
-      background:linear-gradient(135deg,#2563eb,#7c3aed);
+      background:#ef4444;
       border:3px solid white;
       border-radius:50% 50% 50% 0;
       transform:rotate(-45deg);
-      box-shadow:0 4px 14px rgba(37,99,235,.45);
+      box-shadow:0 3px 10px rgba(0,0,0,.35);
       position:relative;
     ">
       <div style="
@@ -79,6 +73,7 @@ function MapCenter({ position }) {
 // ======================================================
 
 const INDIA_STATES = [
+  // States
   "Andhra Pradesh",
   "Arunachal Pradesh",
   "Assam",
@@ -108,6 +103,7 @@ const INDIA_STATES = [
   "Uttarakhand",
   "West Bengal",
 
+  // Union Territories
   "Andaman and Nicobar Islands",
   "Chandigarh",
   "Dadra and Nagar Haveli and Daman and Diu",
@@ -228,7 +224,7 @@ export default function App() {
     useState("");
 
   // ====================================================
-  // CUSTOM STYLES
+  // SCROLLER + LEAFLET STYLE
   // ====================================================
 
   useEffect(() => {
@@ -248,25 +244,12 @@ export default function App() {
       .scroller {
         white-space: nowrap;
         display: inline-block;
-        animation: scrollText 18s linear infinite;
+        animation: scrollText 12s linear infinite;
       }
 
       .jobhir-location-marker {
         background: transparent !important;
         border: none !important;
-      }
-
-      .jobhir-scrollbar::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      .jobhir-scrollbar::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-
-      .jobhir-scrollbar::-webkit-scrollbar-thumb {
-        background: linear-gradient(#2563eb, #7c3aed);
-        border-radius: 20px;
       }
     `;
 
@@ -319,7 +302,7 @@ export default function App() {
     const fetchJobs = async () => {
       try {
         const res = await axios.get(
-          `${API_URL}/jobs`
+          "https://jbackend-h963.onrender.com/jobs"
         );
 
         const fetchedJobs =
@@ -392,7 +375,7 @@ export default function App() {
         try {
           const res =
             await axios.get(
-              `${API_URL}/applied-jobs/${mobile}`
+              `https://jbackend-h963.onrender.com/applied-jobs/${mobile}`
             );
 
           setAppliedJobs(
@@ -445,7 +428,7 @@ export default function App() {
 
   // ====================================================
   // AVAILABLE JOBS
-  // Applied jobs hidden
+  // Applied jobs ko hide rakhenge
   // ====================================================
 
   const availableJobs =
@@ -458,6 +441,12 @@ export default function App() {
 
   // ====================================================
   // ALL AVAILABLE WORK TYPES
+  // ====================================================
+  //
+  // WORK_TYPES ke saath database me agar koi naya
+  // workType aaye to wo bhi automatically category
+  // me add ho jayega.
+  //
   // ====================================================
 
   const availableWorkTypes =
@@ -607,7 +596,7 @@ export default function App() {
 
       const res =
         await axios.post(
-          `${API_URL}/create-order`,
+          "https://jbackend-h963.onrender.com/create-order",
           {
             amount,
 
@@ -625,6 +614,7 @@ export default function App() {
               selectedJob._id ||
               null,
 
+            // Employer location
             location:
               selectedJob.location ||
               null,
@@ -672,10 +662,8 @@ export default function App() {
   return (
     <div className="
       min-h-screen
-      w-full
-      overflow-x-hidden
-      bg-slate-50
-      text-slate-900
+      bg-gray-100
+      text-black
     ">
 
       {/* =================================================
@@ -693,278 +681,142 @@ export default function App() {
       ================================================= */}
 
       <div className="
-        w-full
+        bg-white
+        py-1
         overflow-hidden
-        bg-gradient-to-r
-        from-blue-700
-        via-indigo-700
-        to-purple-700
-        py-2
-        text-white
-        shadow-sm
       ">
 
         <p className="
           scroller
           text-center
-          text-[11px]
-          sm:text-xs
           font-semibold
-          tracking-wide
+          text-xs
         ">
-          {currentTime} &nbsp; • &nbsp;
-          Find your dream job today!
-          &nbsp; • &nbsp;
+          {currentTime} / Find your dream job today!{" "}
           100% Secure & Safe!
         </p>
 
       </div>
 
       {/* =================================================
-          TOP ACTION / FILTER BAR
+          REGISTER + STATE FILTER
       ================================================= */}
 
-      <section className="
-        w-full
-        px-3
-        sm:px-5
-        lg:px-8
-        xl:px-10
-        pt-4
-        sm:pt-5
+      <div className="
+        max-w-7xl
+        mx-auto
+        px-4
+        mt-4
+        flex
+        justify-end
+        items-center
+        gap-2
       ">
 
-        <div className="
-          w-full
-          rounded-2xl
-          border
-          border-blue-100
-          bg-white
-          p-3
-          sm:p-4
-          shadow-sm
-        ">
+        {/* REGISTER */}
 
-          <div className="
-            flex
-            flex-col
-            gap-3
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-          ">
+        <button
+          onClick={() =>
+            navigate(
+              "/worker-register"
+            )
+          }
+          className="
+            w-32
+            h-10
+            bg-[#9B845E]
+            text-white
+            font-semibold
+            border
+            border-[#9B845E]
+            hover:bg-[#866F4D]
+            transition-colors
+            duration-200
+            focus:outline-none
+          "
+        >
+          Register
+        </button>
 
-            {/* LEFT */}
+        {/* STATE SELECT */}
 
-            <div>
+        <select
+          value={selectedState}
+          onChange={(e) => {
+            setSelectedState(
+              e.target.value
+            );
 
-              <p className="
-                text-[10px]
-                sm:text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-blue-600
-              ">
-                Job Search
-              </p>
+            // State change hone par
+            // category reset
+            setSelectedWorkType(
+              null
+            );
+          }}
+          className="
+            w-40
+            h-10
+            px-3
+            bg-[#E8E0CF]
+            text-[#333333]
+            font-semibold
+            border
+            border-[#D5C9B0]
+            hover:bg-[#DDD3C0]
+            transition-colors
+            duration-200
+            focus:outline-none
+          "
+        >
 
-              <h1 className="
-                mt-0.5
-                text-lg
-                sm:text-xl
-                font-extrabold
-                text-slate-800
-              ">
-                Find Jobs Near You
-              </h1>
+          <option value="All">
+            All India
+          </option>
 
-            </div>
-
-            {/* RIGHT ACTIONS */}
-
-            <div className="
-              flex
-              w-full
-              flex-col
-              gap-2
-              sm:w-auto
-              sm:flex-row
-            ">
-
-              {/* POST JOB */}
-
-              <button
-                type="button"
-                onClick={() =>
-                  navigate("/offer-job")
-                }
-                className="
-                  group
-                  relative
-                  w-full
-                  sm:w-auto
-                  overflow-hidden
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-blue-600
-                  via-indigo-600
-                  to-purple-600
-                  px-5
-                  py-2.5
-                  text-sm
-                  font-bold
-                  text-white
-                  shadow-md
-                  shadow-indigo-200
-                  transition-all
-                  duration-200
-                  hover:-translate-y-0.5
-                  hover:shadow-lg
-                  hover:shadow-indigo-300
-                "
+          {stateList.map(
+            (state) => (
+              <option
+                key={state}
+                value={state}
               >
-                <span className="
-                  relative
-                  z-10
-                ">
-                  + Post a Job
-                </span>
-              </button>
+                {state}
+              </option>
+            )
+          )}
 
-              {/* REGISTER */}
+        </select>
 
-              <button
-                type="button"
-                onClick={() =>
-                  navigate(
-                    "/worker-register"
-                  )
-                }
-                className="
-                  w-full
-                  sm:w-auto
-                  rounded-xl
-                  border
-                  border-indigo-200
-                  bg-indigo-50
-                  px-5
-                  py-2.5
-                  text-sm
-                  font-bold
-                  text-indigo-700
-                  transition
-                  hover:border-indigo-300
-                  hover:bg-indigo-100
-                "
-              >
-                Register as Worker
-              </button>
-
-              {/* STATE SELECT */}
-
-              <select
-                value={selectedState}
-                onChange={(e) => {
-                  setSelectedState(
-                    e.target.value
-                  );
-
-                  setSelectedWorkType(
-                    null
-                  );
-                }}
-                className="
-                  w-full
-                  sm:w-48
-                  rounded-xl
-                  border
-                  border-slate-200
-                  bg-slate-50
-                  px-3
-                  py-2.5
-                  text-sm
-                  font-semibold
-                  text-slate-700
-                  outline-none
-                  transition
-                  focus:border-blue-500
-                  focus:bg-white
-                  focus:ring-4
-                  focus:ring-blue-100
-                "
-              >
-
-                <option value="All">
-                  All India
-                </option>
-
-                {stateList.map(
-                  (state) => (
-                    <option
-                      key={state}
-                      value={state}
-                    >
-                      {state}
-                    </option>
-                  )
-                )}
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
+      </div>
 
       {/* =================================================
           SELECTED STATE INFO
       ================================================= */}
 
-      <section className="
-        w-full
-        px-3
-        sm:px-5
-        lg:px-8
-        xl:px-10
+      <div className="
+        max-w-7xl
+        mx-auto
+        px-4
         mt-3
+        sm:mt-4
       ">
 
         <div className="
-          relative
-          overflow-hidden
-          rounded-2xl
+          bg-white
           border
-          border-blue-100
-          bg-gradient-to-r
-          from-white
-          via-blue-50
-          to-purple-50
-          px-4
-          py-3
+          border-gray-200
+          rounded-xl
           shadow-sm
+          px-3
+          py-2
+          sm:px-4
+          sm:py-3
         ">
-
-          <div className="
-            absolute
-            left-0
-            top-0
-            h-full
-            w-1
-            bg-gradient-to-b
-            from-blue-500
-            to-purple-600
-          " />
 
           <div className="
             flex
             items-center
             justify-between
             gap-3
-            pl-1
           ">
 
             {/* STATE */}
@@ -974,39 +826,32 @@ export default function App() {
               <p className="
                 text-[10px]
                 sm:text-xs
-                font-semibold
-                text-slate-400
+                text-gray-400
+                font-medium
               ">
                 Showing jobs from
               </p>
 
               <div className="
-                mt-0.5
                 flex
                 items-center
-                gap-2
+                gap-1.5
+                mt-0.5
               ">
 
                 <span className="
-                  flex
-                  h-7
-                  w-7
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-lg
-                  bg-white
-                  shadow-sm
+                  text-sm
+                  sm:text-base
                 ">
                   🇮🇳
                 </span>
 
                 <p className="
-                  truncate
+                  font-bold
+                  text-gray-800
                   text-sm
                   sm:text-base
-                  font-extrabold
-                  text-slate-800
+                  truncate
                 ">
                   {selectedState === "All"
                     ? "All India"
@@ -1017,25 +862,25 @@ export default function App() {
 
             </div>
 
-            {/* COUNT */}
+            {/* JOB COUNT */}
 
             <div className="
               flex
-              shrink-0
               items-center
               gap-2
+              shrink-0
             ">
 
               <div className="
                 hidden
-                text-right
                 sm:block
+                text-right
               ">
 
                 <p className="
                   text-xs
-                  font-semibold
-                  text-slate-400
+                  text-gray-400
+                  font-medium
                 ">
                   {selectedWorkType
                     ? selectedWorkType
@@ -1045,27 +890,24 @@ export default function App() {
               </div>
 
               <div className="
-                flex
-                h-10
-                min-w-[44px]
-                items-center
-                justify-center
-                rounded-xl
+                min-w-[38px]
+                h-8
+                sm:h-9
+                px-2.5
+                rounded-lg
+                bg-blue-50
                 border
                 border-blue-100
-                bg-white
-                px-3
-                shadow-sm
+                flex
+                items-center
+                justify-center
               ">
 
                 <span className="
-                  bg-gradient-to-r
-                  from-blue-600
-                  to-purple-600
-                  bg-clip-text
-                  text-base
-                  font-extrabold
-                  text-transparent
+                  font-bold
+                  text-blue-600
+                  text-sm
+                  sm:text-base
                 ">
                   {selectedWorkType
                     ? categoryJobs.length
@@ -1080,20 +922,17 @@ export default function App() {
 
         </div>
 
-      </section>
+      </div>
 
       {/* =================================================
-          MAIN CONTENT
+          CATEGORY / JOB SECTION
       ================================================= */}
 
-      <main className="
-        w-full
-        px-3
-        sm:px-5
-        lg:px-8
-        xl:px-10
-        py-6
-        sm:py-8
+      <div className="
+        max-w-7xl
+        mx-auto
+        mt-6
+        px-4
       ">
 
         {/* =================================================
@@ -1103,52 +942,49 @@ export default function App() {
         {loadingJobs && (
           <div className="
             flex
-            min-h-[300px]
-            items-center
             justify-center
+            items-center
+            py-20
           ">
 
             <div className="relative">
 
               <div className="
-                h-16
                 w-16
+                h-16
                 rounded-full
                 border-4
-                border-indigo-100
+                border-blue-200
               " />
 
               <div className="
                 absolute
-                left-0
                 top-0
-                h-16
+                left-0
                 w-16
-                animate-spin
+                h-16
                 rounded-full
                 border-4
                 border-blue-600
                 border-t-transparent
-                border-r-purple-600
+                animate-spin
               " />
 
               <div className="
                 absolute
                 inset-0
                 flex
-                items-center
                 justify-center
+                items-center
               ">
 
                 <div className="
-                  h-3
                   w-3
-                  animate-pulse
+                  h-3
+                  bg-blue-600
                   rounded-full
-                  bg-gradient-to-r
-                  from-blue-600
-                  to-purple-600
-                />
+                  animate-pulse
+                " />
 
               </div>
 
@@ -1165,59 +1001,32 @@ export default function App() {
           availableJobs.length === 0 && (
 
             <div className="
-              flex
-              min-h-[350px]
-              items-center
-              justify-center
+              text-center
+              py-16
             ">
 
               <div className="
-                w-full
-                max-w-lg
-                rounded-3xl
-                border
-                border-slate-200
-                bg-white
-                px-6
-                py-12
-                text-center
-                shadow-sm
+                text-5xl
+                mb-4
               ">
-
-                <div className="
-                  mx-auto
-                  mb-5
-                  flex
-                  h-16
-                  w-16
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  bg-gradient-to-br
-                  from-blue-100
-                  to-purple-100
-                  text-3xl
-                ">
-                  🔍
-                </div>
-
-                <p className="
-                  text-lg
-                  font-extrabold
-                  text-slate-800
-                ">
-                  No jobs found
-                </p>
-
-                <p className="
-                  mt-1
-                  text-sm
-                  text-slate-500
-                ">
-                  Try selecting another state.
-                </p>
-
+                🔍
               </div>
+
+              <p className="
+                text-lg
+                font-semibold
+                text-gray-700
+              ">
+                No jobs found.
+              </p>
+
+              <p className="
+                text-sm
+                text-gray-500
+                mt-1
+              ">
+                Try selecting another state.
+              </p>
 
             </div>
           )}
@@ -1230,56 +1039,18 @@ export default function App() {
           availableJobs.length > 0 &&
           !selectedWorkType && (
 
-            <section>
+            <div>
 
               {/* TITLE */}
 
               <div className="
-                mb-6
-                flex
-                flex-col
-                items-center
-                justify-center
+                mb-5
                 text-center
               ">
 
-                <span className="
-                  inline-flex
-                  rounded-full
-                  border
-                  border-blue-100
-                  bg-gradient-to-r
-                  from-blue-50
-                  to-purple-50
-                  px-4
-                  py-1.5
-                  text-xs
-                  font-bold
-                  text-indigo-700
-                ">
-                  Explore Opportunities
-                </span>
-
-                <h2 className="
-                  mt-2
-                  text-2xl
-                  font-extrabold
-                  text-slate-800
-                  sm:text-3xl
-                ">
-                  Choose Your Work Category
-                </h2>
-
-                <p className="
-                  mt-1
-                  max-w-2xl
-                  text-xs
-                  text-slate-500
-                  sm:text-sm
-                ">
-                  Select a category to see available
-                  jobs matching your skills.
-                </p>
+              <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-100">
+    Explore Opportunities
+  </span>
 
               </div>
 
@@ -1288,13 +1059,11 @@ export default function App() {
               <div className="
                 grid
                 grid-cols-2
-                gap-3
                 sm:grid-cols-3
                 md:grid-cols-4
                 lg:grid-cols-5
-                xl:grid-cols-6
-                2xl:grid-cols-7
-                sm:gap-4
+                gap-3
+                sm:gap-5
               ">
 
                 {workTypeCategories.map(
@@ -1313,89 +1082,37 @@ export default function App() {
                       }
                       className="
                         group
-                        relative
-                        overflow-hidden
-                        rounded-2xl
-                        border
-                        border-slate-200
                         bg-white
+                        border
+                        border-gray-200
+                        rounded-2xl
                         p-4
+                        sm:p-5
                         text-left
                         shadow-sm
-                        transition-all
-                        duration-300
-                        hover:-translate-y-1
-                        hover:border-indigo-200
                         hover:shadow-xl
-                        hover:shadow-indigo-100
-                        sm:p-5
+                        hover:border-blue-400
+                        hover:-translate-y-1
+                        transition-all
+                        duration-200
                       "
                     >
-
-                      {/* TOP GRADIENT */}
-
-                      <div className="
-                        absolute
-                        left-0
-                        top-0
-                        h-1
-                        w-full
-                        bg-gradient-to-r
-                        from-blue-500
-                        via-indigo-500
-                        to-purple-600
-                        opacity-70
-                        transition
-                        group-hover:opacity-100
-                      " />
-
-                      {/* ICON BOX */}
-
-                      <div className="
-                        mb-4
-                        flex
-                        h-10
-                        w-10
-                        items-center
-                        justify-center
-                        rounded-xl
-                        bg-gradient-to-br
-                        from-blue-50
-                        to-purple-100
-                        text-blue-700
-                        transition
-                        group-hover:from-blue-600
-                        group-hover:to-purple-600
-                        group-hover:text-white
-                      ">
-
-                        <span className="
-                          text-sm
-                          font-extrabold
-                        ">
-                          {workType
-                            .charAt(0)
-                            .toUpperCase()}
-                        </span>
-
-                      </div>
 
                       {/* CATEGORY */}
 
                       <div className="
+                        min-h-[52px]
                         flex
-                        min-h-[48px]
                         items-center
                       ">
 
                         <h3 className="
-                          text-sm
-                          font-extrabold
-                          leading-5
-                          text-slate-800
+                          text-base
+                          sm:text-lg
+                          font-bold
+                          text-gray-800
+                          group-hover:text-blue-600
                           transition
-                          group-hover:text-indigo-700
-                          sm:text-base
                         ">
                           {workType}
                         </h3>
@@ -1405,41 +1122,35 @@ export default function App() {
                       {/* COUNT */}
 
                       <div className="
-                        mt-4
+                        mt-3
                         flex
                         items-center
                         justify-between
-                        border-t
-                        border-slate-100
-                        pt-3
                       ">
 
                         <span className="
-                          text-[11px]
-                          font-medium
-                          text-slate-400
-                          sm:text-xs
+                          text-xs
+                          sm:text-sm
+                          text-gray-500
                         ">
-                          Available
+                          Available Jobs
                         </span>
 
                         <span className="
-                          flex
-                          h-7
                           min-w-[30px]
+                          h-7
+                          px-2
+                          rounded-full
+                          bg-blue-50
+                          text-blue-600
+                          border
+                          border-blue-100
+                          flex
                           items-center
                           justify-center
-                          rounded-full
-                          bg-gradient-to-r
-                          from-blue-50
-                          to-purple-50
-                          px-2
                           text-xs
-                          font-extrabold
-                          text-indigo-700
-                          ring-1
-                          ring-inset
-                          ring-indigo-100
+                          sm:text-sm
+                          font-bold
                         ">
                           {count}
                         </span>
@@ -1447,13 +1158,12 @@ export default function App() {
                       </div>
 
                     </button>
-
                   )
                 )}
 
               </div>
 
-            </section>
+            </div>
           )}
 
         {/* =================================================
@@ -1463,45 +1173,27 @@ export default function App() {
         {!loadingJobs &&
           selectedWorkType && (
 
-            <section>
+            <div>
 
               {/* CATEGORY HEADER */}
 
               <div className="
-                relative
-                mb-6
-                overflow-hidden
-                rounded-2xl
+                bg-white
                 border
-                border-indigo-100
-                bg-gradient-to-r
-                from-blue-600
-                via-indigo-600
-                to-purple-700
+                border-gray-200
+                rounded-2xl
+                shadow-sm
                 p-4
-                shadow-lg
-                shadow-indigo-100
-                sm:p-5
+                mb-6
               ">
 
                 <div className="
-                  absolute
-                  -right-10
-                  -top-10
-                  h-32
-                  w-32
-                  rounded-full
-                  bg-white/10
-                " />
-
-                <div className="
-                  relative
                   flex
                   flex-col
-                  gap-4
                   sm:flex-row
                   sm:items-center
                   sm:justify-between
+                  gap-3
                 ">
 
                   {/* BACK */}
@@ -1515,18 +1207,15 @@ export default function App() {
                     }
                     className="
                       w-fit
-                      rounded-xl
-                      border
-                      border-white/20
-                      bg-white/10
                       px-4
-                      py-2.5
+                      py-2
+                      rounded-lg
+                      bg-gray-100
+                      hover:bg-gray-200
+                      text-gray-700
+                      font-semibold
                       text-sm
-                      font-bold
-                      text-white
-                      backdrop-blur-sm
                       transition
-                      hover:bg-white/20
                     "
                   >
                     ← Back to Categories
@@ -1538,27 +1227,23 @@ export default function App() {
                     flex
                     items-center
                     justify-between
-                    gap-4
-                    sm:justify-end
+                    gap-3
                   ">
 
-                    <div className="text-right">
+                    <div>
 
                       <p className="
-                        text-[10px]
-                        font-semibold
-                        uppercase
-                        tracking-wider
-                        text-blue-100
+                        text-xs
+                        text-gray-400
                       ">
                         Work Category
                       </p>
 
                       <h2 className="
                         text-xl
-                        font-extrabold
-                        text-white
                         sm:text-2xl
+                        font-bold
+                        text-gray-800
                       ">
                         {selectedWorkType}
                       </h2>
@@ -1566,21 +1251,21 @@ export default function App() {
                     </div>
 
                     <div className="
+                      min-w-[45px]
+                      h-10
+                      px-3
+                      rounded-lg
+                      bg-blue-50
+                      border
+                      border-blue-100
                       flex
-                      h-12
-                      min-w-[50px]
                       items-center
                       justify-center
-                      rounded-xl
-                      bg-white
-                      px-3
-                      shadow-md
                     ">
 
                       <span className="
-                        text-lg
-                        font-extrabold
-                        text-indigo-700
+                        text-blue-600
+                        font-bold
                       ">
                         {categoryJobs.length}
                       </span>
@@ -1594,43 +1279,27 @@ export default function App() {
               </div>
 
               {/* =================================================
-                  CATEGORY JOBS EMPTY
+                  CATEGORY JOBS
               ================================================= */}
 
               {categoryJobs.length === 0 && (
 
                 <div className="
-                  rounded-3xl
-                  border
-                  border-slate-200
-                  bg-white
-                  px-6
-                  py-16
                   text-center
-                  shadow-sm
+                  py-16
                 ">
 
                   <div className="
-                    mx-auto
+                    text-5xl
                     mb-4
-                    flex
-                    h-16
-                    w-16
-                    items-center
-                    justify-center
-                    rounded-2xl
-                    bg-gradient-to-br
-                    from-blue-100
-                    to-purple-100
-                    text-3xl
                   ">
                     🔍
                   </div>
 
                   <p className="
                     text-lg
-                    font-extrabold
-                    text-slate-800
+                    font-semibold
+                    text-gray-700
                   ">
                     No jobs found in this category.
                   </p>
@@ -1643,20 +1312,14 @@ export default function App() {
                       )
                     }
                     className="
-                      mt-5
-                      rounded-xl
-                      bg-gradient-to-r
-                      from-blue-600
-                      to-purple-600
+                      mt-4
                       px-5
-                      py-2.5
-                      text-sm
-                      font-bold
+                      py-2
+                      bg-blue-600
                       text-white
-                      shadow-md
-                      transition
-                      hover:-translate-y-0.5
-                      hover:shadow-lg
+                      rounded-lg
+                      font-semibold
+                      hover:bg-blue-700
                     "
                   >
                     Back to Categories
@@ -1674,319 +1337,153 @@ export default function App() {
                 <div className="
                   grid
                   grid-cols-1
-                  gap-4
                   sm:grid-cols-2
-                  lg:grid-cols-3
-                  xl:grid-cols-4
-                  2xl:grid-cols-5
+                  md:grid-cols-3
+                  lg:grid-cols-4
+                  gap-7
                 ">
 
                   {categoryJobs.map(
                     (job) => (
 
-                      <article
+                      <div
                         key={job._id}
                         className="
-                          group
                           relative
-                          overflow-hidden
                           rounded-2xl
-                          border
-                          border-slate-200
-                          bg-white
-                          shadow-sm
+                          p-1
+                          shadow-2xl
+                          hover:scale-105
                           transition-all
                           duration-300
-                          hover:-translate-y-1
-                          hover:border-indigo-200
-                          hover:shadow-xl
-                          hover:shadow-indigo-100
                         "
                       >
 
-                        {/* TOP GRADIENT */}
-
                         <div className="
-                          h-1.5
-                          w-full
-                          bg-gradient-to-r
-                          from-blue-500
-                          via-indigo-500
-                          to-purple-600
-                        " />
-
-                        <div className="
-                          flex
-                          h-full
-                          flex-col
+                          bg-white
+                          rounded-2xl
                           p-5
+                          flex
+                          flex-col
+                          justify-between
+                          h-full
                         ">
 
                           {/* TITLE */}
 
-                          <div className="
-                            flex
-                            items-start
-                            justify-between
-                            gap-3
+                          <h2 className="
+                            text-xl
+                            font-bold
+                            mb-2
+                            text-gray-900
                           ">
-
-                            <h2 className="
-                              line-clamp-2
-                              text-lg
-                              font-extrabold
-                              leading-6
-                              text-slate-900
-                              transition
-                              group-hover:text-indigo-700
-                            ">
-                              {job.title}
-                            </h2>
-
-                            <span className="
-                              shrink-0
-                              rounded-lg
-                              bg-gradient-to-r
-                              from-blue-50
-                              to-purple-50
-                              px-2
-                              py-1
-                              text-[10px]
-                              font-bold
-                              text-indigo-700
-                              ring-1
-                              ring-inset
-                              ring-indigo-100
-                            ">
-                              JOB
-                            </span>
-
-                          </div>
+                            {job.title}
+                          </h2>
 
                           {/* DESCRIPTION */}
 
                           <p className="
-                            mt-3
-                            line-clamp-3
-                            min-h-[60px]
-                            text-sm
-                            leading-5
-                            text-slate-500
+                            text-gray-700
+                            mb-4
                           ">
-                            {job.description ||
-                              "No description available."}
+                            {job.description}
                           </p>
 
                           {/* DETAILS */}
 
-                          <div className="
-                            mt-4
-                            space-y-2
+                          <ul className="
+                            text-black
+                            mb-4
+                            space-y-1
+                            text-sm
                           ">
 
                             {/* PRICE */}
 
-                            <div className="
-                              flex
-                              items-center
-                              justify-between
-                              rounded-xl
-                              bg-emerald-50
-                              px-3
-                              py-2
-                            ">
-
-                              <span className="
-                                text-xs
-                                font-semibold
-                                text-emerald-700
+                            <li>
+                              <strong className="
+                                text-green-500
                               ">
-                                Job Amount
-                              </span>
+                                Price:
+                              </strong>{" "}
+                              {job.amount} ₹
+                            </li>
 
-                              <span className="
-                                text-sm
-                                font-extrabold
-                                text-emerald-600
-                              ">
-                                ₹{job.amount}
-                              </span>
-
-                            </div>
-
-                            {/* WORK */}
+                            {/* WORK TYPE */}
 
                             {job.workType && (
-                              <div className="
-                                flex
-                                items-center
-                                gap-2
-                                rounded-lg
-                                bg-blue-50/70
-                                px-3
-                                py-2
-                              ">
-
-                                <span className="
-                                  text-[11px]
-                                  font-bold
+                              <li>
+                                <strong className="
                                   text-blue-600
                                 ">
-                                  Work
-                                </span>
-
-                                <span className="
-                                  truncate
-                                  text-xs
-                                  font-semibold
-                                  text-slate-700
-                                ">
-                                  {job.workType}
-                                </span>
-
-                              </div>
+                                  Work:
+                                </strong>{" "}
+                                {job.workType}
+                              </li>
                             )}
 
                             {/* STATE */}
 
-                            <div className="
-                              flex
-                              items-center
-                              gap-2
-                              rounded-lg
-                              bg-purple-50/70
-                              px-3
-                              py-2
-                            ">
-
-                              <span className="
-                                text-[11px]
-                                font-bold
-                                text-purple-600
+                            <li>
+                              <strong className="
+                                text-purple-700
                               ">
-                                State
-                              </span>
-
-                              <span className="
-                                truncate
-                                text-xs
-                                font-semibold
-                                text-slate-700
-                              ">
-                                {job.state ||
-                                  job.location?.state ||
-                                  "India"}
-                              </span>
-
-                            </div>
+                                State:
+                              </strong>{" "}
+                              {job.state ||
+                                job.location?.state ||
+                                "India"}
+                            </li>
 
                             {/* DISTRICT */}
 
                             {job.district && (
-                              <div className="
-                                flex
-                                items-center
-                                gap-2
-                                rounded-lg
-                                bg-indigo-50/70
-                                px-3
-                                py-2
-                              ">
-
-                                <span className="
-                                  text-[11px]
-                                  font-bold
-                                  text-indigo-600
+                              <li>
+                                <strong className="
+                                  text-fuchsia-700
                                 ">
-                                  District
-                                </span>
-
-                                <span className="
-                                  truncate
-                                  text-xs
-                                  font-semibold
-                                  text-slate-700
-                                ">
-                                  {job.district}
-                                </span>
-
-                              </div>
+                                  District:
+                                </strong>{" "}
+                                {job.district}
+                              </li>
                             )}
 
                             {/* LOCATION */}
 
                             {job.location?.address && (
-                              <div className="
-                                rounded-lg
-                                bg-slate-50
-                                px-3
-                                py-2
-                              ">
-
-                                <p className="
-                                  text-[10px]
-                                  font-bold
-                                  text-slate-400
+                              <li>
+                                <strong className="
+                                  text-red-500
                                 ">
-                                  📍 Location
-                                </p>
-
-                                <p className="
-                                  mt-0.5
-                                  line-clamp-2
-                                  text-xs
-                                  font-medium
-                                  leading-4
-                                  text-slate-600
-                                ">
-                                  {job.location.address}
-                                </p>
-
-                              </div>
+                                  📍 Location:
+                                </strong>{" "}
+                                {job.location.address}
+                              </li>
                             )}
 
                             {/* POSTED */}
 
                             {job.createdAt && (
-                              <div className="
-                                flex
-                                items-center
-                                justify-between
-                                pt-1
-                              ">
-
-                                <span className="
-                                  text-[10px]
-                                  font-medium
-                                  text-slate-400
-                                ">
-                                  Posted
-                                </span>
-
-                                <span className="
-                                  text-[10px]
-                                  font-semibold
-                                  text-slate-500
-                                ">
-                                  {formatDistanceToNow(
-                                    new Date(
-                                      job.createdAt
-                                    ),
-                                    {
-                                      addSuffix: true,
-                                    }
-                                  )}
-                                </span>
-
-                              </div>
+                              <li>
+                                <strong>
+                                  Posted:
+                                </strong>{" "}
+                                {formatDistanceToNow(
+                                  new Date(
+                                    job.createdAt
+                                  ),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </li>
                             )}
 
-                          </div>
+                          </ul>
 
                           {/* APPLY */}
 
                           <button
-                            type="button"
                             onClick={() => {
 
                               setSelectedJob(
@@ -2005,24 +1502,14 @@ export default function App() {
 
                             }}
                             className="
-                              mt-5
                               w-full
-                              rounded-xl
-                              bg-gradient-to-r
-                              from-blue-600
-                              via-indigo-600
-                              to-purple-600
-                              py-3
-                              text-sm
-                              font-extrabold
+                              bg-blue-600
                               text-white
-                              shadow-md
-                              shadow-indigo-100
-                              transition-all
-                              duration-200
-                              hover:-translate-y-0.5
-                              hover:shadow-lg
-                              hover:shadow-indigo-200
+                              py-2
+                              rounded-lg
+                              font-semibold
+                              hover:bg-gray-800
+                              transition
                             "
                           >
                             Apply Now
@@ -2030,7 +1517,7 @@ export default function App() {
 
                         </div>
 
-                      </article>
+                      </div>
 
                     )
                   )}
@@ -2038,10 +1525,10 @@ export default function App() {
                 </div>
               )}
 
-            </section>
+            </div>
           )}
 
-      </main>
+      </div>
 
       {/* =================================================
           APPLY MODAL
@@ -2052,944 +1539,581 @@ export default function App() {
           className="
             fixed
             inset-0
-            z-50
+            bg-black/50
             flex
             items-center
             justify-center
+            z-50
+            px-4
+            py-6
             overflow-y-auto
-            bg-slate-950/70
-            px-3
-            py-5
-            backdrop-blur-sm
-            sm:px-5
           "
           onClick={handleCloseModal}
         >
 
           <div
             className="
-              relative
-              max-h-[94vh]
-              w-full
-              max-w-2xl
-              overflow-y-auto
-              rounded-3xl
-              border
-              border-white/20
               bg-white
+              rounded-xl
               shadow-2xl
-              jobhir-scrollbar
+              p-5
+              w-full
+              max-w-md
+              relative
+              max-h-[90vh]
+              overflow-y-auto
             "
             onClick={(e) =>
               e.stopPropagation()
             }
           >
 
-            {/* =================================================
-                MODAL HEADER
-            ================================================= */}
+            {/* CLOSE */}
 
-            <div className="
-              sticky
-              top-0
-              z-10
-              bg-gradient-to-r
-              from-blue-700
-              via-indigo-700
-              to-purple-700
-              px-5
-              py-5
-              text-white
-              shadow-md
-              sm:px-6
-            ">
-
-              <button
-                type="button"
-                onClick={
-                  handleCloseModal
-                }
-                className="
-                  absolute
-                  right-4
-                  top-4
-                  flex
-                  h-8
-                  w-8
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white/10
-                  text-lg
-                  text-white
-                  backdrop-blur
-                  transition
-                  hover:bg-white/20
-                "
-              >
-                ✕
-              </button>
-
-              <p className="
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-widest
-                text-blue-100
-              ">
-                Job Application
-              </p>
-
-              <h2 className="
-                mt-1
-                pr-10
+            <button
+              onClick={
+                handleCloseModal
+              }
+              className="
+                absolute
+                top-3
+                right-3
+                text-black
+                hover:text-gray-700
                 text-xl
-                font-extrabold
-                sm:text-2xl
-              ">
-                Apply for {selectedJob.title}
-              </h2>
+              "
+            >
+              ✕
+            </button>
+
+            {/* TITLE */}
+
+            <h2 className="
+              text-2xl
+              font-bold
+              text-center
+              mb-5
+              text-black
+              pr-6
+            ">
+              Apply for{" "}
+              {selectedJob.title}
+            </h2>
+
+            <div className="grid gap-4">
+
+              {/* NAME */}
+
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) =>
+                  setCustomerName(
+                    e.target.value
+                  )
+                }
+                placeholder="Your Name"
+                className="
+                  p-3
+                  border
+                  border-gray-300
+                  rounded-lg
+                  w-full
+                  focus:outline-none
+                  focus:border-blue-500
+                "
+              />
+
+              {/* MOBILE */}
+
+              <input
+                type="tel"
+                value={mobileNumber}
+                onChange={(e) =>
+                  setMobileNumber(
+                    e.target.value
+                      .replace(
+                        /\D/g,
+                        ""
+                      )
+                      .slice(
+                        0,
+                        10
+                      )
+                  )
+                }
+                placeholder="Mobile Number"
+                maxLength={10}
+                inputMode="numeric"
+                className="
+                  p-3
+                  border
+                  border-gray-300
+                  rounded-lg
+                  w-full
+                  focus:outline-none
+                  focus:border-blue-500
+                "
+              />
+
+              {/* EMAIL */}
+
+              <input
+                type="email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(
+                    e.target.value
+                  )
+                }
+                placeholder="Email (Optional)"
+                className="
+                  p-3
+                  border
+                  border-gray-300
+                  rounded-lg
+                  w-full
+                  focus:outline-none
+                  focus:border-blue-500
+                "
+              />
+
+              {/* =================================================
+                  EMPLOYER LOCATION
+              ================================================= */}
 
               <div className="
-                mt-3
-                inline-flex
-                items-center
-                rounded-lg
-                bg-white/10
-                px-3
-                py-1.5
-                text-xs
-                font-semibold
-                backdrop-blur-sm
+                border
+                border-gray-200
+                rounded-xl
+                p-3
+                bg-gray-50
               ">
-                Application Fee: ₹
-                {amountInRupees || 0}
-              </div>
-
-            </div>
-
-            {/* =================================================
-                MODAL BODY
-            ================================================= */}
-
-            <div className="p-5 sm:p-6">
-
-              <div className="grid gap-4">
-
-                {/* NAME */}
-
-                <div>
-
-                  <label className="
-                    mb-1.5
-                    block
-                    text-xs
-                    font-bold
-                    text-slate-600
-                  ">
-                    Your Name
-                  </label>
-
-                  <input
-                    type="text"
-                    value={customerName}
-                    onChange={(e) =>
-                      setCustomerName(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter your name"
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-slate-200
-                      bg-slate-50
-                      p-3
-                      text-sm
-                      text-slate-800
-                      outline-none
-                      transition
-                      placeholder:text-slate-400
-                      focus:border-blue-500
-                      focus:bg-white
-                      focus:ring-4
-                      focus:ring-blue-100
-                    "
-                  />
-
-                </div>
-
-                {/* MOBILE */}
-
-                <div>
-
-                  <label className="
-                    mb-1.5
-                    block
-                    text-xs
-                    font-bold
-                    text-slate-600
-                  ">
-                    Mobile Number
-                  </label>
-
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) =>
-                      setMobileNumber(
-                        e.target.value
-                          .replace(
-                            /\D/g,
-                            ""
-                          )
-                          .slice(
-                            0,
-                            10
-                          )
-                      )
-                    }
-                    placeholder="10 digit mobile number"
-                    maxLength={10}
-                    inputMode="numeric"
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-slate-200
-                      bg-slate-50
-                      p-3
-                      text-sm
-                      text-slate-800
-                      outline-none
-                      transition
-                      placeholder:text-slate-400
-                      focus:border-blue-500
-                      focus:bg-white
-                      focus:ring-4
-                      focus:ring-blue-100
-                    "
-                  />
-
-                </div>
-
-                {/* EMAIL */}
-
-                <div>
-
-                  <label className="
-                    mb-1.5
-                    block
-                    text-xs
-                    font-bold
-                    text-slate-600
-                  ">
-                    Email
-                    <span className="
-                      ml-1
-                      font-normal
-                      text-slate-400
-                    ">
-                      (Optional)
-                    </span>
-                  </label>
-
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) =>
-                      setEmail(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter your email"
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-slate-200
-                      bg-slate-50
-                      p-3
-                      text-sm
-                      text-slate-800
-                      outline-none
-                      transition
-                      placeholder:text-slate-400
-                      focus:border-blue-500
-                      focus:bg-white
-                      focus:ring-4
-                      focus:ring-blue-100
-                    "
-                  />
-
-                </div>
-
-                {/* =================================================
-                    EMPLOYER LOCATION
-                ================================================= */}
 
                 <div className="
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                  border-indigo-100
-                  bg-gradient-to-br
-                  from-blue-50
-                  to-purple-50
+                  flex
+                  items-start
+                  gap-3
                 ">
 
-                  {/* LOCATION HEADER */}
-
                   <div className="
-                    flex
-                    items-start
-                    gap-3
-                    border-b
-                    border-indigo-100
-                    px-4
-                    py-3
+                    text-red-500
+                    text-xl
                   ">
+                    📍
+                  </div>
 
-                    <div className="
-                      flex
-                      h-10
-                      w-10
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-gradient-to-br
-                      from-blue-600
-                      to-purple-600
-                      text-lg
-                      text-white
-                      shadow-sm
+                  <div className="min-w-0">
+
+                    <p className="
+                      font-semibold
+                      text-gray-800
+                      text-sm
                     ">
-                      📍
-                    </div>
+                      Job Location
+                    </p>
 
-                    <div className="min-w-0">
-
-                      <p className="
-                        text-sm
-                        font-extrabold
-                        text-slate-800
-                      ">
-                        Job Location
-                      </p>
-
-                      <p className="
-                        mt-0.5
-                        text-xs
-                        text-slate-500
-                      ">
-                        Location provided by the job poster
-                      </p>
-
-                    </div>
+                    <p className="
+                      text-xs
+                      text-gray-500
+                      mt-1
+                    ">
+                      Location provided by the job poster
+                    </p>
 
                   </div>
 
-                  <div className="p-3">
+                </div>
 
-                    {/* ADDRESS */}
+                {/* ADDRESS */}
 
+                <div className="
+                  mt-3
+                  bg-white
+                  rounded-lg
+                  p-3
+                  border
+                  border-gray-100
+                ">
+
+                  <p className="
+                    text-xs
+                    text-gray-400
+                    mb-1
+                  ">
+                    Address
+                  </p>
+
+                  <p className="
+                    text-sm
+                    font-medium
+                    text-gray-700
+                    leading-5
+                  ">
+                    {selectedJob.location?.address ||
+                      "Location provided by employer"}
+                  </p>
+
+                </div>
+
+                {/* LOCATION DETAILS */}
+
+                <div className="
+                  grid
+                  grid-cols-2
+                  gap-2
+                  mt-3
+                ">
+
+                  {/* VILLAGE */}
+
+                  {selectedJob.location?.village && (
                     <div className="
-                      rounded-xl
-                      border
-                      border-slate-100
                       bg-white
-                      p-3
+                      rounded-lg
+                      p-2
                     ">
 
                       <p className="
                         text-[10px]
-                        font-bold
-                        uppercase
-                        tracking-wider
-                        text-slate-400
+                        text-gray-400
                       ">
-                        Address
+                        Village
                       </p>
 
                       <p className="
-                        mt-1
-                        text-sm
-                        font-semibold
-                        leading-5
-                        text-slate-700
+                        text-xs
+                        font-medium
+                        text-gray-700
                       ">
-                        {selectedJob.location?.address ||
-                          "Location provided by employer"}
+                        {
+                          selectedJob
+                            .location
+                            .village
+                        }
                       </p>
 
                     </div>
+                  )}
 
-                    {/* LOCATION DETAILS */}
+                  {/* LOCALITY */}
 
+                  {selectedJob.location?.locality && (
                     <div className="
-                      mt-3
-                      grid
-                      grid-cols-2
-                      gap-2
+                      bg-white
+                      rounded-lg
+                      p-2
                     ">
 
-                      {/* VILLAGE */}
+                      <p className="
+                        text-[10px]
+                        text-gray-400
+                      ">
+                        Locality / Mohalla
+                      </p>
 
-                      {selectedJob.location?.village && (
-                        <div className="
-                          rounded-xl
-                          border
-                          border-slate-100
-                          bg-white
-                          p-3
-                        ">
-
-                          <p className="
-                            text-[10px]
-                            font-bold
-                            text-slate-400
-                          ">
-                            Village
-                          </p>
-
-                          <p className="
-                            mt-1
-                            truncate
-                            text-xs
-                            font-semibold
-                            text-slate-700
-                          ">
-                            {
-                              selectedJob
-                                .location
-                                .village
-                            }
-                          </p>
-
-                        </div>
-                      )}
-
-                      {/* LOCALITY */}
-
-                      {selectedJob.location?.locality && (
-                        <div className="
-                          rounded-xl
-                          border
-                          border-slate-100
-                          bg-white
-                          p-3
-                        ">
-
-                          <p className="
-                            text-[10px]
-                            font-bold
-                            text-slate-400
-                          ">
-                            Locality / Mohalla
-                          </p>
-
-                          <p className="
-                            mt-1
-                            truncate
-                            text-xs
-                            font-semibold
-                            text-slate-700
-                          ">
-                            {
-                              selectedJob
-                                .location
-                                .locality
-                            }
-                          </p>
-
-                        </div>
-                      )}
-
-                      {/* STATE */}
-
-                      {(selectedJob.location?.state ||
-                        selectedJob.state) && (
-                        <div className="
-                          rounded-xl
-                          border
-                          border-slate-100
-                          bg-white
-                          p-3
-                        ">
-
-                          <p className="
-                            text-[10px]
-                            font-bold
-                            text-slate-400
-                          ">
-                            State
-                          </p>
-
-                          <p className="
-                            mt-1
-                            truncate
-                            text-xs
-                            font-semibold
-                            text-slate-700
-                          ">
-                            {selectedJob.location?.state ||
-                              selectedJob.state}
-                          </p>
-
-                        </div>
-                      )}
-
-                      {/* DISTRICT */}
-
-                      {(selectedJob.location?.district ||
-                        selectedJob.district) && (
-                        <div className="
-                          rounded-xl
-                          border
-                          border-slate-100
-                          bg-white
-                          p-3
-                        ">
-
-                          <p className="
-                            text-[10px]
-                            font-bold
-                            text-slate-400
-                          ">
-                            District
-                          </p>
-
-                          <p className="
-                            mt-1
-                            truncate
-                            text-xs
-                            font-semibold
-                            text-slate-700
-                          ">
-                            {selectedJob.location?.district ||
-                              selectedJob.district}
-                          </p>
-
-                        </div>
-                      )}
-
-                      {/* PIN */}
-
-                      {selectedJob.location?.postcode && (
-                        <div className="
-                          rounded-xl
-                          border
-                          border-slate-100
-                          bg-white
-                          p-3
-                        ">
-
-                          <p className="
-                            text-[10px]
-                            font-bold
-                            text-slate-400
-                          ">
-                            PIN
-                          </p>
-
-                          <p className="
-                            mt-1
-                            text-xs
-                            font-semibold
-                            text-slate-700
-                          ">
-                            {
-                              selectedJob
-                                .location
-                                .postcode
-                            }
-                          </p>
-
-                        </div>
-                      )}
+                      <p className="
+                        text-xs
+                        font-medium
+                        text-gray-700
+                      ">
+                        {
+                          selectedJob
+                            .location
+                            .locality
+                        }
+                      </p>
 
                     </div>
+                  )}
 
-                    {/* =================================================
-                        MAP
-                    ================================================= */}
+                  {/* STATE */}
 
-                    {selectedJob.location?.latitude != null &&
-                      selectedJob.location?.longitude != null && (
+                  {(selectedJob.location?.state ||
+                    selectedJob.state) && (
+                    <div className="
+                      bg-white
+                      rounded-lg
+                      p-2
+                    ">
 
-                        <div className="
-                          mt-3
-                          overflow-hidden
-                          rounded-2xl
-                          border
-                          border-indigo-100
-                          bg-white
-                          p-1
-                        ">
+                      <p className="
+                        text-[10px]
+                        text-gray-400
+                      ">
+                        State
+                      </p>
 
-                          <div className="
-                            h-56
-                            w-full
-                            overflow-hidden
-                            rounded-xl
-                            sm:h-64
-                          ">
+                      <p className="
+                        text-xs
+                        font-medium
+                        text-gray-700
+                      ">
+                        {selectedJob.location?.state ||
+                          selectedJob.state}
+                      </p>
 
-                            <MapContainer
-                              center={[
-                                Number(
-                                  selectedJob
-                                    .location
-                                    .latitude
-                                ),
-                                Number(
-                                  selectedJob
-                                    .location
-                                    .longitude
-                                ),
-                              ]}
-                              zoom={16}
-                              scrollWheelZoom={false}
-                              className="
-                                h-full
-                                w-full
-                              "
-                            >
+                    </div>
+                  )}
 
-                              <TileLayer
-                                attribution="&copy; OpenStreetMap contributors"
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                              />
+                  {/* DISTRICT */}
 
-                              <MapCenter
-                                position={[
-                                  Number(
-                                    selectedJob
-                                      .location
-                                      .latitude
-                                  ),
-                                  Number(
-                                    selectedJob
-                                      .location
-                                      .longitude
-                                  ),
-                                ]}
-                              />
+                  {(selectedJob.location?.district ||
+                    selectedJob.district) && (
+                    <div className="
+                      bg-white
+                      rounded-lg
+                      p-2
+                    ">
 
-                              <Marker
-                                position={[
-                                  Number(
-                                    selectedJob
-                                      .location
-                                      .latitude
-                                  ),
-                                  Number(
-                                    selectedJob
-                                      .location
-                                      .longitude
-                                  ),
-                                ]}
-                                icon={
-                                  locationIcon
-                                }
-                              >
+                      <p className="
+                        text-[10px]
+                        text-gray-400
+                      ">
+                        District
+                      </p>
 
-                                <Popup>
+                      <p className="
+                        text-xs
+                        font-medium
+                        text-gray-700
+                      ">
+                        {selectedJob.location?.district ||
+                          selectedJob.district}
+                      </p>
 
-                                  <strong>
-                                    Job Location
-                                  </strong>
+                    </div>
+                  )}
 
-                                  <br />
+                  {/* PIN */}
 
-                                  {selectedJob
-                                    .location
-                                    ?.address ||
-                                    "Job Location"}
+                  {selectedJob.location?.postcode && (
+                    <div className="
+                      bg-white
+                      rounded-lg
+                      p-2
+                    ">
 
-                                </Popup>
+                      <p className="
+                        text-[10px]
+                        text-gray-400
+                      ">
+                        PIN
+                      </p>
 
-                              </Marker>
+                      <p className="
+                        text-xs
+                        font-medium
+                        text-gray-700
+                      ">
+                        {
+                          selectedJob
+                            .location
+                            .postcode
+                        }
+                      </p>
 
-                            </MapContainer>
-
-                          </div>
-
-                        </div>
-                      )}
-
-                  </div>
+                    </div>
+                  )}
 
                 </div>
 
                 {/* =================================================
-                    APPLICATION FEE
+                    MAP
                 ================================================= */}
 
-                <div>
+                {selectedJob.location?.latitude != null &&
+                  selectedJob.location?.longitude != null && (
 
-                  <label className="
-                    mb-1.5
-                    block
-                    text-xs
-                    font-bold
-                    text-slate-600
-                  ">
-                    Application Fee
-                  </label>
-
-                  <div className="
-                    relative
-                  ">
-
-                    <span className="
-                      absolute
-                      left-3
-                      top-1/2
-                      -translate-y-1/2
-                      font-bold
-                      text-slate-500
-                    ">
-                      ₹
-                    </span>
-
-                    <input
-                      type="number"
-                      value={
-                        amountInRupees
-                      }
-                      onChange={(e) =>
-                        setAmountInRupees(
-                          e.target.value
-                        )
-                      }
-                      min="1"
-                      placeholder="Application Fee"
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-200
-                        bg-slate-50
-                        p-3
-                        pl-8
-                        text-sm
-                        font-semibold
-                        text-slate-800
-                        outline-none
-                        transition
-                        focus:border-blue-500
-                        focus:bg-white
-                        focus:ring-4
-                        focus:ring-blue-100
-                      "
-                    />
-
-                  </div>
-
-                </div>
-
-                {/* NOTE */}
-
-                <div>
-
-                  <label className="
-                    mb-1.5
-                    block
-                    text-xs
-                    font-bold
-                    text-slate-600
-                  ">
-                    Note
-                  </label>
-
-                  <input
-                    type="text"
-                    value={note}
-                    onChange={(e) =>
-                      setNote(
-                        e.target.value
-                      )
-                    }
-                    placeholder="Note"
-                    className="
-                      w-full
+                    <div className="
+                      mt-3
+                      overflow-hidden
                       rounded-xl
                       border
-                      border-slate-200
-                      bg-slate-50
-                      p-3
-                      text-sm
-                      text-slate-800
-                      outline-none
-                      transition
-                      focus:border-blue-500
-                      focus:bg-white
-                      focus:ring-4
-                      focus:ring-blue-100
-                    "
-                  />
+                      border-gray-200
+                    ">
 
-                </div>
+                      <div className="
+                        h-52
+                        w-full
+                      ">
+
+                        <MapContainer
+                          center={[
+                            Number(
+                              selectedJob
+                                .location
+                                .latitude
+                            ),
+                            Number(
+                              selectedJob
+                                .location
+                                .longitude
+                            ),
+                          ]}
+                          zoom={16}
+                          scrollWheelZoom={false}
+                          className="
+                            h-full
+                            w-full
+                          "
+                        >
+
+                          <TileLayer
+                            attribution="&copy; OpenStreetMap contributors"
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                          />
+
+                          <MapCenter
+                            position={[
+                              Number(
+                                selectedJob
+                                  .location
+                                  .latitude
+                              ),
+                              Number(
+                                selectedJob
+                                  .location
+                                  .longitude
+                              ),
+                            ]}
+                          />
+
+                          <Marker
+                            position={[
+                              Number(
+                                selectedJob
+                                  .location
+                                  .latitude
+                              ),
+                              Number(
+                                selectedJob
+                                  .location
+                                  .longitude
+                              ),
+                            ]}
+                            icon={
+                              locationIcon
+                            }
+                          >
+
+                            <Popup>
+
+                              <strong>
+                                Job Location
+                              </strong>
+
+                              <br />
+
+                              {selectedJob
+                                .location
+                                ?.address ||
+                                "Job Location"}
+
+                            </Popup>
+
+                          </Marker>
+
+                        </MapContainer>
+
+                      </div>
+
+                    </div>
+                  )}
 
               </div>
 
               {/* =================================================
-                  ERROR
+                  APPLICATION FEE
               ================================================= */}
 
-              {error && (
-                <div className="
-                  mt-4
-                  rounded-xl
-                  border
-                  border-red-100
-                  bg-red-50
-                  px-4
-                  py-3
-                  text-sm
-                  font-medium
-                  text-red-600
-                ">
-                  {error}
-                </div>
-              )}
-
-              {/* =================================================
-                  PAYMENT INFO
-              ================================================= */}
-
-              <div className="
-                mt-5
-                rounded-2xl
-                border
-                border-amber-100
-                bg-amber-50
-                p-3
-              ">
-
-                <div className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-3
-                ">
-
-                  <div>
-
-                    <p className="
-                      text-xs
-                      font-bold
-                      text-amber-800
-                    ">
-                      Secure Application
-                    </p>
-
-                    <p className="
-                      mt-0.5
-                      text-[11px]
-                      text-amber-700
-                    ">
-                      You will be redirected to the
-                      secure payment page.
-                    </p>
-
-                  </div>
-
-                  <span className="
-                    shrink-0
-                    rounded-lg
-                    bg-white
-                    px-2
-                    py-1
-                    text-xs
-                    font-extrabold
-                    text-amber-700
-                    shadow-sm
-                  ">
-                    ₹{amountInRupees || 0}
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* =================================================
-                  PAY & APPLY
-              ================================================= */}
-
-              <button
-                type="button"
-                onClick={
-                  createOrder
+              <input
+                type="number"
+                value={
+                  amountInRupees
                 }
-                disabled={loading}
+                onChange={(e) =>
+                  setAmountInRupees(
+                    e.target.value
+                  )
+                }
+                min="1"
+                placeholder="Application Fee"
                 className="
-                  mt-5
-                  flex
+                  p-3
+                  border
+                  border-gray-300
+                  rounded-lg
                   w-full
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-2xl
-                  bg-gradient-to-r
-                  from-blue-600
-                  via-indigo-600
-                  to-purple-600
-                  py-3.5
-                  text-sm
-                  font-extrabold
-                  text-white
-                  shadow-lg
-                  shadow-indigo-200
-                  transition-all
-                  duration-200
-                  hover:-translate-y-0.5
-                  hover:shadow-xl
-                  hover:shadow-indigo-300
-                  disabled:cursor-not-allowed
-                  disabled:opacity-60
-                  disabled:hover:translate-y-0
+                  focus:outline-none
+                  focus:border-blue-500
                 "
-              >
+              />
 
-                {loading ? (
-                  <>
-                    <span className="
-                      h-4
-                      w-4
-                      animate-spin
-                      rounded-full
-                      border-2
-                      border-white/40
-                      border-t-white
-                    " />
+              {/* NOTE */}
 
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Pay ₹
-                    {amountInRupees || 0}
-                    &nbsp; & Apply
-                  </>
-                )}
-
-              </button>
-
-              <p className="
-                mt-3
-                text-center
-                text-[10px]
-                text-slate-400
-              ">
-                By continuing, you agree to proceed
-                with this job application.
-              </p>
+              <input
+                type="text"
+                value={note}
+                onChange={(e) =>
+                  setNote(
+                    e.target.value
+                  )
+                }
+                placeholder="Note"
+                className="
+                  p-3
+                  border
+                  border-gray-300
+                  rounded-lg
+                  w-full
+                  focus:outline-none
+                  focus:border-blue-500
+                "
+              />
 
             </div>
+
+            {/* ERROR */}
+
+            {error && (
+              <p className="
+                text-red-600
+                mt-2
+                text-sm
+              ">
+                {error}
+              </p>
+            )}
+
+            {/* =================================================
+                PAY & APPLY
+            ================================================= */}
+
+            <button
+              onClick={
+                createOrder
+              }
+              disabled={loading}
+              className="
+                mt-6
+                w-full
+                bg-yellow-400
+                hover:bg-yellow-500
+                disabled:opacity-60
+                disabled:cursor-not-allowed
+                text-black
+                font-semibold
+                py-3
+                rounded-lg
+                shadow-md
+                transition-all
+              "
+            >
+              {loading
+                ? "Processing..."
+                : "Pay & Apply"}
+            </button>
 
           </div>
 
