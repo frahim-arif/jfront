@@ -807,7 +807,7 @@ export default function Header() {
                   lg:text-sm
                 "
               >
-                Offer Job
+                Job Post
               </Link>
             </nav>
           </div>
