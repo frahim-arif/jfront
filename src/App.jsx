@@ -115,6 +115,41 @@ const INDIA_STATES = [
 ];
 
 // ======================================================
+// JOB WORK TYPES / CATEGORIES
+// ======================================================
+
+const WORK_TYPES = [
+  "Mason",
+  "Carpenter",
+  "Painter",
+  "Electrician",
+  "Plumber",
+  "Gardener",
+  "Cleaner",
+  "Welder",
+  "Driver",
+  "Construction Worker",
+  "Helper",
+  "AC Technician",
+  "Mechanic",
+  "Tiles Worker",
+  "Furniture Worker",
+  "Home Care",
+  "Graphic Designer",
+  "Other",
+];
+
+// ======================================================
+// NORMALIZE WORK TYPE
+// ======================================================
+
+const normalizeWorkType = (value) => {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+};
+
+// ======================================================
 // APP
 // ======================================================
 
@@ -138,6 +173,13 @@ export default function App() {
 
   const [selectedState, setSelectedState] =
     useState("All");
+
+  // ====================================================
+  // SELECTED WORK TYPE / CATEGORY
+  // ====================================================
+
+  const [selectedWorkType, setSelectedWorkType] =
+    useState(null);
 
   // ====================================================
   // SELECTED JOB
@@ -182,7 +224,7 @@ export default function App() {
     useState("");
 
   // ====================================================
-  // SCROLLER STYLE
+  // SCROLLER + LEAFLET STYLE
   // ====================================================
 
   useEffect(() => {
@@ -279,9 +321,10 @@ export default function App() {
         const apiStates = [
           ...new Set(
             fetchedJobs
-              .map((job) =>
-                job?.state ||
-                job?.location?.state
+              .map(
+                (job) =>
+                  job?.state ||
+                  job?.location?.state
               )
               .filter(Boolean)
           ),
@@ -384,6 +427,84 @@ export default function App() {
   ]);
 
   // ====================================================
+  // AVAILABLE JOBS
+  // Applied jobs ko hide rakhenge
+  // ====================================================
+
+  const availableJobs =
+    filteredJobs.filter(
+      (job) =>
+        !appliedJobs.includes(
+          job?._id
+        )
+    );
+
+  // ====================================================
+  // ALL AVAILABLE WORK TYPES
+  // ====================================================
+  //
+  // WORK_TYPES ke saath database me agar koi naya
+  // workType aaye to wo bhi automatically category
+  // me add ho jayega.
+  //
+  // ====================================================
+
+  const availableWorkTypes =
+    Array.from(
+      new Set([
+        ...WORK_TYPES,
+
+        ...jobs
+          .map(
+            (job) =>
+              job?.workType
+          )
+          .filter(Boolean),
+      ])
+    );
+
+  // ====================================================
+  // CATEGORY COUNT
+  // ====================================================
+
+  const workTypeCategories =
+    availableWorkTypes
+      .map((workType) => ({
+        workType,
+        count:
+          availableJobs.filter(
+            (job) =>
+              normalizeWorkType(
+                job?.workType
+              ) ===
+              normalizeWorkType(
+                workType
+              )
+          ).length,
+      }))
+      .filter(
+        (item) =>
+          item.count > 0
+      );
+
+  // ====================================================
+  // SELECTED CATEGORY JOBS
+  // ====================================================
+
+  const categoryJobs =
+    selectedWorkType
+      ? availableJobs.filter(
+          (job) =>
+            normalizeWorkType(
+              job?.workType
+            ) ===
+            normalizeWorkType(
+              selectedWorkType
+            )
+        )
+      : [];
+
+  // ====================================================
   // CLOSE APPLY MODAL
   // ====================================================
 
@@ -396,7 +517,9 @@ export default function App() {
 
     setAmountInRupees(10);
 
-    setNote("Order for job");
+    setNote(
+      "Order for job"
+    );
 
     setError("");
   };
@@ -454,7 +577,8 @@ export default function App() {
       // ==================================================
 
       const amount = Math.round(
-        Number(amountInRupees) * 100
+        Number(amountInRupees) *
+          100
       );
 
       // ==================================================
@@ -522,7 +646,8 @@ export default function App() {
       );
 
       setError(
-        err.response?.data?.message ||
+        err.response?.data
+          ?.message ||
           "Unable to create order. Please try again."
       );
     } finally {
@@ -535,7 +660,11 @@ export default function App() {
   // ====================================================
 
   return (
-    <div className="min-h-screen bg-gray-100 text-black">
+    <div className="
+      min-h-screen
+      bg-gray-100
+      text-black
+    ">
 
       {/* =================================================
           HEADER
@@ -551,18 +680,38 @@ export default function App() {
           SCROLLING BAR
       ================================================= */}
 
-      <div className="bg-white py-1 overflow-hidden">
-        <p className="scroller text-center font-semibold text-xs">
+      <div className="
+        bg-white
+        py-1
+        overflow-hidden
+      ">
+
+        <p className="
+          scroller
+          text-center
+          font-semibold
+          text-xs
+        ">
           {currentTime} / Find your dream job today!{" "}
           100% Secure & Safe!
         </p>
+
       </div>
 
       {/* =================================================
           REGISTER + STATE FILTER
       ================================================= */}
 
-      <div className="max-w-7xl mx-auto px-4 mt-4 flex justify-end items-center gap-2">
+      <div className="
+        max-w-7xl
+        mx-auto
+        px-4
+        mt-4
+        flex
+        justify-end
+        items-center
+        gap-2
+      ">
 
         {/* REGISTER */}
 
@@ -589,17 +738,21 @@ export default function App() {
           Register
         </button>
 
-        {/* =================================================
-            STATE SELECT
-        ================================================= */}
+        {/* STATE SELECT */}
 
         <select
           value={selectedState}
-          onChange={(e) =>
+          onChange={(e) => {
             setSelectedState(
               e.target.value
-            )
-          }
+            );
+
+            // State change hone par
+            // category reset
+            setSelectedWorkType(
+              null
+            );
+          }}
           className="
             w-40
             h-10
@@ -615,6 +768,7 @@ export default function App() {
             focus:outline-none
           "
         >
+
           <option value="All">
             All India
           </option>
@@ -629,80 +783,169 @@ export default function App() {
               </option>
             )
           )}
+
         </select>
-      </div>
-
-     {/* =================================================
-    SELECTED STATE INFO
-================================================= */}
-
-<div className="max-w-7xl mx-auto px-4 mt-3 sm:mt-4">
-  <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-3 py-2 sm:px-4 sm:py-3">
-
-    <div className="flex items-center justify-between gap-3">
-
-      {/* STATE */}
-      <div className="min-w-0">
-        <p className="text-[10px] sm:text-xs text-gray-400 font-medium">
-          Showing jobs from
-        </p>
-
-        <div className="flex items-center gap-1.5 mt-0.5">
-          <span className="text-sm sm:text-base">
-            🇮🇳
-          </span>
-
-          <p className="font-bold text-gray-800 text-sm sm:text-base truncate">
-            {selectedState === "All"
-              ? "All India"
-              : selectedState}
-          </p>
-        </div>
-      </div>
-
-      {/* JOB COUNT */}
-      <div className="flex items-center gap-2 shrink-0">
-
-        <div className="hidden sm:block text-right">
-          <p className="text-xs text-gray-400 font-medium">
-            Available Jobs
-          </p>
-        </div>
-
-        <div className="min-w-[38px] h-8 sm:h-9 px-2.5 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-          <span className="font-bold text-blue-600 text-sm sm:text-base">
-            {filteredJobs.length}
-          </span>
-        </div>
 
       </div>
-
-    </div>
-
-  </div>
-</div>
 
       {/* =================================================
-          JOB CARDS
+          SELECTED STATE INFO
+      ================================================= */}
+
+      <div className="
+        max-w-7xl
+        mx-auto
+        px-4
+        mt-3
+        sm:mt-4
+      ">
+
+        <div className="
+          bg-white
+          border
+          border-gray-200
+          rounded-xl
+          shadow-sm
+          px-3
+          py-2
+          sm:px-4
+          sm:py-3
+        ">
+
+          <div className="
+            flex
+            items-center
+            justify-between
+            gap-3
+          ">
+
+            {/* STATE */}
+
+            <div className="min-w-0">
+
+              <p className="
+                text-[10px]
+                sm:text-xs
+                text-gray-400
+                font-medium
+              ">
+                Showing jobs from
+              </p>
+
+              <div className="
+                flex
+                items-center
+                gap-1.5
+                mt-0.5
+              ">
+
+                <span className="
+                  text-sm
+                  sm:text-base
+                ">
+                  🇮🇳
+                </span>
+
+                <p className="
+                  font-bold
+                  text-gray-800
+                  text-sm
+                  sm:text-base
+                  truncate
+                ">
+                  {selectedState === "All"
+                    ? "All India"
+                    : selectedState}
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* JOB COUNT */}
+
+            <div className="
+              flex
+              items-center
+              gap-2
+              shrink-0
+            ">
+
+              <div className="
+                hidden
+                sm:block
+                text-right
+              ">
+
+                <p className="
+                  text-xs
+                  text-gray-400
+                  font-medium
+                ">
+                  {selectedWorkType
+                    ? selectedWorkType
+                    : "Available Jobs"}
+                </p>
+
+              </div>
+
+              <div className="
+                min-w-[38px]
+                h-8
+                sm:h-9
+                px-2.5
+                rounded-lg
+                bg-blue-50
+                border
+                border-blue-100
+                flex
+                items-center
+                justify-center
+              ">
+
+                <span className="
+                  font-bold
+                  text-blue-600
+                  text-sm
+                  sm:text-base
+                ">
+                  {selectedWorkType
+                    ? categoryJobs.length
+                    : availableJobs.length}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* =================================================
+          CATEGORY / JOB SECTION
       ================================================= */}
 
       <div className="
         max-w-7xl
         mx-auto
         mt-6
-        grid
-        grid-cols-1
-        sm:grid-cols-2
-        md:grid-cols-3
-        lg:grid-cols-4
-        gap-7
         px-4
       ">
 
-        {/* LOADING */}
+        {/* =================================================
+            LOADING
+        ================================================= */}
 
         {loadingJobs && (
-          <div className="col-span-full flex justify-center items-center py-20">
+          <div className="
+            flex
+            justify-center
+            items-center
+            py-20
+          ">
 
             <div className="relative">
 
@@ -734,6 +977,7 @@ export default function App() {
                 justify-center
                 items-center
               ">
+
                 <div className="
                   w-3
                   h-3
@@ -741,24 +985,30 @@ export default function App() {
                   rounded-full
                   animate-pulse
                 " />
+
               </div>
 
             </div>
+
           </div>
         )}
 
-        {/* NO JOB */}
+        {/* =================================================
+            NO JOBS
+        ================================================= */}
 
         {!loadingJobs &&
-          filteredJobs.filter(
-            (job) =>
-              !appliedJobs.includes(
-                job?._id
-              )
-          ).length === 0 && (
-            <div className="col-span-full text-center py-16">
+          availableJobs.length === 0 && (
 
-              <div className="text-5xl mb-4">
+            <div className="
+              text-center
+              py-16
+            ">
+
+              <div className="
+                text-5xl
+                mb-4
+              ">
                 🔍
               </div>
 
@@ -781,178 +1031,516 @@ export default function App() {
             </div>
           )}
 
-        {/* JOB LIST */}
+        {/* =================================================
+            CATEGORY LIST
+        ================================================= */}
 
         {!loadingJobs &&
-          filteredJobs
-            .filter(
-              (job) =>
-                !appliedJobs.includes(
-                  job?._id
-                )
-            )
-            .map((job) => (
+          availableJobs.length > 0 &&
+          !selectedWorkType && (
 
-              <div
-                key={job._id}
-                className="
-                  relative
-                  rounded-2xl
-                  p-1
-                  shadow-2xl
-                  hover:scale-105
-                  transition-all
-                  duration-300
-                "
-              >
+            <div>
+
+              {/* TITLE */}
+
+              <div className="
+                mb-5
+                text-center
+              ">
+
+                <h2 className="
+                  text-2xl
+                  sm:text-3xl
+                  font-bold
+                  text-gray-800
+                ">
+                  Find Jobs by Work Type
+                </h2>
+
+                <p className="
+                  text-sm
+                  text-gray-500
+                  mt-1
+                ">
+                  Select a work category to see available jobs
+                </p>
+
+              </div>
+
+              {/* CATEGORY GRID */}
+
+              <div className="
+                grid
+                grid-cols-2
+                sm:grid-cols-3
+                md:grid-cols-4
+                lg:grid-cols-5
+                gap-3
+                sm:gap-5
+              ">
+
+                {workTypeCategories.map(
+                  ({
+                    workType,
+                    count,
+                  }) => (
+
+                    <button
+                      key={workType}
+                      type="button"
+                      onClick={() =>
+                        setSelectedWorkType(
+                          workType
+                        )
+                      }
+                      className="
+                        group
+                        bg-white
+                        border
+                        border-gray-200
+                        rounded-2xl
+                        p-4
+                        sm:p-5
+                        text-left
+                        shadow-sm
+                        hover:shadow-xl
+                        hover:border-blue-400
+                        hover:-translate-y-1
+                        transition-all
+                        duration-200
+                      "
+                    >
+
+                      {/* CATEGORY */}
+
+                      <div className="
+                        min-h-[52px]
+                        flex
+                        items-center
+                      ">
+
+                        <h3 className="
+                          text-base
+                          sm:text-lg
+                          font-bold
+                          text-gray-800
+                          group-hover:text-blue-600
+                          transition
+                        ">
+                          {workType}
+                        </h3>
+
+                      </div>
+
+                      {/* COUNT */}
+
+                      <div className="
+                        mt-3
+                        flex
+                        items-center
+                        justify-between
+                      ">
+
+                        <span className="
+                          text-xs
+                          sm:text-sm
+                          text-gray-500
+                        ">
+                          Available Jobs
+                        </span>
+
+                        <span className="
+                          min-w-[30px]
+                          h-7
+                          px-2
+                          rounded-full
+                          bg-blue-50
+                          text-blue-600
+                          border
+                          border-blue-100
+                          flex
+                          items-center
+                          justify-center
+                          text-xs
+                          sm:text-sm
+                          font-bold
+                        ">
+                          {count}
+                        </span>
+
+                      </div>
+
+                    </button>
+                  )
+                )}
+
+              </div>
+
+            </div>
+          )}
+
+        {/* =================================================
+            SELECTED CATEGORY
+        ================================================= */}
+
+        {!loadingJobs &&
+          selectedWorkType && (
+
+            <div>
+
+              {/* CATEGORY HEADER */}
+
+              <div className="
+                bg-white
+                border
+                border-gray-200
+                rounded-2xl
+                shadow-sm
+                p-4
+                mb-6
+              ">
 
                 <div className="
-                  bg-white
-                  rounded-2xl
-                  p-5
                   flex
                   flex-col
-                  justify-between
-                  h-full
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                  gap-3
                 ">
 
-                  {/* TITLE */}
-
-                  <h2 className="
-                    text-xl
-                    font-bold
-                    mb-2
-                    text-gray-900
-                  ">
-                    {job.title}
-                  </h2>
-
-                  {/* DESCRIPTION */}
-
-                  <p className="
-                    text-gray-700
-                    mb-4
-                  ">
-                    {job.description}
-                  </p>
-
-                  {/* DETAILS */}
-
-                  <ul className="
-                    text-black
-                    mb-4
-                    space-y-1
-                    text-sm
-                  ">
-
-                    {/* PRICE */}
-
-                    <li>
-                      <strong className="text-green-500">
-                        Price:
-                      </strong>{" "}
-                      {job.amount} ₹
-                    </li>
-
-                    {/* WORK TYPE */}
-
-                    {job.workType && (
-                      <li>
-                        <strong className="text-blue-600">
-                          Work:
-                        </strong>{" "}
-                        {job.workType}
-                      </li>
-                    )}
-
-                    {/* STATE */}
-
-                    <li>
-                      <strong className="text-purple-700">
-                        State:
-                      </strong>{" "}
-                      {job.state ||
-                        job.location?.state ||
-                        "India"}
-                    </li>
-
-                    {/* DISTRICT */}
-
-                    {job.district && (
-                      <li>
-                        <strong className="text-fuchsia-700">
-                          District:
-                        </strong>{" "}
-                        {job.district}
-                      </li>
-                    )}
-
-                    {/* LOCATION */}
-
-                    {job.location?.address && (
-                      <li>
-                        <strong className="text-red-500">
-                          📍 Location:
-                        </strong>{" "}
-                        {job.location.address}
-                      </li>
-                    )}
-
-                    {/* POSTED */}
-
-                    {job.createdAt && (
-                      <li>
-                        <strong>
-                          Posted:
-                        </strong>{" "}
-                        {formatDistanceToNow(
-                          new Date(
-                            job.createdAt
-                          ),
-                          {
-                            addSuffix: true,
-                          }
-                        )}
-                      </li>
-                    )}
-
-                  </ul>
-
-                  {/* APPLY */}
+                  {/* BACK */}
 
                   <button
-                    onClick={() => {
-                      setSelectedJob(
-                        job
-                      );
-
-                      setAmountInRupees(
-                        10
-                      );
-
-                      setNote(
-                        `Applying for ${job.title}`
-                      );
-
-                      setError("");
-                    }}
+                    type="button"
+                    onClick={() =>
+                      setSelectedWorkType(
+                        null
+                      )
+                    }
                     className="
-                      w-full
-                      bg-blue-600
-                      text-white
+                      w-fit
+                      px-4
                       py-2
                       rounded-lg
+                      bg-gray-100
+                      hover:bg-gray-200
+                      text-gray-700
                       font-semibold
-                      hover:bg-gray-800
+                      text-sm
                       transition
                     "
                   >
-                    Apply Now
+                    ← Back to Categories
+                  </button>
+
+                  {/* CATEGORY */}
+
+                  <div className="
+                    flex
+                    items-center
+                    justify-between
+                    gap-3
+                  ">
+
+                    <div>
+
+                      <p className="
+                        text-xs
+                        text-gray-400
+                      ">
+                        Work Category
+                      </p>
+
+                      <h2 className="
+                        text-xl
+                        sm:text-2xl
+                        font-bold
+                        text-gray-800
+                      ">
+                        {selectedWorkType}
+                      </h2>
+
+                    </div>
+
+                    <div className="
+                      min-w-[45px]
+                      h-10
+                      px-3
+                      rounded-lg
+                      bg-blue-50
+                      border
+                      border-blue-100
+                      flex
+                      items-center
+                      justify-center
+                    ">
+
+                      <span className="
+                        text-blue-600
+                        font-bold
+                      ">
+                        {categoryJobs.length}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* =================================================
+                  CATEGORY JOBS
+              ================================================= */}
+
+              {categoryJobs.length === 0 && (
+
+                <div className="
+                  text-center
+                  py-16
+                ">
+
+                  <div className="
+                    text-5xl
+                    mb-4
+                  ">
+                    🔍
+                  </div>
+
+                  <p className="
+                    text-lg
+                    font-semibold
+                    text-gray-700
+                  ">
+                    No jobs found in this category.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedWorkType(
+                        null
+                      )
+                    }
+                    className="
+                      mt-4
+                      px-5
+                      py-2
+                      bg-blue-600
+                      text-white
+                      rounded-lg
+                      font-semibold
+                      hover:bg-blue-700
+                    "
+                  >
+                    Back to Categories
                   </button>
 
                 </div>
-              </div>
-            ))}
+              )}
+
+              {/* =================================================
+                  JOB CARDS
+              ================================================= */}
+
+              {categoryJobs.length > 0 && (
+
+                <div className="
+                  grid
+                  grid-cols-1
+                  sm:grid-cols-2
+                  md:grid-cols-3
+                  lg:grid-cols-4
+                  gap-7
+                ">
+
+                  {categoryJobs.map(
+                    (job) => (
+
+                      <div
+                        key={job._id}
+                        className="
+                          relative
+                          rounded-2xl
+                          p-1
+                          shadow-2xl
+                          hover:scale-105
+                          transition-all
+                          duration-300
+                        "
+                      >
+
+                        <div className="
+                          bg-white
+                          rounded-2xl
+                          p-5
+                          flex
+                          flex-col
+                          justify-between
+                          h-full
+                        ">
+
+                          {/* TITLE */}
+
+                          <h2 className="
+                            text-xl
+                            font-bold
+                            mb-2
+                            text-gray-900
+                          ">
+                            {job.title}
+                          </h2>
+
+                          {/* DESCRIPTION */}
+
+                          <p className="
+                            text-gray-700
+                            mb-4
+                          ">
+                            {job.description}
+                          </p>
+
+                          {/* DETAILS */}
+
+                          <ul className="
+                            text-black
+                            mb-4
+                            space-y-1
+                            text-sm
+                          ">
+
+                            {/* PRICE */}
+
+                            <li>
+                              <strong className="
+                                text-green-500
+                              ">
+                                Price:
+                              </strong>{" "}
+                              {job.amount} ₹
+                            </li>
+
+                            {/* WORK TYPE */}
+
+                            {job.workType && (
+                              <li>
+                                <strong className="
+                                  text-blue-600
+                                ">
+                                  Work:
+                                </strong>{" "}
+                                {job.workType}
+                              </li>
+                            )}
+
+                            {/* STATE */}
+
+                            <li>
+                              <strong className="
+                                text-purple-700
+                              ">
+                                State:
+                              </strong>{" "}
+                              {job.state ||
+                                job.location?.state ||
+                                "India"}
+                            </li>
+
+                            {/* DISTRICT */}
+
+                            {job.district && (
+                              <li>
+                                <strong className="
+                                  text-fuchsia-700
+                                ">
+                                  District:
+                                </strong>{" "}
+                                {job.district}
+                              </li>
+                            )}
+
+                            {/* LOCATION */}
+
+                            {job.location?.address && (
+                              <li>
+                                <strong className="
+                                  text-red-500
+                                ">
+                                  📍 Location:
+                                </strong>{" "}
+                                {job.location.address}
+                              </li>
+                            )}
+
+                            {/* POSTED */}
+
+                            {job.createdAt && (
+                              <li>
+                                <strong>
+                                  Posted:
+                                </strong>{" "}
+                                {formatDistanceToNow(
+                                  new Date(
+                                    job.createdAt
+                                  ),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </li>
+                            )}
+
+                          </ul>
+
+                          {/* APPLY */}
+
+                          <button
+                            onClick={() => {
+
+                              setSelectedJob(
+                                job
+                              );
+
+                              setAmountInRupees(
+                                10
+                              );
+
+                              setNote(
+                                `Applying for ${job.title}`
+                              );
+
+                              setError("");
+
+                            }}
+                            className="
+                              w-full
+                              bg-blue-600
+                              text-white
+                              py-2
+                              rounded-lg
+                              font-semibold
+                              hover:bg-gray-800
+                              transition
+                            "
+                          >
+                            Apply Now
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+              )}
+
+            </div>
+          )}
+
       </div>
 
       {/* =================================================
@@ -1147,6 +1735,7 @@ export default function App() {
                     </p>
 
                   </div>
+
                 </div>
 
                 {/* ADDRESS */}
@@ -1197,6 +1786,7 @@ export default function App() {
                       rounded-lg
                       p-2
                     ">
+
                       <p className="
                         text-[10px]
                         text-gray-400
@@ -1215,6 +1805,7 @@ export default function App() {
                             .village
                         }
                       </p>
+
                     </div>
                   )}
 
@@ -1226,6 +1817,7 @@ export default function App() {
                       rounded-lg
                       p-2
                     ">
+
                       <p className="
                         text-[10px]
                         text-gray-400
@@ -1244,6 +1836,7 @@ export default function App() {
                             .locality
                         }
                       </p>
+
                     </div>
                   )}
 
@@ -1256,6 +1849,7 @@ export default function App() {
                       rounded-lg
                       p-2
                     ">
+
                       <p className="
                         text-[10px]
                         text-gray-400
@@ -1271,6 +1865,7 @@ export default function App() {
                         {selectedJob.location?.state ||
                           selectedJob.state}
                       </p>
+
                     </div>
                   )}
 
@@ -1283,6 +1878,7 @@ export default function App() {
                       rounded-lg
                       p-2
                     ">
+
                       <p className="
                         text-[10px]
                         text-gray-400
@@ -1298,6 +1894,7 @@ export default function App() {
                         {selectedJob.location?.district ||
                           selectedJob.district}
                       </p>
+
                     </div>
                   )}
 
@@ -1309,6 +1906,7 @@ export default function App() {
                       rounded-lg
                       p-2
                     ">
+
                       <p className="
                         text-[10px]
                         text-gray-400
@@ -1327,6 +1925,7 @@ export default function App() {
                             .postcode
                         }
                       </p>
+
                     </div>
                   )}
 
@@ -1431,6 +2030,7 @@ export default function App() {
                         </MapContainer>
 
                       </div>
+
                     </div>
                   )}
 
@@ -1442,7 +2042,9 @@ export default function App() {
 
               <input
                 type="number"
-                value={amountInRupees}
+                value={
+                  amountInRupees
+                }
                 onChange={(e) =>
                   setAmountInRupees(
                     e.target.value
@@ -1502,7 +2104,9 @@ export default function App() {
             ================================================= */}
 
             <button
-              onClick={createOrder}
+              onClick={
+                createOrder
+              }
               disabled={loading}
               className="
                 mt-6
@@ -1525,6 +2129,7 @@ export default function App() {
             </button>
 
           </div>
+
         </div>
       )}
 
