@@ -1041,31 +1041,36 @@ export default function App() {
 
             <div>
 
-              {/* TITLE */}
+  {/* TITLE */}
+<div className="mb-7 sm:mb-9 text-center">
+  <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-100">
+    Explore Opportunities
+  </span>
 
-              <div className="
-                mb-5
-                text-center
-              ">
+  <h2 className="
+    mt-3
+    text-2xl
+    sm:text-3xl
+    lg:text-4xl
+    font-bold
+    tracking-tight
+    text-slate-900
+  ">
+    Find Jobs by Work Type
+  </h2>
 
-                <h2 className="
-                  text-2xl
-                  sm:text-3xl
-                  font-bold
-                  text-gray-800
-                ">
-                  Find Jobs by Work Type
-                </h2>
-
-                <p className="
-                  text-sm
-                  text-gray-500
-                  mt-1
-                ">
-                  Select a work category to see available jobs
-                </p>
-
-              </div>
+  <p className="
+    mx-auto
+    mt-2
+    max-w-xl
+    text-sm
+    sm:text-base
+    leading-6
+    text-slate-500
+  ">
+    Select a work category to discover available job opportunities near you.
+  </p>
+</div>
 
               {/* CATEGORY GRID */}
 
