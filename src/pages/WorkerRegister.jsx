@@ -434,9 +434,14 @@ export default function WorkerRegister() {
       // =====================================================
 
       localStorage.setItem(
-        "pendingWorkerId",
-        String(registeredWorkerId)
-      );
+  "pendingWorkerId",
+  String(registeredWorkerId)
+);
+
+console.log(
+  "💾 pendingWorkerId SAVED:",
+  localStorage.getItem("pendingWorkerId")
+);
 
       // =====================================================
       // STEP 3
@@ -528,9 +533,23 @@ export default function WorkerRegister() {
       // PHONEPE CHECKOUT
       // =====================================================
 
-      console.log(
-        "➡️ Redirecting to PhonePe..."
-      );
+      
+console.log(
+  "🚀 Before PhonePe redirect - pendingWorkerId:",
+  localStorage.getItem("pendingWorkerId")
+);
+
+console.log(
+  "🚀 Before PhonePe redirect - workerMerchantOrderId:",
+  localStorage.getItem("workerMerchantOrderId")
+);
+
+console.log(
+  "🚀 Redirecting to PhonePe..."
+);
+
+window.location.href =
+  paymentResult.checkoutPageUrl;
 
       window.location.href =
         paymentResult.checkoutPageUrl;
