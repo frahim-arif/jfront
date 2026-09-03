@@ -428,14 +428,25 @@ export default function WorkerRegister() {
         registeredWorkerId
       );
 
-      // =====================================================
-      // IMPORTANT
-      // PAYMENT SE PEHLE workerId SAVE NAHI KARNA
-      // =====================================================
+   // =====================================================
+// WORKER ID SAVE
+// Payment se pehle workerId localStorage me save kar rahe hain
+// Taaki payment ke baad Header worker ko identify kar sake
+// =====================================================
 
-      localStorage.setItem(
+localStorage.setItem(
+  "workerId",
+  String(registeredWorkerId)
+);
+
+localStorage.setItem(
   "pendingWorkerId",
   String(registeredWorkerId)
+);
+
+console.log(
+  "💾 workerId SAVED:",
+  localStorage.getItem("workerId")
 );
 
 console.log(
