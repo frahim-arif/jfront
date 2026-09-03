@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -7,10 +8,12 @@ const API_URL = "https://jbackend-h963.onrender.com";
 function Success() {
   const [params] = useSearchParams();
 
-  const merchantOrderId = params.get("merchantOrderId");
+  const merchantOrderId =
+    params.get("merchantOrderId");
 
   const [loading, setLoading] = useState(true);
-  const [workerActivated, setWorkerActivated] = useState(false);
+  const [workerActivated, setWorkerActivated] =
+    useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -19,18 +22,28 @@ function Success() {
     async function activateWorker() {
       try {
         // ============================================
-        // GET PENDING WORKER ID
+        // GET LOCAL STORAGE DATA
         // ============================================
 
         const pendingWorkerId =
           localStorage.getItem("pendingWorkerId");
 
         const savedMerchantOrderId =
-          localStorage.getItem("workerMerchantOrderId");
+          localStorage.getItem(
+            "workerMerchantOrderId"
+          );
+
+        const existingWorkerId =
+          localStorage.getItem("workerId");
 
         console.log(
           "👷 Pending Worker ID:",
           pendingWorkerId
+        );
+
+        console.log(
+          "👷 Existing Worker ID:",
+          existingWorkerId
         );
 
         console.log(
@@ -43,29 +56,36 @@ function Success() {
           savedMerchantOrderId
         );
 
-        if (!pendingWorkerId) {
+        // ============================================
+        // MERCHANT ORDER ID REQUIRED
+        // ============================================
+
+        if (!merchantOrderId) {
           console.warn(
-            "⚠️ pendingWorkerId not found"
+            "⚠️ Merchant Order ID not found in URL"
           );
 
           setError(
-            "Worker registration information not found."
+            "Payment order information not found."
           );
 
           return;
         }
 
         // ============================================
-        // VERIFY THAT THIS IS THE SAME PAYMENT
+        // VERIFY LOCAL STORAGE ORDER ID
         // ============================================
 
         if (
-          merchantOrderId &&
           savedMerchantOrderId &&
           merchantOrderId !== savedMerchantOrderId
         ) {
           console.error(
-            "❌ Merchant Order ID mismatch"
+            "❌ Merchant Order ID mismatch",
+            {
+              current: merchantOrderId,
+              saved: savedMerchantOrderId,
+            }
           );
 
           setError(
@@ -76,57 +96,131 @@ function Success() {
         }
 
         // ============================================
-        // PAYMENT CALLBACK ALREADY VERIFIED PAYMENT
+        // WORKER ID
         // ============================================
-        //
-        // Backend /worker-payment/check-status
-        // PhonePe se status verify karta hai.
-        //
-        // Agar status COMPLETED hai to backend already:
-        //
-        // worker.paymentStatus = "PAID"
-        // worker.status = "Active"
-        //
-        // kar chuka hai.
-        //
-        // Isliye ab browser mein workerId activate karenge.
+
+        let workerId =
+          pendingWorkerId ||
+          existingWorkerId ||
+          null;
+
+        // ============================================
+        // IF WORKER ID NOT AVAILABLE
+        // RECOVER FROM BACKEND
+        // ============================================
+
+        if (!workerId) {
+          console.log(
+            "🔍 Worker ID not found in localStorage."
+          );
+
+          console.log(
+            "🔍 Recovering Worker ID from backend..."
+          );
+
+          const response = await axios.get(
+            `${API_URL}/workers/payment-by-order/${encodeURIComponent(
+              merchantOrderId
+            )}`
+          );
+
+          console.log(
+            "🔍 Worker recovery response:",
+            response.data
+          );
+
+          if (
+            response.data?.success &&
+            response.data?.worker?._id
+          ) {
+            workerId =
+              response.data.worker._id;
+
+            console.log(
+              "✅ Worker ID recovered from backend:",
+              workerId
+            );
+          }
+        }
+
+        // ============================================
+        // WORKER ID STILL NOT FOUND
+        // ============================================
+
+        if (!workerId) {
+          console.error(
+            "❌ Unable to find Worker ID"
+          );
+
+          setError(
+            "Worker registration information not found."
+          );
+
+          return;
+        }
+
+        // ============================================
+        // SAVE WORKER ID PERMANENTLY
         // ============================================
 
         localStorage.setItem(
           "workerId",
-          String(pendingWorkerId)
+          String(workerId)
         );
+
+        console.log(
+          "💾 Worker ID saved:",
+          localStorage.getItem("workerId")
+        );
+
+        // ============================================
+        // CLEAN PENDING DATA
+        // ============================================
 
         localStorage.removeItem(
           "pendingWorkerId"
         );
 
-        console.log(
-          "✅ Worker activated in browser:",
-          pendingWorkerId
-        );
+        // ============================================
+        // KEEP MERCHANT ORDER ID
+        // ============================================
+        // workerMerchantOrderId ko remove nahi kar rahe,
+        // future verification/debugging ke liye useful hai.
 
         // ============================================
-        // HEADER KO IMMEDIATELY NOTIFY
+        // NOTIFY HEADER
         // ============================================
 
         window.dispatchEvent(
           new Event("workerPaymentSuccess")
         );
 
+        console.log(
+          "📢 Header notified about worker payment success"
+        );
+
+        // ============================================
+        // SUCCESS
+        // ============================================
+
         if (mounted) {
           setWorkerActivated(true);
         }
-
       } catch (error) {
         console.error(
           "❌ Worker activation error:",
           error
         );
 
+        console.error(
+          "❌ Backend response:",
+          error?.response?.data
+        );
+
         if (mounted) {
           setError(
-            "Unable to activate worker registration."
+            error?.response?.data?.message ||
+              "Unable to activate worker registration."
           );
         }
       } finally {
@@ -248,3 +342,4 @@ function Success() {
 }
 
 export default Success;
+
