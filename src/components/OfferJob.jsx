@@ -228,7 +228,7 @@ const INDIA_LOCATIONS = {
     "Morbi",
     "Narmada",
     "Navsari",
-    
+    "Noida",
     "Panchmahal",
     "Patan",
     "Porbandar",

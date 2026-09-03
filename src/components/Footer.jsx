@@ -44,18 +44,7 @@ export default function Footer() {
           </a>
 
         </div>
-         </div>
-
-          {/* Phone */}
-          <a
-            href="tel:9058596626"
-            className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20"
-          >
-            <Phone size={16} />
-            +91 9058596626
-          </a>
-
-        </div>
+        
         <div className="text-center">
             <p className="text-sm text-white/70">
               Powered & Developed by
