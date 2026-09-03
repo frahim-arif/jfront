@@ -955,14 +955,14 @@ console.log(
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
 
                 <p className="text-sm font-semibold text-amber-800">
-                  Worker Registration Fee: ₹250
+                  Worker Registration Fee: ₹5
                 </p>
 
                 <p className="mt-1 text-xs leading-5 text-amber-700">
                   After submitting your
                   registration, you will be
                   redirected to PhonePe to
-                  complete the one-time ₹250
+                  complete the one-time ₹5
                   registration payment.
                 </p>
 
@@ -996,7 +996,7 @@ console.log(
               >
                 {loading
                   ? "Creating Registration & Payment..."
-                  : "Register & Pay ₹250"}
+                  : "Register & Pay ₹5"}
               </button>
 
             </form>
