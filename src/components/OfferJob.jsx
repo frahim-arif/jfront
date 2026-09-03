@@ -228,7 +228,7 @@ const INDIA_LOCATIONS = {
     "Morbi",
     "Narmada",
     "Navsari",
-    "Noida",
+    
     "Panchmahal",
     "Patan",
     "Porbandar",
@@ -783,6 +783,7 @@ const INDIA_LOCATIONS = {
     "Mirzapur",
     "Moradabad",
     "Muzaffarnagar",
+    "Noida",
     "Pilibhit",
     "Pratapgarh",
     "Prayagraj",
