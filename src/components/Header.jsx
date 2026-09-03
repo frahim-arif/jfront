@@ -877,7 +877,7 @@ export default function Header() {
                 hover:to-blue-400
               "
             >
-              Offer Job
+             Job Post
             </Link>
 
             {/* MENU BUTTON */}
