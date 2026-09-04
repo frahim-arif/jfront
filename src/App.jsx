@@ -2582,6 +2582,12 @@ export default function App() {
 
         </div>
       )}
+      <Link
+  to="/healthcare-jobs"
+  className="rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white"
+>
+  Healthcare Jobs
+</Link>
 
       {/* =================================================
           FOOTER

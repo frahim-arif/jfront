@@ -22,6 +22,7 @@ import Disclaimer from "./App/Disclaimer/page.jsx";
 import Admin from "./App/Admin/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
 // import WorkerLogin from "./pages/WorkerLogin.jsx";
+import HealthcareJobs from "./HealthcareJobs";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +85,11 @@ const router = createBrowserRouter([
     path: "/offer-job",
     element: <OfferJob />,
   },
+
+  {
+  path: "/healthcare-jobs",
+  element: <HealthcareJobs />,
+},
 // WORKER LOGIN
 // {
 //   path: "/worker-login",
