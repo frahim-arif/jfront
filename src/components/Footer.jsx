@@ -156,111 +156,7 @@ export default function Footer() {
 
           </div>
 
-          {/* =================================================
-              QUICK LINKS
-          ================================================= */}
-
-          <div>
-
-            <div className="mb-6 flex items-center gap-3">
-
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
-                <BriefcaseBusiness size={17} />
-              </div>
-
-              <div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-white">
-                  Quick Links
-                </h3>
-
-                <p className="mt-0.5 text-[10px] text-slate-600">
-                  Explore JobHIR
-                </p>
-              </div>
-
-            </div>
-
-            <ul className="space-y-3">
-
-              <li>
-                <Link
-                  to="/"
-                  className="group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400 transition hover:bg-white/[0.04] hover:text-emerald-400"
-                >
-                  <span>Home</span>
-
-                  <ArrowUpRight
-                    size={14}
-                    className="opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                  />
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/worker-register"
-                  className="group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400 transition hover:bg-white/[0.04] hover:text-emerald-400"
-                >
-                  <span>Worker Registration</span>
-
-                  <ArrowUpRight
-                    size={14}
-                    className="opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                  />
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/offer-job"
-                  className="group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400 transition hover:bg-white/[0.04] hover:text-emerald-400"
-                >
-                  <span>Post a Job</span>
-
-                  <ArrowUpRight
-                    size={14}
-                    className="opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                  />
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/disclaimer"
-                  className="group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400 transition hover:bg-white/[0.04] hover:text-emerald-400"
-                >
-                  <span>Disclaimer</span>
-
-                  <ArrowUpRight
-                    size={14}
-                    className="opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                  />
-                </Link>
-              </li>
-
-            </ul>
-
-            {/* SERVICE BOX */}
-
-            <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-
-              <div className="flex items-start gap-3">
-
-                <CheckCircle2
-                  size={17}
-                  className="mt-0.5 shrink-0 text-emerald-400"
-                />
-
-                <p className="text-[11px] leading-5 text-slate-500">
-                  Always verify job details and employer information
-                  before sharing personal documents.
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
+         
 
           {/* =================================================
               CONTACT
@@ -502,29 +398,7 @@ export default function Footer() {
 
         </div>
 
-        {/* =====================================================
-            DISCLAIMER
-        ===================================================== */}
-
-        <div className="mt-5 rounded-2xl border border-amber-400/10 bg-amber-400/[0.025] px-5 py-4">
-
-          <div className="flex items-start gap-3">
-
-            <ShieldCheck
-              size={16}
-              className="mt-0.5 shrink-0 text-amber-400/70"
-            />
-
-            <p className="text-[10px] leading-5 text-slate-500 sm:text-[11px]">
-              Please verify job details, employer information and
-              recruitment contacts before sharing personal documents
-              or making any payment. JobHIR does not guarantee the
-              authenticity of every third-party job opportunity.
-            </p>
-
-          </div>
-
-        </div>
+        
 
         {/* =====================================================
             BOTTOM
