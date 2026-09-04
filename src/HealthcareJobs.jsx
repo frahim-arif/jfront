@@ -1,8 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
-import Header from "./components/Header.jsx";
-import Footer from "./components/Footer.jsx";
+import { useMemo, useState } from "react";
 
 // ======================================================
 // HEALTHCARE JOBS
@@ -174,6 +171,7 @@ function LocationIcon({ className = "h-5 w-5" }) {
       stroke="currentColor"
       strokeWidth="1.8"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path
         strokeLinecap="round"
@@ -193,6 +191,7 @@ function PhoneIcon({ className = "h-5 w-5" }) {
       stroke="currentColor"
       strokeWidth="1.8"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path
         strokeLinecap="round"
@@ -220,6 +219,7 @@ function WhatsAppIcon({ className = "h-5 w-5" }) {
       className={className}
       fill="currentColor"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path d="M20.52 3.48A11.87 11.87 0 0012.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.75a11.9 11.9 0 005.78 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.47-8.34zM12.08 21.7a9.86 9.86 0 01-5.03-1.38l-.36-.21-3.74 1.04 1-3.65-.23-.38a9.83 9.83 0 01-1.51-5.22c0-5.45 4.43-9.88 9.88-9.88 2.64 0 5.12 1.03 6.98 2.89a9.81 9.81 0 012.89 6.98c0 5.45-4.43 9.88-9.88 9.88zm5.42-7.41c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.96 1.18-.18.2-.35.22-.65.07-1.78-.89-2.95-1.59-4.13-3.61-.31-.54.31-.5.89-1.67.1-.2.05-.38-.03-.53-.08-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.51s1.08 2.91 1.23 3.11c.15.2 2.12 3.24 5.14 4.55.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.18-1.43-.07-.12-.25-.2-.55-.35z" />
     </svg>
@@ -234,6 +234,7 @@ function SearchIcon({ className = "h-5 w-5" }) {
       stroke="currentColor"
       strokeWidth="2"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <circle cx="11" cy="11" r="7" />
       <path
@@ -253,6 +254,7 @@ function BriefcaseIcon({ className = "h-5 w-5" }) {
       stroke="currentColor"
       strokeWidth="1.8"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <rect
         x="3"
@@ -279,6 +281,7 @@ function UsersIcon({ className = "h-5 w-5" }) {
       stroke="currentColor"
       strokeWidth="1.8"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path
         strokeLinecap="round"
@@ -313,16 +316,11 @@ export default function HealthcareJobs() {
   const categories = useMemo(() => {
     const uniqueCategories = [
       ...new Set(
-        healthcareJobs.map(
-          (job) => job.category
-        )
+        healthcareJobs.map((job) => job.category)
       ),
     ];
 
-    return [
-      "All",
-      ...uniqueCategories,
-    ];
+    return ["All", ...uniqueCategories];
   }, []);
 
   // ====================================================
@@ -330,50 +328,34 @@ export default function HealthcareJobs() {
   // ====================================================
 
   const filteredJobs = useMemo(() => {
-    return healthcareJobs.filter((job) => {
-      const search = searchTerm
-        .trim()
-        .toLowerCase();
+    const search = searchTerm.trim().toLowerCase();
 
+    return healthcareJobs.filter((job) => {
       const matchesSearch =
         !search ||
-        job.title
-          .toLowerCase()
-          .includes(search) ||
-        job.category
-          .toLowerCase()
-          .includes(search) ||
-        job.department
-          .toLowerCase()
-          .includes(search) ||
-        job.qualification
-          .toLowerCase()
-          .includes(search);
+        job.title.toLowerCase().includes(search) ||
+        job.category.toLowerCase().includes(search) ||
+        job.department.toLowerCase().includes(search) ||
+        job.qualification.toLowerCase().includes(search) ||
+        job.location.toLowerCase().includes(search);
 
       const matchesCategory =
         selectedCategory === "All" ||
         job.category === selectedCategory;
 
-      return (
-        matchesSearch &&
-        matchesCategory
-      );
+      return matchesSearch && matchesCategory;
     });
-  }, [
-    searchTerm,
-    selectedCategory,
-  ]);
+  }, [searchTerm, selectedCategory]);
 
   // ====================================================
-  // APPLY ON WHATSAPP
+  // WHATSAPP APPLY
   // ====================================================
 
   const handleWhatsAppApply = (
     job,
-    phone = "9760020822"
+    phone = CONTACTS[0].phone
   ) => {
-    const cleanPhone = String(phone)
-      .replace(/\D/g, "");
+    const cleanPhone = String(phone).replace(/\D/g, "");
 
     const internationalPhone =
       cleanPhone.length === 10
@@ -395,11 +377,14 @@ Please share more details about the recruitment process.
 Thank you.
     `.trim();
 
+    const whatsappUrl =
+      `https://wa.me/${internationalPhone}?text=` +
+      encodeURIComponent(message);
+
     window.open(
-      `https://wa.me/${internationalPhone}?text=${encodeURIComponent(
-        message
-      )}`,
-      "_blank"
+      whatsappUrl,
+      "_blank",
+      "noopener,noreferrer"
     );
   };
 
@@ -419,14 +404,12 @@ Thank you.
     setSelectedJob(null);
   };
 
+  // ====================================================
+  // RENDER
+  // ====================================================
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-
-      {/* ==================================================
-          HEADER
-      ================================================== */}
-
-      <Header />
+    <section className="w-full bg-slate-50 text-slate-900">
 
       {/* ==================================================
           HERO SECTION
@@ -436,9 +419,7 @@ Thank you.
 
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-white blur-3xl" />
-
           <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-white blur-3xl" />
-
           <div className="absolute bottom-0 left-1/2 h-60 w-60 rounded-full bg-white blur-3xl" />
         </div>
 
@@ -458,12 +439,15 @@ Thank you.
 
               </div>
 
-              <h1 className="max-w-3xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
+              <h2 className="max-w-3xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
+
                 Find Your Next
+
                 <span className="block text-cyan-100">
                   Healthcare Job
                 </span>
-              </h1>
+
+              </h2>
 
               <p className="mt-6 max-w-2xl text-base leading-7 text-sky-50 sm:text-lg">
                 Explore healthcare and hospital-related
@@ -478,7 +462,7 @@ Thank you.
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
                 <a
-                  href="#jobs"
+                  href="#healthcare-jobs-list"
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 font-bold text-sky-700 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
                 >
                   <BriefcaseIcon />
@@ -487,7 +471,7 @@ Thank you.
                 </a>
 
                 <a
-                  href="#contact"
+                  href="#healthcare-contact"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 font-bold text-white backdrop-blur transition hover:bg-white/20"
                 >
                   <PhoneIcon />
@@ -528,7 +512,7 @@ Thank you.
                 <div className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center backdrop-blur sm:p-4">
 
                   <p className="text-xl font-black text-white sm:text-2xl">
-                    2
+                    {CONTACTS.length}
                   </p>
 
                   <p className="mt-1 text-[10px] font-medium text-sky-100 sm:text-xs">
@@ -555,16 +539,14 @@ Thank you.
                       Healthcare Recruitment
                     </p>
 
-                    <h2 className="mt-1 text-2xl font-black text-slate-900">
+                    <h3 className="mt-1 text-2xl font-black text-slate-900">
                       Noida Job Opportunities
-                    </h2>
+                    </h3>
 
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
-
                     <UsersIcon className="h-6 w-6" />
-
                   </div>
 
                 </div>
@@ -599,7 +581,7 @@ Thank you.
                 </div>
 
                 <a
-                  href="#jobs"
+                  href="#healthcare-jobs-list"
                   className="mt-6 flex w-full items-center justify-center rounded-xl bg-sky-600 px-5 py-3.5 font-bold text-white transition hover:bg-sky-700"
                 >
                   Browse Healthcare Jobs
@@ -627,9 +609,9 @@ Thank you.
             Healthcare Opportunities
           </span>
 
-          <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-4xl">
+          <h3 className="mt-4 text-3xl font-black text-slate-900 sm:text-4xl">
             Healthcare Job Locations
-          </h2>
+          </h3>
 
           <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
             Explore job opportunities and recruitment
@@ -651,9 +633,7 @@ Thank you.
               <div className="flex items-start justify-between gap-4">
 
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 text-lg font-black text-white shadow-lg">
-
                   {hospital.shortName}
-
                 </div>
 
                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
@@ -662,9 +642,9 @@ Thank you.
 
               </div>
 
-              <h3 className="mt-5 text-xl font-black text-slate-900">
+              <h4 className="mt-5 text-xl font-black text-slate-900">
                 {hospital.name}
-              </h3>
+              </h4>
 
               <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
 
@@ -680,11 +660,10 @@ Thank you.
               </p>
 
               <a
-                href="#contact"
+                href="#healthcare-contact"
                 className="mt-5 inline-flex text-sm font-bold text-sky-600 transition hover:text-sky-800"
               >
                 Enquire About Jobs →
-
               </a>
 
             </div>
@@ -700,7 +679,7 @@ Thank you.
       ================================================== */}
 
       <section
-        id="jobs"
+        id="healthcare-jobs-list"
         className="border-y border-slate-200 bg-white"
       >
 
@@ -714,9 +693,9 @@ Thank you.
                 Available Positions
               </span>
 
-              <h2 className="mt-2 text-3xl font-black text-slate-900">
+              <h3 className="mt-2 text-3xl font-black text-slate-900">
                 Healthcare Jobs in Noida
-              </h2>
+              </h3>
 
               <p className="mt-2 text-sm text-slate-500">
                 Search and choose a role that matches
@@ -727,7 +706,10 @@ Thank you.
 
             <div className="w-full lg:max-w-md">
 
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
+              <label
+                htmlFor="healthcare-job-search"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
                 Search Jobs
               </label>
 
@@ -736,6 +718,7 @@ Thank you.
                 <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
                 <input
+                  id="healthcare-job-search"
                   type="text"
                   value={searchTerm}
                   onChange={(e) =>
@@ -770,7 +753,6 @@ Thank you.
                 }`}
               >
                 {category}
-
               </button>
 
             ))}
@@ -791,13 +773,12 @@ Thank you.
 
           <div>
 
-            <h2 className="text-xl font-black text-slate-900">
+            <h3 className="text-xl font-black text-slate-900">
+
               {filteredJobs.length} Job
-              {filteredJobs.length !== 1
-                ? "s"
-                : ""}{" "}
-              Found
-            </h2>
+              {filteredJobs.length !== 1 ? "s" : ""} Found
+
+            </h3>
 
             <p className="mt-1 text-sm text-slate-500">
               Healthcare opportunities in Noida
@@ -817,9 +798,9 @@ Thank you.
               🔍
             </div>
 
-            <h3 className="mt-5 text-xl font-bold text-slate-800">
+            <h4 className="mt-5 text-xl font-bold text-slate-800">
               No jobs found
-            </h3>
+            </h4>
 
             <p className="mt-2 text-sm text-slate-500">
               Try another keyword or category.
@@ -865,9 +846,9 @@ Thank you.
                         {job.category}
                       </span>
 
-                      <h3 className="truncate text-lg font-black text-slate-900">
+                      <h4 className="truncate text-lg font-black text-slate-900">
                         {job.title}
-                      </h3>
+                      </h4>
 
                     </div>
 
@@ -941,9 +922,7 @@ Thank you.
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setSelectedJob(job)
-                  }
+                  onClick={() => setSelectedJob(job)}
                   className="mt-6 w-full rounded-xl bg-sky-600 px-4 py-3 font-bold text-white transition hover:bg-sky-700 active:scale-[0.98]"
                 >
                   View & Apply
@@ -964,7 +943,7 @@ Thank you.
       ================================================== */}
 
       <section
-        id="contact"
+        id="healthcare-contact"
         className="bg-slate-900"
       >
 
@@ -980,9 +959,9 @@ Thank you.
                 Job Enquiry
               </span>
 
-              <h2 className="mt-5 text-3xl font-black text-white sm:text-4xl">
+              <h3 className="mt-5 text-3xl font-black text-white sm:text-4xl">
                 Interested in a Healthcare Job?
-              </h2>
+              </h3>
 
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
                 Contact the recruitment enquiry numbers
@@ -1023,9 +1002,7 @@ Thank you.
                     <div className="flex items-center gap-4">
 
                       <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/20 text-sky-300">
-
                         <PhoneIcon />
-
                       </div>
 
                       <div>
@@ -1139,9 +1116,9 @@ Thank you.
                 Healthcare Job Application
               </span>
 
-              <h2 className="mt-2 text-2xl font-black text-slate-900">
+              <h3 className="mt-2 text-2xl font-black text-slate-900">
                 {selectedJob.title}
-              </h2>
+              </h3>
 
               <p className="mt-2 text-sm text-slate-500">
                 {selectedJob.department} •{" "}
@@ -1200,9 +1177,9 @@ Thank you.
 
             <div className="mt-6">
 
-              <h3 className="text-base font-black text-slate-900">
+              <h4 className="text-base font-black text-slate-900">
                 Apply / Enquire
-              </h3>
+              </h4>
 
               <p className="mt-1 text-sm leading-6 text-slate-500">
                 Choose a contact method to enquire about
@@ -1295,12 +1272,7 @@ Thank you.
 
       )}
 
-      {/* ==================================================
-          FOOTER
-      ================================================== */}
-
-      <Footer />
-
-    </div>
+    </section>
   );
 }
+
