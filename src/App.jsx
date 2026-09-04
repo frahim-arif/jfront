@@ -17,6 +17,7 @@ import "leaflet/dist/leaflet.css";
 
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
+import HealthcareJobs from "./HealthcareJobs";
 
 // ======================================================
 // LEAFLET LOCATION MARKER
