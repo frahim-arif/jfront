@@ -1,52 +1,45 @@
+import { useEffect, useMemo, useState } from "react";
 
-import { useMemo, useState } from "react";
+import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
-// ======================================================
-// HEALTHCARE JOBS
-// ======================================================
+// =====================================================
+// CONTACTS
+// =====================================================
 
 const CONTACTS = [
   {
-    name: "Recruitment Contact 1",
+    name: "Recruitment Contact",
     phone: "9760020822",
   },
   {
-    name: "Recruitment Contact 2",
+    name: "Recruitment Contact",
     phone: "6002511436",
   },
 ];
 
-// ======================================================
-// HOSPITAL / OPPORTUNITY DATA
-// ======================================================
+// =====================================================
+// HOSPITALS
+// =====================================================
 
 const hospitals = [
   {
-    id: 1,
     name: "Mahanand Hospital",
     location: "Noida, Uttar Pradesh",
-    type: "Healthcare Opportunities",
-    shortName: "MH",
   },
   {
-    id: 2,
     name: "Felix Hospital",
     location: "Noida, Uttar Pradesh",
-    type: "Healthcare Opportunities",
-    shortName: "FH",
   },
   {
-    id: 3,
     name: "Max Hospital",
-    location: "Noida / NCR",
-    type: "Healthcare Opportunities",
-    shortName: "MX",
+    location: "Noida, Uttar Pradesh",
   },
 ];
 
-// ======================================================
-// JOB DATA
-// ======================================================
+// =====================================================
+// HEALTHCARE JOBS
+// =====================================================
 
 const healthcareJobs = [
   {
@@ -54,283 +47,222 @@ const healthcareJobs = [
     title: "Staff Nurse",
     category: "Nursing",
     department: "General Ward",
-    experience: "0 - 3 Years",
+    experience: "0-3 Years",
     qualification: "GNM / B.Sc Nursing",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "N",
+    description:
+      "Responsible for providing quality patient care, monitoring patients, administering medicines as prescribed and maintaining proper nursing records.",
   },
+
   {
     id: 2,
     title: "Nursing Assistant",
     category: "Nursing",
     department: "Patient Care",
     experience: "Fresher / Experienced",
-    qualification: "Healthcare / Relevant Experience",
+    qualification: "Relevant Nursing / Healthcare Training",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "NA",
+    description:
+      "Assist nurses and medical staff in routine patient care, maintaining cleanliness and supporting patients with their daily healthcare needs.",
   },
+
   {
     id: 3,
     title: "Ward Boy",
     category: "Support Staff",
     department: "Hospital Ward",
     experience: "Fresher Welcome",
-    qualification: "Relevant Experience Preferred",
+    qualification: "Basic Education Preferred",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "WB",
+    description:
+      "Support hospital staff with patient movement, ward assistance, basic housekeeping coordination and other routine hospital duties.",
   },
+
   {
     id: 4,
     title: "Patient Care Executive",
     category: "Patient Care",
     department: "Patient Services",
-    experience: "0 - 2 Years",
-    qualification: "Graduate Preferred",
+    experience: "0-2 Years",
+    qualification: "Graduate / Relevant Experience Preferred",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "PC",
+    description:
+      "Assist patients and their attendants, coordinate patient services and help maintain a smooth patient experience within the hospital.",
   },
+
   {
     id: 5,
     title: "Hospital Receptionist",
     category: "Administration",
     department: "Front Office",
-    experience: "0 - 2 Years",
-    qualification: "12th Pass / Graduate",
+    experience: "0-2 Years",
+    qualification: "Graduate / Good Communication Skills",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "HR",
+    description:
+      "Handle reception duties, patient registration, appointment coordination, basic enquiries and communication with patients and attendants.",
   },
+
   {
     id: 6,
     title: "Pharmacy Assistant",
     category: "Pharmacy",
     department: "Pharmacy",
-    experience: "0 - 2 Years",
-    qualification: "Relevant Qualification Preferred",
+    experience: "0-2 Years",
+    qualification: "D.Pharm / Relevant Experience Preferred",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "PA",
+    description:
+      "Assist pharmacy staff with medicine handling, stock management, billing support and maintaining proper pharmacy records.",
   },
+
   {
     id: 7,
     title: "Lab Technician",
     category: "Laboratory",
     department: "Diagnostics",
     experience: "1+ Years Preferred",
-    qualification: "DMLT / BMLT",
+    qualification: "DMLT / BMLT / Relevant Qualification",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "LT",
+    description:
+      "Perform laboratory procedures, handle samples, maintain equipment and follow required safety and quality standards.",
   },
+
   {
     id: 8,
     title: "Housekeeping Staff",
     category: "Support Staff",
     department: "Housekeeping",
     experience: "Fresher / Experienced",
-    qualification: "Relevant Experience Preferred",
+    qualification: "Basic Education Preferred",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "HS",
+    description:
+      "Maintain cleanliness and hygiene in hospital areas while following healthcare housekeeping and safety procedures.",
   },
+
   {
     id: 9,
     title: "OT Assistant",
     category: "Technical",
     department: "Operation Theatre",
-    experience: "0 - 3 Years",
-    qualification: "Relevant Healthcare Qualification",
+    experience: "0-3 Years",
+    qualification: "Relevant OT / Healthcare Training",
     location: "Noida",
-    employmentType: "Full Time",
     hospital: "Healthcare Opportunities",
-    icon: "OT",
+    description:
+      "Assist operation theatre staff with preparation, equipment handling, cleanliness and other routine OT support activities.",
   },
 ];
 
-// ======================================================
-// ICON COMPONENTS
-// ======================================================
+// =====================================================
+// ICONS
+// =====================================================
 
-function LocationIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 21s7-5.2 7-12A7 7 0 105 9c0 6.8 7 12 7 12z"
-      />
-      <circle cx="12" cy="9" r="2.5" />
-    </svg>
-  );
-}
+const LocationIcon = ({ className = "w-4 h-4" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+    <circle cx="12" cy="10" r="2.5" />
+  </svg>
+);
 
-function PhoneIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M22 16.92v3a2 2 0 01-2.18 2
-           19.79 19.79 0 01-8.63-3.07
-           19.5 19.5 0 01-6-6
-           19.79 19.79 0 01-3.07-8.67
-           A2 2 0 014.11 2h3
-           a2 2 0 012 1.72
-           c.12.9.33 1.78.62 2.63
-           a2 2 0 01-.45 2.11L8 9.73
-           a16 16 0 006 6l1.27-1.27
-           a2 2 0 012.11-.45
-           c.85.29 1.73.5 2.63.62
-           A2 2 0 0122 16.92z"
-      />
-    </svg>
-  );
-}
+const PhoneIcon = ({ className = "w-4 h-4" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L9 10.73a16 16 0 0 0 4.27 4.27l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z" />
+  </svg>
+);
 
-function WhatsAppIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M20.52 3.48A11.87 11.87 0 0012.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.75a11.9 11.9 0 005.78 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.47-8.34zM12.08 21.7a9.86 9.86 0 01-5.03-1.38l-.36-.21-3.74 1.04 1-3.65-.23-.38a9.83 9.83 0 01-1.51-5.22c0-5.45 4.43-9.88 9.88-9.88 2.64 0 5.12 1.03 6.98 2.89a9.81 9.81 0 012.89 6.98c0 5.45-4.43 9.88-9.88 9.88zm5.42-7.41c-.3-.15-1.78-.88-2.05-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.96 1.18-.18.2-.35.22-.65.07-1.78-.89-2.95-1.59-4.13-3.61-.31-.54.31-.5.89-1.67.1-.2.05-.38-.03-.53-.08-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.51s1.08 2.91 1.23 3.11c.15.2 2.12 3.24 5.14 4.55.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.31.18-1.43-.07-.12-.25-.2-.55-.35z" />
-    </svg>
-  );
-}
+const WhatsAppIcon = ({ className = "w-4 h-4" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M17.47 14.38c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.27.5 1.7.64.72.23 1.37.2 1.89.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35ZM12.05 2C6.52 2 2.02 6.5 2.02 12.03c0 1.77.46 3.5 1.34 5.02L2 22l5.08-1.33a9.98 9.98 0 0 0 4.97 1.35h.01c5.53 0 10.03-4.5 10.03-10.03C22.09 6.5 17.59 2 12.05 2Zm0 18.2h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.01.79.8-2.94-.2-.3a8.2 8.2 0 1 1 6.9 3.78Z" />
+  </svg>
+);
 
-function SearchIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="7" />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M20 20l-4-4"
-      />
-    </svg>
-  );
-}
+const SearchIcon = ({ className = "w-5 h-5" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-4-4" />
+  </svg>
+);
 
-function BriefcaseIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="7"
-        width="18"
-        height="13"
-        rx="2"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"
-      />
-      <path d="M3 12h18" />
-    </svg>
-  );
-}
+const BriefcaseIcon = ({ className = "w-4 h-4" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    aria-hidden="true"
+  >
+    <rect x="3" y="7" width="18" height="13" rx="2" />
+    <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <path d="M3 12h18" />
+  </svg>
+);
 
-function UsersIcon({ className = "h-5 w-5" }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"
-      />
-      <circle cx="9" cy="7" r="4" />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
-      />
-    </svg>
-  );
-}
-
-// ======================================================
+// =====================================================
 // MAIN COMPONENT
-// ======================================================
+// =====================================================
 
 export default function HealthcareJobs() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState("All");
-
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedJob, setSelectedJob] = useState(null);
 
-  // ====================================================
+  // ===================================================
   // CATEGORIES
-  // ====================================================
+  // ===================================================
 
   const categories = useMemo(() => {
-    const uniqueCategories = [
-      ...new Set(
-        healthcareJobs.map((job) => job.category)
-      ),
+    return [
+      "All",
+      ...new Set(healthcareJobs.map((job) => job.category)),
     ];
-
-    return ["All", ...uniqueCategories];
   }, []);
 
-  // ====================================================
+  // ===================================================
   // FILTER JOBS
-  // ====================================================
+  // ===================================================
 
   const filteredJobs = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
 
     return healthcareJobs.filter((job) => {
+      const matchesCategory =
+        selectedCategory === "All" ||
+        job.category === selectedCategory;
+
       const matchesSearch =
         !search ||
         job.title.toLowerCase().includes(search) ||
@@ -339,736 +271,296 @@ export default function HealthcareJobs() {
         job.qualification.toLowerCase().includes(search) ||
         job.location.toLowerCase().includes(search);
 
-      const matchesCategory =
-        selectedCategory === "All" ||
-        job.category === selectedCategory;
-
-      return matchesSearch && matchesCategory;
+      return matchesCategory && matchesSearch;
     });
   }, [searchTerm, selectedCategory]);
 
-  // ====================================================
+  // ===================================================
   // WHATSAPP APPLY
-  // ====================================================
+  // ===================================================
 
-  const handleWhatsAppApply = (
-    job,
-    phone = CONTACTS[0].phone
-  ) => {
-    const cleanPhone = String(phone).replace(/\D/g, "");
+  const handleWhatsAppApply = (job, phone) => {
+    const message = `Hello, I want to apply for the following healthcare job.
 
-    const internationalPhone =
-      cleanPhone.length === 10
-        ? `91${cleanPhone}`
-        : cleanPhone;
-
-    const message = `
-Hello,
-
-I am interested in applying for the following healthcare job.
-
-Job Position: ${job.title}
+Job: ${job.title}
 Category: ${job.category}
 Department: ${job.department}
+Experience: ${job.experience}
+Qualification: ${job.qualification}
 Location: ${job.location}
 
-Please share more details about the recruitment process.
+Please provide me with further details regarding this job.`;
 
-Thank you.
-    `.trim();
+    const url = `https://wa.me/91${phone}?text=${encodeURIComponent(
+      message
+    )}`;
 
-    const whatsappUrl =
-      `https://wa.me/${internationalPhone}?text=` +
-      encodeURIComponent(message);
-
-    window.open(
-      whatsappUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  // ====================================================
+  // ===================================================
   // CALL
-  // ====================================================
+  // ===================================================
 
   const handleCall = (phone) => {
-    window.location.href = `tel:${phone}`;
+    window.location.href = `tel:+91${phone}`;
   };
 
-  // ====================================================
+  // ===================================================
   // CLOSE MODAL
-  // ====================================================
+  // ===================================================
 
   const closeModal = () => {
     setSelectedJob(null);
   };
 
-  // ====================================================
-  // RENDER
-  // ====================================================
+  // ===================================================
+  // ESCAPE + BODY SCROLL
+  // ===================================================
+
+  useEffect(() => {
+    if (!selectedJob) return;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedJob]);
 
   return (
-    <section className="w-full bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-white">
+      <Header />
 
-      {/* ==================================================
-          HERO SECTION
-      ================================================== */}
+      {/* =================================================
+          HERO - LIGHT
+      ================================================= */}
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-sky-700 via-sky-600 to-cyan-600">
+      <section className="bg-green-50 border-b border-green-100">
+        <div className="max-w-6xl mx-auto px-4 py-10 md:py-14">
+          <div className="max-w-2xl">
+            <p className="text-green-700 text-sm font-semibold mb-2">
+              Healthcare Careers
+            </p>
 
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-white blur-3xl" />
-          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-white blur-3xl" />
-          <div className="absolute bottom-0 left-1/2 h-60 w-60 rounded-full bg-white blur-3xl" />
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+              Healthcare Jobs in Noida
+            </h1>
+
+            <p className="mt-3 text-gray-600 text-sm md:text-base">
+              Find healthcare and hospital job opportunities in Noida.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+      {/* =================================================
+          HOSPITALS - COMPACT
+      ================================================= */}
 
-          <div className="grid items-center gap-10 lg:grid-cols-2">
+      <section className="py-7">
+        <div className="max-w-6xl mx-auto px-4">
 
-            {/* LEFT */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">
+              Hospital Opportunities
+            </h2>
 
-            <div>
+            <span className="text-xs text-gray-500">
+              Noida & NCR
+            </span>
+          </div>
 
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {hospitals.map((hospital) => (
+              <div
+                key={hospital.name}
+                className="border border-gray-200 rounded-lg px-4 py-3"
+              >
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {hospital.name}
+                </h3>
 
-                <LocationIcon className="h-4 w-4" />
-
-                Noida Healthcare Opportunities
-
+                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-gray-500">
+                  <LocationIcon className="w-3.5 h-3.5" />
+                  {hospital.location}
+                </div>
               </div>
+            ))}
+          </div>
 
-              <h2 className="max-w-3xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
+        </div>
+      </section>
 
-                Find Your Next
+      {/* =================================================
+          SEARCH + FILTER
+      ================================================= */}
 
-                <span className="block text-cyan-100">
-                  Healthcare Job
-                </span>
+      <section className="bg-gray-50 border-y border-gray-100 py-5">
+        <div className="max-w-6xl mx-auto px-4">
 
+          <div className="flex flex-col md:flex-row gap-3">
+
+            {/* SEARCH */}
+            <div className="relative flex-1">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search healthcare jobs..."
+                className="w-full h-11 pl-10 pr-4 rounded-lg border border-gray-200 bg-white text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
+              />
+            </div>
+
+            {/* CATEGORY */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="h-11 md:w-52 px-3 rounded-lg border border-gray-200 bg-white text-sm outline-none focus:border-green-500"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* =================================================
+          JOBS
+      ================================================= */}
+
+      <section className="py-8 md:py-10">
+        <div className="max-w-6xl mx-auto px-4">
+
+          {/* SECTION HEADER */}
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Available Jobs
               </h2>
 
-              <p className="mt-6 max-w-2xl text-base leading-7 text-sky-50 sm:text-lg">
-                Explore healthcare and hospital-related
-                job opportunities in Noida. Find roles in
-                nursing, patient care, laboratory,
-                administration, pharmacy and hospital
-                support services.
+              <p className="text-xs text-gray-500 mt-1">
+                {filteredJobs.length} opportunities found
               </p>
-
-              {/* BUTTONS */}
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-
-                <a
-                  href="#healthcare-jobs-list"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 font-bold text-sky-700 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
-                >
-                  <BriefcaseIcon />
-
-                  View Available Jobs
-                </a>
-
-                <a
-                  href="#healthcare-contact"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 font-bold text-white backdrop-blur transition hover:bg-white/20"
-                >
-                  <PhoneIcon />
-
-                  Job Enquiry
-                </a>
-
-              </div>
-
-              {/* STATS */}
-
-              <div className="mt-10 grid grid-cols-3 gap-3 sm:max-w-xl">
-
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center backdrop-blur sm:p-4">
-
-                  <p className="text-xl font-black text-white sm:text-2xl">
-                    {healthcareJobs.length}+
-                  </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-sky-100 sm:text-xs">
-                    Job Roles
-                  </p>
-
-                </div>
-
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center backdrop-blur sm:p-4">
-
-                  <p className="text-xl font-black text-white sm:text-2xl">
-                    Noida
-                  </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-sky-100 sm:text-xs">
-                    Location
-                  </p>
-
-                </div>
-
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center backdrop-blur sm:p-4">
-
-                  <p className="text-xl font-black text-white sm:text-2xl">
-                    {CONTACTS.length}
-                  </p>
-
-                  <p className="mt-1 text-[10px] font-medium text-sky-100 sm:text-xs">
-                    Enquiry Contacts
-                  </p>
-
-                </div>
-
-              </div>
-
             </div>
-
-            {/* RIGHT HERO CARD */}
-
-            <div className="mx-auto w-full max-w-lg">
-
-              <div className="rounded-3xl border border-white/20 bg-white p-5 shadow-2xl sm:p-7">
-
-                <div className="flex items-start justify-between gap-4">
-
-                  <div>
-
-                    <p className="text-sm font-semibold text-sky-600">
-                      Healthcare Recruitment
-                    </p>
-
-                    <h3 className="mt-1 text-2xl font-black text-slate-900">
-                      Noida Job Opportunities
-                    </h3>
-
-                  </div>
-
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
-                    <UsersIcon className="h-6 w-6" />
-                  </div>
-
-                </div>
-
-                <div className="mt-6 space-y-3">
-
-                  {[
-                    "Nursing & Patient Care",
-                    "Laboratory & Diagnostics",
-                    "Hospital Administration",
-                    "Pharmacy Support",
-                    "Ward & Housekeeping Staff",
-                  ].map((item) => (
-
-                    <div
-                      key={item}
-                      className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3"
-                    >
-
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-sky-600 shadow-sm">
-                        ✓
-                      </div>
-
-                      <span className="text-sm font-semibold text-slate-700">
-                        {item}
-                      </span>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-                <a
-                  href="#healthcare-jobs-list"
-                  className="mt-6 flex w-full items-center justify-center rounded-xl bg-sky-600 px-5 py-3.5 font-bold text-white transition hover:bg-sky-700"
-                >
-                  Browse Healthcare Jobs
-                </a>
-
-              </div>
-
-            </div>
-
           </div>
 
-        </div>
-
-      </section>
-
-      {/* ==================================================
-          HOSPITAL / OPPORTUNITY SECTION
-      ================================================== */}
-
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-
-        <div className="mx-auto mb-10 max-w-2xl text-center">
-
-          <span className="inline-flex rounded-full bg-sky-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-sky-600">
-            Healthcare Opportunities
-          </span>
-
-          <h3 className="mt-4 text-3xl font-black text-slate-900 sm:text-4xl">
-            Healthcare Job Locations
-          </h3>
-
-          <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
-            Explore job opportunities and recruitment
-            enquiries related to healthcare and hospital
-            work in the Noida region.
-          </p>
-
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-
-          {hospitals.map((hospital) => (
-
-            <div
-              key={hospital.id}
-              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl"
-            >
-
-              <div className="flex items-start justify-between gap-4">
-
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 text-lg font-black text-white shadow-lg">
-                  {hospital.shortName}
-                </div>
-
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
-                  Opportunities
-                </span>
-
-              </div>
-
-              <h4 className="mt-5 text-xl font-black text-slate-900">
-                {hospital.name}
-              </h4>
-
-              <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
-
-                <LocationIcon className="h-4 w-4 text-sky-500" />
-
-                {hospital.location}
-
-              </div>
-
-              <p className="mt-4 text-sm leading-6 text-slate-500">
-                {hospital.type} related job enquiries
-                and recruitment information.
+          {/* NO JOB */}
+          {filteredJobs.length === 0 ? (
+            <div className="border border-gray-200 rounded-xl py-12 text-center">
+              <p className="text-gray-500 text-sm">
+                No healthcare jobs found.
               </p>
-
-              <a
-                href="#healthcare-contact"
-                className="mt-5 inline-flex text-sm font-bold text-sky-600 transition hover:text-sky-800"
-              >
-                Enquire About Jobs →
-              </a>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
-
-      {/* ==================================================
-          SEARCH + FILTER
-      ================================================== */}
-
-      <section
-        id="healthcare-jobs-list"
-        className="border-y border-slate-200 bg-white"
-      >
-
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-
-            <div>
-
-              <span className="text-sm font-bold uppercase tracking-wider text-sky-600">
-                Available Positions
-              </span>
-
-              <h3 className="mt-2 text-3xl font-black text-slate-900">
-                Healthcare Jobs in Noida
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-500">
-                Search and choose a role that matches
-                your skills.
-              </p>
-
-            </div>
-
-            <div className="w-full lg:max-w-md">
-
-              <label
-                htmlFor="healthcare-job-search"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Search Jobs
-              </label>
-
-              <div className="relative">
-
-                <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-
-                <input
-                  id="healthcare-job-search"
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) =>
-                    setSearchTerm(e.target.value)
-                  }
-                  placeholder="Search nurse, lab technician..."
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-12 pr-4 text-sm outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-100"
-                />
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* CATEGORY BUTTONS */}
-
-          <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
-
-            {categories.map((category) => (
 
               <button
-                key={category}
-                type="button"
-                onClick={() =>
-                  setSelectedCategory(category)
-                }
-                className={`whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-bold transition ${
-                  selectedCategory === category
-                    ? "bg-sky-600 text-white shadow-lg shadow-sky-200"
-                    : "border border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-600"
-                }`}
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("All");
+                }}
+                className="mt-3 text-sm font-medium text-green-600 hover:text-green-700"
               >
-                {category}
+                Clear Filters
               </button>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ==================================================
-          JOB LIST
-      ================================================== */}
-
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
-        <div className="mb-7 flex items-center justify-between gap-4">
-
-          <div>
-
-            <h3 className="text-xl font-black text-slate-900">
-
-              {filteredJobs.length} Job
-              {filteredJobs.length !== 1 ? "s" : ""} Found
-
-            </h3>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Healthcare opportunities in Noida
-            </p>
-
-          </div>
-
-        </div>
-
-        {/* NO JOB */}
-
-        {filteredJobs.length === 0 ? (
-
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sky-50 text-2xl">
-              🔍
             </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            <h4 className="mt-5 text-xl font-bold text-slate-800">
-              No jobs found
-            </h4>
-
-            <p className="mt-2 text-sm text-slate-500">
-              Try another keyword or category.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("All");
-              }}
-              className="mt-5 rounded-xl bg-sky-600 px-5 py-3 text-sm font-bold text-white hover:bg-sky-700"
-            >
-              Reset Filters
-            </button>
-
-          </div>
-
-        ) : (
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-
-            {filteredJobs.map((job) => (
-
-              <article
-                key={job.id}
-                className="group flex flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl"
-              >
-
-                {/* TOP */}
-
-                <div className="flex items-start justify-between gap-4">
-
-                  <div className="flex min-w-0 items-center gap-3">
-
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sm font-black text-sky-600">
-                      {job.icon}
-                    </div>
-
-                    <div className="min-w-0">
-
-                      <span className="text-[11px] font-bold uppercase tracking-wide text-sky-600">
-                        {job.category}
-                      </span>
-
-                      <h4 className="truncate text-lg font-black text-slate-900">
-                        {job.title}
-                      </h4>
-
-                    </div>
-
-                  </div>
-
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
-                    Hiring
-                  </span>
-
-                </div>
-
-                {/* DETAILS */}
-
-                <div className="mt-5 space-y-3 border-t border-slate-100 pt-5">
-
-                  <div className="flex justify-between gap-4 text-sm">
-
-                    <span className="text-slate-400">
-                      Department
-                    </span>
-
-                    <span className="text-right font-semibold text-slate-700">
-                      {job.department}
-                    </span>
-
-                  </div>
-
-                  <div className="flex justify-between gap-4 text-sm">
-
-                    <span className="text-slate-400">
-                      Experience
-                    </span>
-
-                    <span className="text-right font-semibold text-slate-700">
-                      {job.experience}
-                    </span>
-
-                  </div>
-
-                  <div className="flex justify-between gap-4 text-sm">
-
-                    <span className="text-slate-400">
-                      Qualification
-                    </span>
-
-                    <span className="text-right font-semibold text-slate-700">
-                      {job.qualification}
-                    </span>
-
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 pt-1">
-
-                    <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-600">
-
-                      <LocationIcon className="h-4 w-4 text-sky-500" />
-
-                      {job.location}
-
-                    </div>
-
-                    <span className="text-xs font-semibold text-slate-400">
-                      {job.employmentType}
-                    </span>
-
-                  </div>
-
-                </div>
-
-                {/* BUTTON */}
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedJob(job)}
-                  className="mt-6 w-full rounded-xl bg-sky-600 px-4 py-3 font-bold text-white transition hover:bg-sky-700 active:scale-[0.98]"
+              {filteredJobs.map((job) => (
+                <article
+                  key={job.id}
+                  className="border border-gray-200 rounded-xl p-4 bg-white hover:border-green-300 hover:shadow-sm transition"
                 >
-                  View & Apply
-                </button>
 
-              </article>
+                  {/* TITLE + CATEGORY */}
+                  <div className="mb-4">
+                    <span className="text-[11px] font-medium text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                      {job.category}
+                    </span>
 
-            ))}
+                    <h3 className="mt-2 text-base font-bold text-gray-900">
+                      {job.title}
+                    </h3>
+                  </div>
 
-          </div>
+                  {/* ONLY SHORT INFO */}
+                  <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
 
-        )}
+                    <div className="flex items-center gap-1.5">
+                      <LocationIcon className="w-3.5 h-3.5" />
+                      <span>{job.location}</span>
+                    </div>
 
+                    <div className="flex items-center gap-1.5">
+                      <BriefcaseIcon className="w-3.5 h-3.5" />
+                      <span>{job.experience}</span>
+                    </div>
+
+                  </div>
+
+                  {/* DETAILS BUTTON */}
+                  <button
+                    onClick={() => setSelectedJob(job)}
+                    className="w-full h-9 rounded-lg bg-gray-900 hover:bg-green-600 text-white text-sm font-semibold transition"
+                  >
+                    View Details
+                  </button>
+
+                </article>
+              ))}
+
+            </div>
+          )}
+
+        </div>
       </section>
 
-      {/* ==================================================
-          CONTACT SECTION
-      ================================================== */}
+      {/* =================================================
+          CONTACT SECTION - COMPACT
+      ================================================= */}
 
-      <section
-        id="healthcare-contact"
-        className="bg-slate-900"
-      >
+      <section className="bg-green-50 border-y border-green-100 py-7">
+        <div className="max-w-6xl mx-auto px-4">
 
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-
-            {/* LEFT */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <div>
+              <h2 className="text-lg font-bold text-gray-900">
+                Need Help Applying?
+              </h2>
 
-              <span className="inline-flex rounded-full border border-sky-400/20 bg-sky-400/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-sky-300">
-                Job Enquiry
-              </span>
-
-              <h3 className="mt-5 text-3xl font-black text-white sm:text-4xl">
-                Interested in a Healthcare Job?
-              </h3>
-
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
-                Contact the recruitment enquiry numbers
-                below for information about healthcare job
-                opportunities in Noida.
+              <p className="text-sm text-gray-600 mt-1">
+                Contact our recruitment team.
               </p>
-
-              <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4">
-
-                <div className="text-amber-300">
-                  ℹ
-                </div>
-
-                <p className="text-xs leading-5 text-slate-300">
-                  Please verify the job details, employer,
-                  work location, salary and other terms
-                  directly before making any payment or
-                  sharing sensitive personal documents.
-                </p>
-
-              </div>
-
             </div>
 
-            {/* CONTACT CARDS */}
-
-            <div className="grid gap-4">
+            <div className="flex flex-wrap gap-2">
 
               {CONTACTS.map((contact) => (
-
-                <div
+                <button
                   key={contact.phone}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"
+                  onClick={() => handleCall(contact.phone)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-800 hover:border-green-500 transition"
                 >
-
-                  <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
-                    <div className="flex items-center gap-4">
-
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/20 text-sky-300">
-                        <PhoneIcon />
-                      </div>
-
-                      <div>
-
-                        <p className="text-xs font-semibold text-slate-400">
-                          {contact.name}
-                        </p>
-
-                        <p className="mt-1 text-lg font-black text-white">
-                          +91 {contact.phone}
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                    <div className="flex gap-2">
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleCall(
-                            `+91${contact.phone}`
-                          )
-                        }
-                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-100 sm:flex-none"
-                      >
-
-                        <PhoneIcon className="h-4 w-4" />
-
-                        Call
-
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleWhatsAppApply(
-                            {
-                              title:
-                                "Healthcare Job Enquiry",
-                              category:
-                                "Healthcare",
-                              department:
-                                "Job Enquiry",
-                              location:
-                                "Noida",
-                            },
-                            contact.phone
-                          )
-                        }
-                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-white transition hover:bg-emerald-600 sm:flex-none"
-                      >
-
-                        <WhatsAppIcon className="h-4 w-4" />
-
-                        WhatsApp
-
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
+                  <PhoneIcon className="w-4 h-4 text-green-600" />
+                  {contact.phone}
+                </button>
               ))}
 
             </div>
@@ -1076,203 +568,181 @@ Thank you.
           </div>
 
         </div>
-
       </section>
 
-      {/* ==================================================
-          APPLY MODAL
-      ================================================== */}
+      {/* =================================================
+          JOB DETAILS MODAL
+      ================================================= */}
 
       {selectedJob && (
-
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4"
           onClick={closeModal}
         >
 
           <div
-            className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-7"
-            onClick={(event) =>
-              event.stopPropagation()
-            }
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
 
-            {/* CLOSE */}
+            {/* MODAL HEADER */}
+            <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-5 py-4 flex items-start justify-between">
 
-            <button
-              type="button"
-              onClick={closeModal}
-              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xl text-slate-600 transition hover:bg-slate-200"
-              aria-label="Close"
-            >
-              ×
-            </button>
+              <div className="pr-4">
+                <span className="text-[11px] font-medium text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                  {selectedJob.category}
+                </span>
 
-            {/* HEADER */}
+                <h2 className="text-xl font-bold text-gray-900 mt-2">
+                  {selectedJob.title}
+                </h2>
+              </div>
 
-            <div className="pr-10">
-
-              <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
-                Healthcare Job Application
-              </span>
-
-              <h3 className="mt-2 text-2xl font-black text-slate-900">
-                {selectedJob.title}
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-500">
-                {selectedJob.department} •{" "}
-                {selectedJob.location}
-              </p>
+              <button
+                onClick={closeModal}
+                className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 text-xl leading-none"
+                aria-label="Close"
+              >
+                ×
+              </button>
 
             </div>
 
-            {/* JOB INFO */}
+            {/* MODAL CONTENT */}
+            <div className="p-5">
 
-            <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+              {/* BASIC DETAILS */}
+              <div className="grid grid-cols-2 gap-3">
 
-              <div className="grid gap-4 sm:grid-cols-2">
-
-                <div>
-
-                  <p className="text-xs text-slate-400">
-                    Category
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[11px] text-gray-500">
+                    Department
                   </p>
 
-                  <p className="mt-1 text-sm font-bold text-slate-700">
-                    {selectedJob.category}
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
+                    {selectedJob.department}
                   </p>
-
                 </div>
 
-                <div>
-
-                  <p className="text-xs text-slate-400">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[11px] text-gray-500">
                     Experience
                   </p>
 
-                  <p className="mt-1 text-sm font-bold text-slate-700">
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
                     {selectedJob.experience}
                   </p>
-
                 </div>
 
-                <div className="sm:col-span-2">
-
-                  <p className="text-xs text-slate-400">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[11px] text-gray-500">
                     Qualification
                   </p>
 
-                  <p className="mt-1 text-sm font-bold text-slate-700">
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
                     {selectedJob.qualification}
                   </p>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[11px] text-gray-500">
+                    Location
+                  </p>
+
+                  <p className="text-sm font-semibold text-gray-900 mt-1">
+                    {selectedJob.location}
+                  </p>
+                </div>
+
+              </div>
+
+              {/* DESCRIPTION */}
+              <div className="mt-6">
+
+                <h3 className="text-sm font-bold text-gray-900 mb-2">
+                  Job Description
+                </h3>
+
+                <p className="text-sm text-gray-600 leading-6">
+                  {selectedJob.description}
+                </p>
+
+              </div>
+
+              {/* HOSPITAL */}
+              <div className="mt-5">
+
+                <h3 className="text-sm font-bold text-gray-900 mb-2">
+                  Hospital / Organization
+                </h3>
+
+                <p className="text-sm text-gray-600">
+                  {selectedJob.hospital}
+                </p>
+
+              </div>
+
+              {/* APPLY */}
+              <div className="mt-6 pt-5 border-t border-gray-100">
+
+                <p className="text-sm font-bold text-gray-900 mb-3">
+                  Apply for this Job
+                </p>
+
+                <div className="grid grid-cols-2 gap-3">
+
+                  <button
+                    onClick={() =>
+                      handleWhatsAppApply(
+                        selectedJob,
+                        CONTACTS[0].phone
+                      )
+                    }
+                    className="h-11 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition"
+                  >
+                    <WhatsAppIcon />
+                    WhatsApp
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleCall(CONTACTS[0].phone)
+                    }
+                    className="h-11 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold flex items-center justify-center gap-2 transition"
+                  >
+                    <PhoneIcon />
+                    Call Now
+                  </button>
 
                 </div>
 
               </div>
 
-            </div>
+              {/* OTHER CONTACT */}
+              <div className="mt-4">
 
-            {/* APPLY */}
-
-            <div className="mt-6">
-
-              <h4 className="text-base font-black text-slate-900">
-                Apply / Enquire
-              </h4>
-
-              <p className="mt-1 text-sm leading-6 text-slate-500">
-                Choose a contact method to enquire about
-                this job position.
-              </p>
-
-              <div className="mt-5 grid gap-3">
-
-                {CONTACTS.map((contact) => (
-
-                  <div
-                    key={contact.phone}
-                    className="rounded-2xl border border-slate-200 p-4"
-                  >
-
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-                      <div>
-
-                        <p className="text-xs text-slate-400">
-                          {contact.name}
-                        </p>
-
-                        <p className="mt-1 font-bold text-slate-800">
-                          +91 {contact.phone}
-                        </p>
-
-                      </div>
-
-                      <div className="flex gap-2">
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleCall(
-                              `+91${contact.phone}`
-                            )
-                          }
-                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                        >
-                          Call
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleWhatsAppApply(
-                              selectedJob,
-                              contact.phone
-                            )
-                          }
-                          className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-600"
-                        >
-
-                          <WhatsAppIcon className="h-4 w-4" />
-
-                          Apply
-
-                        </button>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                ))}
+                <button
+                  onClick={() =>
+                    handleWhatsAppApply(
+                      selectedJob,
+                      CONTACTS[1].phone
+                    )
+                  }
+                  className="w-full text-xs text-gray-500 hover:text-green-600 transition"
+                >
+                  Or contact recruitment at {CONTACTS[1].phone}
+                </button>
 
               </div>
-
-            </div>
-
-            {/* DISCLAIMER */}
-
-            <div className="mt-6 rounded-xl border border-amber-100 bg-amber-50 p-4">
-
-              <p className="text-xs leading-5 text-amber-800">
-                Important: Confirm the employer, job role,
-                salary, location and recruitment terms
-                directly before proceeding. Do not make
-                payments unless you have independently
-                verified the purpose and recipient.
-              </p>
 
             </div>
 
           </div>
 
         </div>
-
       )}
 
-    </section>
+      <Footer />
+    </div>
   );
 }
-
