@@ -23,6 +23,7 @@ import Admin from "./App/Admin/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
 // import WorkerLogin from "./pages/WorkerLogin.jsx";
 import HealthcareJobs from "./HealthcareJobs";
+import AdminLogin from "./pages/AdminLogin";
 
 const router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
     path: "/worker-register",
     element: <WorkerRegister />,
   },
+  {
+  path: "/admin/login",
+  element: <AdminLogin />,
+},
 ]);
 
 createRoot(document.getElementById("root")).render(
