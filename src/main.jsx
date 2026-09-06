@@ -23,7 +23,7 @@ import Admin from "./App/Admin/delete/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
 // import WorkerLogin from "./pages/WorkerLogin.jsx";
 import HealthcareJobs from "./HealthcareJobs";
-import AdminLogin from "./pages/AdminLogin";
+import AdminLogin from "./App/Admin/login/page.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,8 +77,8 @@ const router = createBrowserRouter([
   },
 
   {
-  path: "/admin/delete",
-  element: <AdminDelete />,
+  path: "/admin/",
+  element: <Admin />,
 },
 
   // OFFER JOB
