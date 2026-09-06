@@ -54,7 +54,7 @@ export default function AdminLogin() {
         JSON.stringify(data.admin)
       );
 
-      navigate("/workers");
+      navigate("/admin/workers");
     } catch (error) {
       console.error("ADMIN LOGIN ERROR:", error);
 
