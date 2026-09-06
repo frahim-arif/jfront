@@ -25,6 +25,7 @@ import WorkerRegister from "./pages/WorkerRegister.jsx";
 import HealthcareJobs from "./HealthcareJobs";
 import AdminDashboard from "./App/Admin/dashboard/page.jsx";
 import AdminLogin from "./App/Admin/login/page.jsx";
+import AdminWorkers from "./App/Admin/workers/page.jsx";
 
 const router = createBrowserRouter([
   {
@@ -93,7 +94,10 @@ const router = createBrowserRouter([
 //   path: "/worker-login",
 //   element: <WorkerLogin />,
 // },
- 
+ {
+  path: "/admin/workers",
+  element: <AdminWorkers />,
+},
 
   // WORKER REGISTER
   {
