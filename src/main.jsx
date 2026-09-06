@@ -101,7 +101,7 @@ const router = createBrowserRouter([
     element: <WorkerRegister />,
   },
   {
-  path: "/admin",
+  path: "/admin/dashboard",
   element: <AdminDashboard />,
 },
   {
