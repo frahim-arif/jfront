@@ -413,7 +413,7 @@ export default function Footer() {
           <p className="text-[10px] text-slate-600 sm:text-xs">
             Powered & Developed by{" "}
             <span className="font-semibold text-slate-400">
-              Web Core Cube Tech
+              Web Core Cube Tech-9058596626
             </span>
           </p>
 
