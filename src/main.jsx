@@ -23,6 +23,7 @@ import Admin from "./App/Admin/delete/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
 // import WorkerLogin from "./pages/WorkerLogin.jsx";
 import HealthcareJobs from "./HealthcareJobs";
+import AdminDashboard from "./App/Admin/dashboard/page.jsx";
 import AdminLogin from "./App/Admin/login/page.jsx";
 
 const router = createBrowserRouter([
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
     path: "/worker-register",
     element: <WorkerRegister />,
   },
+  {
+  path: "/admin",
+  element: <AdminDashboard />,
+},
   {
   path: "/admin/login",
   element: <AdminLogin />,
