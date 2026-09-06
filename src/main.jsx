@@ -19,7 +19,7 @@ import PrivacyPolicy from "./App/Privacy/page.jsx";
 import Terms from "./App/Terms/page.jsx";
 import Contact from "./App/Contact/page.jsx";
 import Disclaimer from "./App/Disclaimer/page.jsx";
-// import Admin from "./App/Admin/delete/page.jsx";
+import Admin from "./App/Admin/delete/page.jsx";
 import WorkerRegister from "./pages/WorkerRegister.jsx";
 // import WorkerLogin from "./pages/WorkerLogin.jsx";
 import HealthcareJobs from "./HealthcareJobs";
@@ -76,10 +76,10 @@ const router = createBrowserRouter([
     element: <Disclaimer />,
   },
 
-  // {
-  //   path: "/admin",
-  //   element: <Admin />,
-  // },
+  {
+  path: "/admin/delete",
+  element: <AdminDelete />,
+},
 
   // OFFER JOB
   {
