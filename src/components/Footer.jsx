@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import {
   ShieldCheck,
   Phone,
@@ -9,24 +10,37 @@ import {
   BriefcaseBusiness,
   UserPlus,
   Building2,
-  CheckCircle2,
 } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const recruitmentContacts = [
-    "9760020822",
-    "6002511436",
+    {
+      name: "Javed Ali",
+      phone: "9760020822",
+    },
+    {
+      name: "Kalpana",
+      phone: "6002511436",
+    },
+    {
+      name: "Priti Kumari",
+      phone: "9027497076",
+    },
   ];
 
-  const handleWhatsApp = (phone) => {
-    window.open(`https://wa.me/91${phone}`, "_blank");
+  const handleWhatsApp = (name, phone) => {
+    const message = `Hello ${name}, I am contacting you regarding healthcare recruitment through JobHIR.`;
+
+    window.open(
+      `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
   };
 
   return (
     <footer className="relative mt-16 w-full overflow-hidden bg-slate-950 text-white">
-
       {/* =====================================================
           BACKGROUND EFFECTS
       ===================================================== */}
@@ -123,6 +137,7 @@ export default function Footer() {
             <div className="mt-7 grid max-w-sm grid-cols-2 gap-3">
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+
                 <BriefcaseBusiness
                   size={18}
                   className="text-emerald-400"
@@ -135,9 +150,11 @@ export default function Footer() {
                 <p className="mt-1 text-[10px] text-slate-500">
                   Find suitable work
                 </p>
+
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+
                 <UserPlus
                   size={18}
                   className="text-cyan-400"
@@ -150,13 +167,12 @@ export default function Footer() {
                 <p className="mt-1 text-[10px] text-slate-500">
                   Connect with employers
                 </p>
+
               </div>
 
             </div>
 
           </div>
-
-         
 
           {/* =================================================
               CONTACT
@@ -287,9 +303,9 @@ export default function Footer() {
 
               <div className="mt-4 space-y-2.5">
 
-                {recruitmentContacts.map((phone) => (
+                {recruitmentContacts.map((contact) => (
                   <div
-                    key={phone}
+                    key={contact.phone}
                     className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-slate-950/50 p-2.5"
                   >
 
@@ -299,9 +315,15 @@ export default function Footer() {
                         <Phone size={14} />
                       </div>
 
-                      <span className="text-xs font-bold text-slate-300">
-                        {phone}
-                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-bold text-slate-200">
+                          {contact.name}
+                        </p>
+
+                        <p className="mt-0.5 text-[11px] text-slate-500">
+                          {contact.phone}
+                        </p>
+                      </div>
 
                     </div>
 
@@ -310,9 +332,9 @@ export default function Footer() {
                       {/* CALL */}
 
                       <a
-                        href={`tel:${phone}`}
+                        href={`tel:${contact.phone}`}
                         className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-slate-300 transition hover:bg-white hover:text-slate-900"
-                        title="Call"
+                        title={`Call ${contact.name}`}
                       >
                         <Phone size={13} />
                       </a>
@@ -321,9 +343,14 @@ export default function Footer() {
 
                       <button
                         type="button"
-                        onClick={() => handleWhatsApp(phone)}
+                        onClick={() =>
+                          handleWhatsApp(
+                            contact.name,
+                            contact.phone
+                          )
+                        }
                         className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white transition hover:bg-emerald-500"
-                        title="WhatsApp"
+                        title={`WhatsApp ${contact.name}`}
                       >
                         <MessageCircle size={14} />
                       </button>
@@ -397,8 +424,6 @@ export default function Footer() {
           </div>
 
         </div>
-
-        
 
         {/* =====================================================
             BOTTOM
