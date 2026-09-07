@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 const CONTACTS = {
   recruitment1: "9760020822",
   recruitment2: "6002511436",
+  recruitment3: "9027497076",
 };
 
 /* =========================================================
@@ -334,7 +335,6 @@ export default function HealthcareJobs() {
       ===================================================== */}
 
       <section className="relative w-full overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950">
-        {/* Background decoration */}
         <div className="absolute -right-32 -top-32 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
         <div className="absolute -bottom-40 left-10 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
 
@@ -404,9 +404,10 @@ export default function HealthcareJobs() {
                   </p>
                 </div>
 
+                {/* UPDATED: 2 → 3 */}
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur sm:p-4">
                   <p className="text-xl font-black text-white sm:text-2xl">
-                    2
+                    3
                   </p>
                   <p className="mt-1 text-[10px] text-slate-400 sm:text-xs">
                     Contacts
@@ -501,14 +502,12 @@ export default function HealthcareJobs() {
             </div>
           </div>
 
-          {/* EXACTLY 3 HOSPITAL CARDS */}
           <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {hospitals.map((hospital) => (
               <div
                 key={hospital.id}
                 className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl"
               >
-                {/* top gradient */}
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${hospital.accent}`}
                 />
@@ -710,6 +709,7 @@ export default function HealthcareJobs() {
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           Department
                         </p>
+
                         <p className="mt-1 text-xs font-bold text-slate-700">
                           {job.department}
                         </p>
@@ -719,6 +719,7 @@ export default function HealthcareJobs() {
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           Experience
                         </p>
+
                         <p className="mt-1 text-xs font-bold text-slate-700">
                           {job.experience}
                         </p>
@@ -728,6 +729,7 @@ export default function HealthcareJobs() {
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           Qualification
                         </p>
+
                         <p className="mt-1 text-xs font-bold text-slate-700">
                           {job.qualification}
                         </p>
@@ -762,8 +764,6 @@ export default function HealthcareJobs() {
           </div>
         </section>
       )}
-
-     
 
       {/* =====================================================
           APPLY MODAL
@@ -808,6 +808,7 @@ export default function HealthcareJobs() {
                   <p className="text-[10px] uppercase tracking-wide text-slate-400">
                     Department
                   </p>
+
                   <p className="mt-1 text-xs font-bold text-slate-700">
                     {selectedJob.department}
                   </p>
@@ -817,6 +818,7 @@ export default function HealthcareJobs() {
                   <p className="text-[10px] uppercase tracking-wide text-slate-400">
                     Experience
                   </p>
+
                   <p className="mt-1 text-xs font-bold text-slate-700">
                     {selectedJob.experience}
                   </p>
@@ -826,61 +828,65 @@ export default function HealthcareJobs() {
                   <p className="text-[10px] uppercase tracking-wide text-slate-400">
                     Qualification
                   </p>
+
                   <p className="mt-1 text-xs font-bold text-slate-700">
                     {selectedJob.qualification}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-6" id="contact">
                 <p className="text-sm font-black text-slate-900">
                   Contact Recruitment
                 </p>
 
                 <div className="mt-3 space-y-3">
-                  {[CONTACTS.recruitment1, CONTACTS.recruitment2].map(
-                    (phone) => (
-                      <div
-                        key={phone}
-                        className="flex flex-col gap-3 rounded-2xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                            <PhoneIcon size={18} />
-                          </div>
-
-                          <div>
-                            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                              Recruitment
-                            </p>
-
-                            <p className="text-sm font-black text-slate-800">
-                              {phone}
-                            </p>
-                          </div>
+                  {/* UPDATED: NOW 3 NUMBERS */}
+                  {[
+                    CONTACTS.recruitment1,
+                    CONTACTS.recruitment2,
+                    CONTACTS.recruitment3,
+                  ].map((phone) => (
+                    <div
+                      key={phone}
+                      className="flex flex-col gap-3 rounded-2xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                          <PhoneIcon size={18} />
                         </div>
 
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleCall(phone)}
-                            className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-                          >
-                            Call
-                          </button>
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            Recruitment
+                          </p>
 
-                          <button
-                            onClick={() =>
-                              handleWhatsAppApply(selectedJob, phone)
-                            }
-                            className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-emerald-700"
-                          >
-                            <WhatsAppIcon size={15} />
-                            Apply
-                          </button>
+                          <p className="text-sm font-black text-slate-800">
+                            {phone}
+                          </p>
                         </div>
                       </div>
-                    )
-                  )}
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleCall(phone)}
+                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                        >
+                          Call
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleWhatsAppApply(selectedJob, phone)
+                          }
+                          className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-emerald-700"
+                        >
+                          <WhatsAppIcon size={15} />
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
