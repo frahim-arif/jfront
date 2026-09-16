@@ -68,17 +68,23 @@ export default function AdminDashboard() {
     navigate("/admin/login");
   };
 
-  const adminUser = JSON.parse(
-    localStorage.getItem("adminUser") || "{}"
-  );
+  let adminUser = {};
+
+  try {
+    adminUser = JSON.parse(
+      localStorage.getItem("adminUser") || "{}"
+    );
+  } catch {
+    adminUser = {};
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="bg-white rounded-xl shadow p-8 text-center">
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
+        <div className="bg-white border border-slate-200 shadow-sm p-8 text-center">
           <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
 
-          <p className="text-slate-600">
+          <p className="text-slate-600 font-medium">
             Loading Admin Dashboard...
           </p>
         </div>
@@ -88,23 +94,26 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* HEADER */}
+
+      {/* ================= HEADER ================= */}
       <header className="bg-slate-900 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
             <div>
               <h1 className="text-2xl font-bold">
                 JobHIR Admin
               </h1>
 
               <p className="text-sm text-slate-400 mt-1">
-                Worker Management Dashboard
+                Global Worker Management Dashboard
               </p>
             </div>
 
             <div className="flex items-center gap-3">
+
               <div className="hidden sm:block text-right">
-                <p className="text-sm text-slate-300">
+                <p className="text-sm text-slate-400">
                   Logged in as
                 </p>
 
@@ -119,16 +128,18 @@ export default function AdminDashboard() {
               >
                 Logout
               </button>
+
             </div>
           </div>
         </div>
       </header>
 
-      {/* CONTENT */}
+      {/* ================= CONTENT ================= */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+
         {/* ERROR */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4">
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 p-4">
             <p className="font-semibold">
               Dashboard Error
             </p>
@@ -149,18 +160,19 @@ export default function AdminDashboard() {
         {/* PAGE TITLE */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900">
-            Dashboard
+            Global Dashboard
           </h2>
 
           <p className="text-slate-500 mt-1">
-            JobHIR workers aur registrations ka overview
+            JobHIR ke workers, payments, accounts aur verification ka complete overview.
           </p>
         </div>
 
-        {/* MAIN STATS */}
+        {/* ================= MAIN STATS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
           {/* TOTAL WORKERS */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
               Total Workers
             </p>
@@ -170,12 +182,12 @@ export default function AdminDashboard() {
             </h3>
 
             <p className="text-xs text-slate-400 mt-2">
-              All registered workers
+              All registered workers worldwide
             </p>
           </div>
 
           {/* PAID */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
               Paid Workers
             </p>
@@ -185,12 +197,12 @@ export default function AdminDashboard() {
             </h3>
 
             <p className="text-xs text-slate-400 mt-2">
-              Payment completed
+              Registration payment completed
             </p>
           </div>
 
           {/* PENDING PAYMENT */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
               Pending Payment
             </p>
@@ -205,7 +217,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* ACTIVE */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
               Active Workers
             </p>
@@ -215,14 +227,14 @@ export default function AdminDashboard() {
             </h3>
 
             <p className="text-xs text-slate-400 mt-2">
-              Currently active
+              Currently active accounts
             </p>
           </div>
 
-          {/* PENDING */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          {/* PENDING ACCOUNT */}
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
-              Pending Workers
+              Pending Accounts
             </p>
 
             <h3 className="text-3xl font-bold text-yellow-600 mt-2">
@@ -230,12 +242,12 @@ export default function AdminDashboard() {
             </h3>
 
             <p className="text-xs text-slate-400 mt-2">
-              Waiting for approval
+              Waiting for account approval
             </p>
           </div>
 
           {/* BLOCKED */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-white shadow-sm border border-slate-200 p-5">
             <p className="text-sm font-medium text-slate-500">
               Blocked Workers
             </p>
@@ -250,70 +262,123 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* LOCATION STATS */}
+        {/* ================= VERIFICATION OVERVIEW ================= */}
         <div className="mt-8">
-          <h3 className="text-xl font-bold text-slate-900 mb-4">
-            Location Overview
-          </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* UP */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-slate-900">
+              Worker Verification
+            </h3>
+
+            <p className="text-sm text-slate-500 mt-1">
+              Worker skill aur KYC verification manage karein.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+            {/* PENDING VERIFICATION */}
+            <div className="bg-white border border-slate-200 shadow-sm p-5">
               <p className="text-sm font-medium text-slate-500">
-                Uttar Pradesh Workers
+                Pending Verification
               </p>
 
-              <div className="flex items-end justify-between mt-3">
-                <h3 className="text-4xl font-bold text-slate-900">
-                  {stats?.upWorkers ?? 0}
-                </h3>
+              <h3 className="text-3xl font-bold text-orange-500 mt-2">
+                {stats?.pendingVerification ?? 0}
+              </h3>
 
-                <span className="text-sm text-blue-600 font-semibold">
-                  UP
-                </span>
-              </div>
-
-              <Link
-                to="/admin/workers?state=Uttar%20Pradesh"
-                className="inline-block mt-5 text-sm font-semibold text-blue-600 hover:text-blue-800"
-              >
-                View UP Workers →
-              </Link>
+              <p className="text-xs text-slate-400 mt-2">
+                Workers waiting for review
+              </p>
             </div>
 
-            {/* NOIDA */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            {/* UNDER REVIEW */}
+            <div className="bg-white border border-slate-200 shadow-sm p-5">
               <p className="text-sm font-medium text-slate-500">
-                Noida Workers
+                Under Review
               </p>
 
-              <div className="flex items-end justify-between mt-3">
-                <h3 className="text-4xl font-bold text-slate-900">
-                  {stats?.noidaWorkers ?? 0}
-                </h3>
+              <h3 className="text-3xl font-bold text-blue-600 mt-2">
+                {stats?.underReview ?? 0}
+              </h3>
 
-                <span className="text-sm text-green-600 font-semibold">
-                  Noida
-                </span>
-              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                Verification currently in progress
+              </p>
+            </div>
 
-              <Link
-                to="/admin/workers?state=Uttar%20Pradesh&district=Noida"
-                className="inline-block mt-5 text-sm font-semibold text-green-600 hover:text-green-800"
-              >
-                View Noida Workers →
-              </Link>
+            {/* VERIFIED */}
+            <div className="bg-white border border-slate-200 shadow-sm p-5">
+              <p className="text-sm font-medium text-slate-500">
+                Verified Workers
+              </p>
+
+              <h3 className="text-3xl font-bold text-green-600 mt-2">
+                {stats?.verifiedWorkers ?? 0}
+              </h3>
+
+              <p className="text-xs text-slate-400 mt-2">
+                Successfully verified
+              </p>
+            </div>
+
+            {/* NEED MORE INFO */}
+            <div className="bg-white border border-slate-200 shadow-sm p-5">
+              <p className="text-sm font-medium text-slate-500">
+                Need More Information
+              </p>
+
+              <h3 className="text-3xl font-bold text-yellow-600 mt-2">
+                {stats?.needMoreInformation ?? 0}
+              </h3>
+
+              <p className="text-xs text-slate-400 mt-2">
+                Additional information required
+              </p>
             </div>
           </div>
         </div>
 
-        {/* QUICK ACTIONS */}
+        {/* ================= GLOBAL LOCATION ================= */}
         <div className="mt-8">
+
+          <div className="bg-white border border-slate-200 shadow-sm p-6">
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">
+                  Global Worker Directory
+                </h3>
+
+                <p className="text-sm text-slate-500 mt-1">
+                  State, district, work type, payment aur verification ke
+                  according workers search karein.
+                </p>
+              </div>
+
+              <Link
+                to="/admin/workers"
+                className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold transition"
+              >
+                View All Workers →
+              </Link>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* ================= QUICK ACTIONS ================= */}
+        <div className="mt-8">
+
           <h3 className="text-xl font-bold text-slate-900 mb-4">
             Quick Actions
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            {/* ALL WORKERS */}
             <Link
               to="/admin/workers"
               className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 transition"
@@ -323,23 +388,26 @@ export default function AdminDashboard() {
               </h4>
 
               <p className="text-sm text-blue-100 mt-1">
-                Workers dekhein, search karein aur status manage karein.
+                Sabhi states aur districts ke workers dekhein,
+                search karein aur manage karein.
               </p>
             </Link>
 
+            {/* VERIFICATION */}
             <Link
-              to="/admin/workers?state=Uttar%20Pradesh&district=Noida"
-              className="bg-green-600 hover:bg-green-700 text-white rounded-xl p-5 transition"
+              to="/admin/workers?verificationStatus=Pending"
+              className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl p-5 transition"
             >
               <h4 className="font-bold text-lg">
-                Noida Workers
+                Worker Verification
               </h4>
 
-              <p className="text-sm text-green-100 mt-1">
-                Noida, Uttar Pradesh ke registered workers dekhein.
+              <p className="text-sm text-purple-100 mt-1">
+                Pending workers ki KYC aur skill verification karein.
               </p>
             </Link>
 
+            {/* JOBS */}
             <Link
               to="/admin/delete"
               className="bg-red-600 hover:bg-red-700 text-white rounded-xl p-5 transition"
@@ -352,18 +420,22 @@ export default function AdminDashboard() {
                 Posted jobs dekhein aur manage karein.
               </p>
             </Link>
+
           </div>
         </div>
 
-        {/* REFRESH */}
+        {/* ================= REFRESH ================= */}
         <div className="mt-8 flex justify-end">
+
           <button
             onClick={fetchStats}
             className="bg-white border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg font-semibold hover:bg-slate-50 transition"
           >
             Refresh Dashboard
           </button>
+
         </div>
+
       </main>
     </div>
   );
