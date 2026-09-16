@@ -1052,7 +1052,7 @@ export default function WorkerRegister() {
               >
                 {loading
                   ? "Creating Registration & Payment..."
-                  : "Register & Pay ₹250"}
+                  : "Register & Pay ₹5"}
               </button>
 
             </form>
