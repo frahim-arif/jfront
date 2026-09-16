@@ -3,9 +3,23 @@ import { Link, useSearchParams } from "react-router-dom";
 
 const API_URL = "https://jbackend-h963.onrender.com";
 
+const VERIFICATION_STATUSES = [
+  "Pending",
+  "Under Review",
+  "Verified",
+  "Need More Information",
+  "Rejected",
+];
+
+const SKILL_LEVELS = [
+  "Expert",
+  "Skilled",
+  "Semi-Skilled",
+  "Helper",
+];
+
 export default function AdminWorkers() {
-  const [searchParams, setSearchParams] =
-    useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,42 +35,42 @@ export default function AdminWorkers() {
   const [filters, setFilters] = useState({
     state: searchParams.get("state") || "",
     district: searchParams.get("district") || "",
-    workType: "",
-    paymentStatus: "",
-    status: "",
-    verificationStatus: "",
-    skillLevel: "",
-    search: "",
+    workType: searchParams.get("workType") || "",
+    paymentStatus: searchParams.get("paymentStatus") || "",
+    status: searchParams.get("status") || "",
+    verificationStatus:
+      searchParams.get("verificationStatus") || "",
+    skillLevel: searchParams.get("skillLevel") || "",
+    search: searchParams.get("search") || "",
   });
 
   // =====================================================
   // SELECTED WORKER
   // =====================================================
 
-  const [selectedWorker, setSelectedWorker] =
-    useState(null);
-
-  const [detailLoading, setDetailLoading] =
-    useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // =====================================================
   // VERIFICATION FORM
   // =====================================================
 
-  const [verificationForm, setVerificationForm] =
-    useState({
-      verificationStatus: "Pending",
-      skillLevel: "",
-      verificationNotes: "",
-    });
+  const [verificationForm, setVerificationForm] = useState({
+    verificationStatus: "Pending",
+    skillLevel: "",
+    verificationScore: 0,
+    experienceYears: 0,
+    kycVerified: false,
+    skillVerified: false,
+    adminNotes: "",
+  });
 
   // =====================================================
   // ADMIN TOKEN
   // =====================================================
 
   const getAdminToken = () => {
-    const token =
-      localStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
 
     if (!token) {
       window.location.href = "/admin/login";
@@ -81,9 +95,7 @@ export default function AdminWorkers() {
   // FETCH WORKERS
   // =====================================================
 
-  const fetchWorkers = async (
-    customFilters = filters
-  ) => {
+  const fetchWorkers = async (customFilters = filters) => {
     try {
       setLoading(true);
       setError("");
@@ -95,24 +107,15 @@ export default function AdminWorkers() {
       const params = new URLSearchParams();
 
       if (customFilters.state) {
-        params.append(
-          "state",
-          customFilters.state
-        );
+        params.append("state", customFilters.state);
       }
 
       if (customFilters.district) {
-        params.append(
-          "district",
-          customFilters.district
-        );
+        params.append("district", customFilters.district);
       }
 
       if (customFilters.workType) {
-        params.append(
-          "workType",
-          customFilters.workType
-        );
+        params.append("workType", customFilters.workType);
       }
 
       if (customFilters.paymentStatus) {
@@ -123,10 +126,7 @@ export default function AdminWorkers() {
       }
 
       if (customFilters.status) {
-        params.append(
-          "status",
-          customFilters.status
-        );
+        params.append("status", customFilters.status);
       }
 
       if (customFilters.verificationStatus) {
@@ -172,34 +172,31 @@ export default function AdminWorkers() {
         return;
       }
 
-      if (
-        !response.ok ||
-        !data.success
-      ) {
+      if (!response.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Failed to load workers"
+          data.message || "Failed to load workers"
         );
       }
 
       setWorkers(data.workers || []);
     } catch (err) {
-      console.error(
-        "ADMIN WORKERS ERROR:",
-        err
-      );
+      console.error("ADMIN WORKERS ERROR:", err);
 
       setError(
-        err.message ||
-          "Workers load nahi ho sake."
+        err.message || "Workers load nahi ho sake."
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
   useEffect(() => {
     fetchWorkers(filters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // =====================================================
@@ -207,10 +204,7 @@ export default function AdminWorkers() {
   // =====================================================
 
   const handleFilterChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
+    const { name, value } = e.target;
 
     setFilters((prev) => ({
       ...prev,
@@ -225,16 +219,13 @@ export default function AdminWorkers() {
   const applyFilters = () => {
     const params = {};
 
-    Object.entries(filters).forEach(
-      ([key, value]) => {
-        if (value) {
-          params[key] = value;
-        }
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        params[key] = value;
       }
-    );
+    });
 
     setSearchParams(params);
-
     fetchWorkers(filters);
   };
 
@@ -256,7 +247,6 @@ export default function AdminWorkers() {
 
     setFilters(emptyFilters);
     setSearchParams({});
-
     fetchWorkers(emptyFilters);
   };
 
@@ -264,10 +254,7 @@ export default function AdminWorkers() {
   // UPDATE ACCOUNT STATUS
   // =====================================================
 
-  const updateStatus = async (
-    workerId,
-    status
-  ) => {
+  const updateStatus = async (workerId, status) => {
     try {
       const token = getAdminToken();
 
@@ -280,10 +267,8 @@ export default function AdminWorkers() {
         {
           method: "PATCH",
           headers: {
-            "Content-Type":
-              "application/json",
-            Authorization:
-              `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             status,
@@ -291,8 +276,7 @@ export default function AdminWorkers() {
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (
         response.status === 401 ||
@@ -302,13 +286,9 @@ export default function AdminWorkers() {
         return;
       }
 
-      if (
-        !response.ok ||
-        !data.success
-      ) {
+      if (!response.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Failed to update status"
+          data.message || "Failed to update status"
         );
       }
 
@@ -317,32 +297,25 @@ export default function AdminWorkers() {
           worker._id === workerId
             ? {
                 ...worker,
-                status:
-                  data.worker.status,
+                status: data.worker.status,
               }
             : worker
         )
       );
 
       setSelectedWorker((prev) =>
-        prev &&
-        prev._id === workerId
+        prev && prev._id === workerId
           ? {
               ...prev,
-              status:
-                data.worker.status,
+              status: data.worker.status,
             }
           : prev
       );
     } catch (err) {
-      console.error(
-        "STATUS UPDATE ERROR:",
-        err
-      );
+      console.error("STATUS UPDATE ERROR:", err);
 
       alert(
-        err.message ||
-          "Status update failed"
+        err.message || "Status update failed"
       );
     } finally {
       setUpdatingId(null);
@@ -353,9 +326,7 @@ export default function AdminWorkers() {
   // VIEW WORKER
   // =====================================================
 
-  const viewWorker = async (
-    workerId
-  ) => {
+  const viewWorker = async (workerId) => {
     try {
       const token = getAdminToken();
 
@@ -367,14 +338,12 @@ export default function AdminWorkers() {
         `${API_URL}/admin/workers/${workerId}`,
         {
           headers: {
-            Authorization:
-              `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (
         response.status === 401 ||
@@ -384,32 +353,37 @@ export default function AdminWorkers() {
         return;
       }
 
-      if (
-        !response.ok ||
-        !data.success
-      ) {
+      if (!response.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Failed to load worker"
+          data.message || "Failed to load worker"
         );
       }
 
-      const worker =
-        data.worker;
+      const worker = data.worker;
 
       setSelectedWorker(worker);
 
       setVerificationForm({
         verificationStatus:
-          worker.verificationStatus ||
-          "Pending",
+          worker.verificationStatus || "Pending",
 
-        skillLevel:
-          worker.skillLevel || "",
+        skillLevel: worker.skillLevel || "",
 
-        verificationNotes:
-          worker.verificationNotes ||
-          "",
+        verificationScore:
+          worker.verificationScore ?? 0,
+
+        experienceYears:
+          worker.experienceYears ?? 0,
+
+        kycVerified: Boolean(
+          worker.kycVerified
+        ),
+
+        skillVerified: Boolean(
+          worker.skillVerified
+        ),
+
+        adminNotes: worker.adminNotes || "",
       });
     } catch (err) {
       console.error(
@@ -430,20 +404,16 @@ export default function AdminWorkers() {
   // VERIFICATION FORM CHANGE
   // =====================================================
 
-  const handleVerificationChange = (
-    e
-  ) => {
-    const {
-      name,
-      value,
-    } = e.target;
+  const handleVerificationChange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-    setVerificationForm(
-      (prev) => ({
-        ...prev,
-        [name]: value,
-      })
-    );
+    setVerificationForm((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : value,
+    }));
   };
 
   // =====================================================
@@ -454,12 +424,39 @@ export default function AdminWorkers() {
     if (!selectedWorker) return;
 
     try {
-      const token =
-        getAdminToken();
+      const token = getAdminToken();
 
       if (!token) return;
 
-      // Verified worker must have skill level
+      const score = Number(
+        verificationForm.verificationScore
+      );
+
+      const experience = Number(
+        verificationForm.experienceYears
+      );
+
+      if (
+        Number.isNaN(score) ||
+        score < 0 ||
+        score > 100
+      ) {
+        alert(
+          "Verification Score 0 se 100 ke beech hona chahiye."
+        );
+        return;
+      }
+
+      if (
+        Number.isNaN(experience) ||
+        experience < 0
+      ) {
+        alert(
+          "Experience Years 0 ya usse zyada hona chahiye."
+        );
+        return;
+      }
+
       if (
         verificationForm.verificationStatus ===
           "Verified" &&
@@ -474,36 +471,42 @@ export default function AdminWorkers() {
 
       setVerificationUpdating(true);
 
-      const response =
-        await fetch(
-          `${API_URL}/admin/workers/${selectedWorker._id}/verification`,
-          {
-            method: "PATCH",
+      const response = await fetch(
+        `${API_URL}/admin/workers/${selectedWorker._id}/verification`,
+        {
+          method: "PATCH",
 
-            headers: {
-              "Content-Type":
-                "application/json",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
 
-              Authorization:
-                `Bearer ${token}`,
-            },
+          body: JSON.stringify({
+            verificationStatus:
+              verificationForm.verificationStatus,
 
-            body: JSON.stringify({
-              verificationStatus:
-                verificationForm.verificationStatus,
+            skillLevel:
+              verificationForm.skillLevel || null,
 
-              skillLevel:
-                verificationForm.skillLevel ||
-                null,
+            verificationScore: score,
 
-              verificationNotes:
-                verificationForm.verificationNotes,
-            }),
-          }
-        );
+            experienceYears: experience,
 
-      const data =
-        await response.json();
+            kycVerified: Boolean(
+              verificationForm.kycVerified
+            ),
+
+            skillVerified: Boolean(
+              verificationForm.skillVerified
+            ),
+
+            adminNotes:
+              verificationForm.adminNotes.trim(),
+          }),
+        }
+      );
+
+      const data = await response.json();
 
       if (
         response.status === 401 ||
@@ -513,10 +516,7 @@ export default function AdminWorkers() {
         return;
       }
 
-      if (
-        !response.ok ||
-        !data.success
-      ) {
+      if (!response.ok || !data.success) {
         throw new Error(
           data.message ||
             "Verification update failed"
@@ -527,9 +527,7 @@ export default function AdminWorkers() {
       // UPDATE SELECTED WORKER
       // -----------------------------------------------
 
-      setSelectedWorker(
-        data.worker
-      );
+      setSelectedWorker(data.worker);
 
       // -----------------------------------------------
       // UPDATE WORKER LIST
@@ -537,8 +535,7 @@ export default function AdminWorkers() {
 
       setWorkers((prev) =>
         prev.map((worker) =>
-          worker._id ===
-          selectedWorker._id
+          worker._id === selectedWorker._id
             ? {
                 ...worker,
                 ...data.worker,
@@ -553,17 +550,28 @@ export default function AdminWorkers() {
 
       setVerificationForm({
         verificationStatus:
-          data.worker
-            .verificationStatus ||
+          data.worker.verificationStatus ||
           "Pending",
 
         skillLevel:
-          data.worker
-            .skillLevel || "",
+          data.worker.skillLevel || "",
 
-        verificationNotes:
-          data.worker
-            .verificationNotes || "",
+        verificationScore:
+          data.worker.verificationScore ?? 0,
+
+        experienceYears:
+          data.worker.experienceYears ?? 0,
+
+        kycVerified: Boolean(
+          data.worker.kycVerified
+        ),
+
+        skillVerified: Boolean(
+          data.worker.skillVerified
+        ),
+
+        adminNotes:
+          data.worker.adminNotes || "",
       });
 
       alert(
@@ -581,9 +589,7 @@ export default function AdminWorkers() {
           "Worker verification update failed."
       );
     } finally {
-      setVerificationUpdating(
-        false
-      );
+      setVerificationUpdating(false);
     }
   };
 
@@ -591,9 +597,7 @@ export default function AdminWorkers() {
   // PAYMENT BADGE
   // =====================================================
 
-  const paymentBadge = (
-    status
-  ) => {
+  const paymentBadge = (status) => {
     if (status === "PAID") {
       return (
         <span className="inline-flex border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
@@ -621,9 +625,7 @@ export default function AdminWorkers() {
   // ACCOUNT STATUS BADGE
   // =====================================================
 
-  const statusBadge = (
-    status
-  ) => {
+  const statusBadge = (status) => {
     if (status === "Active") {
       return (
         <span className="inline-flex border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
@@ -651,13 +653,27 @@ export default function AdminWorkers() {
   // VERIFICATION BADGE
   // =====================================================
 
-  const verificationBadge = (
-    status
-  ) => {
+  const verificationBadge = (status) => {
     if (status === "Verified") {
       return (
         <span className="inline-flex border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
           ✓ Verified
+        </span>
+      );
+    }
+
+    if (status === "Under Review") {
+      return (
+        <span className="inline-flex border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+          Under Review
+        </span>
+      );
+    }
+
+    if (status === "Need More Information") {
+      return (
+        <span className="inline-flex border border-yellow-200 bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700">
+          Need More Information
         </span>
       );
     }
@@ -681,9 +697,7 @@ export default function AdminWorkers() {
   // SKILL BADGE
   // =====================================================
 
-  const skillBadge = (
-    level
-  ) => {
+  const skillBadge = (level) => {
     if (!level) {
       return (
         <span className="text-slate-400 text-xs">
@@ -703,19 +717,34 @@ export default function AdminWorkers() {
   // FORMAT DATE
   // =====================================================
 
-  const formatDate = (
-    date
-  ) => {
+  const formatDate = (date) => {
     if (!date) return "-";
 
-    return new Date(
-      date
-    ).toLocaleDateString(
+    return new Date(date).toLocaleDateString(
       "en-IN",
       {
         day: "2-digit",
         month: "short",
         year: "numeric",
+      }
+    );
+  };
+
+  // =====================================================
+  // FORMAT DATETIME
+  // =====================================================
+
+  const formatDateTime = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       }
     );
   };
@@ -738,8 +767,7 @@ export default function AdminWorkers() {
               </h1>
 
               <p className="text-sm text-slate-400 mt-1">
-                Worker Management &
-                Verification
+                Worker Management & Verification
               </p>
             </div>
 
@@ -787,8 +815,7 @@ export default function AdminWorkers() {
           </h2>
 
           <p className="text-slate-500 mt-1">
-            Search, manage and manually
-            verify JobHIR workers.
+            Search, manage and manually verify JobHIR workers.
           </p>
         </div>
 
@@ -804,203 +831,127 @@ export default function AdminWorkers() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-            {/* SEARCH */}
-
             <FilterInput
               label="Name / Mobile"
               name="search"
               value={filters.search}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
               placeholder="Search worker..."
             />
-
-            {/* STATE */}
 
             <FilterInput
               label="State"
               name="state"
               value={filters.state}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
               placeholder="e.g. Uttar Pradesh"
             />
-
-            {/* DISTRICT */}
 
             <FilterInput
               label="District"
               name="district"
               value={filters.district}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
               placeholder="e.g. Noida"
             />
-
-            {/* WORK TYPE */}
 
             <FilterSelect
               label="Work Type"
               name="workType"
               value={filters.workType}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
             >
               <option value="">
                 All Work Types
               </option>
 
-              <option value="Mason">
-                Mason
-              </option>
-
-              <option value="Carpenter">
-                Carpenter
-              </option>
-
-              <option value="Painter">
-                Painter
-              </option>
-
-              <option value="Electrician">
-                Electrician
-              </option>
-
-              <option value="Plumber">
-                Plumber
-              </option>
-
-              <option value="Gardener">
-                Gardener
-              </option>
-
-              <option value="Cleaner">
-                Cleaner
-              </option>
-
-              <option value="Home Care">
-                Home Care
-              </option>
-
-              <option value="Other">
-                Other
-              </option>
+              <option value="Mason">Mason</option>
+              <option value="Carpenter">Carpenter</option>
+              <option value="Painter">Painter</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Plumber">Plumber</option>
+              <option value="Gardener">Gardener</option>
+              <option value="Cleaner">Cleaner</option>
+              <option value="Home Care">Home Care</option>
+              <option value="Other">Other</option>
             </FilterSelect>
-
-            {/* PAYMENT */}
 
             <FilterSelect
               label="Payment"
               name="paymentStatus"
-              value={
-                filters.paymentStatus
-              }
-              onChange={
-                handleFilterChange
-              }
+              value={filters.paymentStatus}
+              onChange={handleFilterChange}
             >
               <option value="">
                 All Payments
               </option>
 
-              <option value="PAID">
-                Paid
-              </option>
-
-              <option value="PENDING">
-                Pending
-              </option>
-
-              <option value="FAILED">
-                Failed
-              </option>
+              <option value="PAID">Paid</option>
+              <option value="PENDING">Pending</option>
+              <option value="FAILED">Failed</option>
             </FilterSelect>
-
-            {/* ACCOUNT STATUS */}
 
             <FilterSelect
               label="Account Status"
               name="status"
               value={filters.status}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
             >
               <option value="">
                 All Status
               </option>
 
-              <option value="Active">
-                Active
-              </option>
-
-              <option value="Pending">
-                Pending
-              </option>
-
-              <option value="Blocked">
-                Blocked
-              </option>
+              <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+              <option value="Blocked">Blocked</option>
             </FilterSelect>
 
-            {/* VERIFICATION */}
+            {/* NEW VERIFICATION FILTER */}
 
             <FilterSelect
               label="Verification"
               name="verificationStatus"
-              value={
-                filters.verificationStatus
-              }
-              onChange={
-                handleFilterChange
-              }
+              value={filters.verificationStatus}
+              onChange={handleFilterChange}
             >
               <option value="">
                 All Verification
               </option>
 
-              <option value="Pending">
-                Pending
-              </option>
-
-              <option value="Verified">
-                Verified
-              </option>
-
-              <option value="Rejected">
-                Rejected
-              </option>
+              {VERIFICATION_STATUSES.map(
+                (status) => (
+                  <option
+                    key={status}
+                    value={status}
+                  >
+                    {status}
+                  </option>
+                )
+              )}
             </FilterSelect>
 
-            {/* SKILL */}
+            {/* NEW SKILL FILTER */}
 
             <FilterSelect
               label="Skill Level"
               name="skillLevel"
               value={filters.skillLevel}
-              onChange={
-                handleFilterChange
-              }
+              onChange={handleFilterChange}
             >
               <option value="">
                 All Skill Levels
               </option>
 
-              <option value="Entry Level">
-                Entry Level
-              </option>
-
-              <option value="Intermediate">
-                Intermediate
-              </option>
-
-              <option value="Expert">
-                Expert
-              </option>
+              {SKILL_LEVELS.map(
+                (level) => (
+                  <option
+                    key={level}
+                    value={level}
+                  >
+                    {level}
+                  </option>
+                )
+              )}
             </FilterSelect>
 
           </div>
@@ -1008,29 +959,21 @@ export default function AdminWorkers() {
           <div className="flex flex-wrap gap-3 mt-5">
 
             <button
-              onClick={
-                applyFilters
-              }
+              onClick={applyFilters}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 font-semibold"
             >
               Apply Filters
             </button>
 
             <button
-              onClick={
-                clearFilters
-              }
+              onClick={clearFilters}
               className="bg-slate-200 hover:bg-slate-300 text-slate-800 px-6 py-2.5 font-semibold"
             >
               Clear
             </button>
 
             <button
-              onClick={() =>
-                fetchWorkers(
-                  filters
-                )
-              }
+              onClick={() => fetchWorkers(filters)}
               className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 font-semibold"
             >
               Refresh
@@ -1106,147 +1049,146 @@ export default function AdminWorkers() {
 
             <div className="grid grid-cols-1 gap-4 md:hidden">
 
-              {workers.map(
-                (worker) => (
-                  <div
-                    key={
-                      worker._id
-                    }
-                    className="bg-white border border-slate-200 shadow-sm p-5"
-                  >
+              {workers.map((worker) => (
+                <div
+                  key={worker._id}
+                  className="bg-white border border-slate-200 shadow-sm p-5"
+                >
 
-                    <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-3">
 
-                      <div>
-                        <h3 className="font-bold text-lg text-slate-900">
-                          {worker.name}
-                        </h3>
+                    <div>
+                      <h3 className="font-bold text-lg text-slate-900">
+                        {worker.name}
+                      </h3>
 
-                        <p className="text-sm text-slate-500 mt-1">
-                          {worker.mobile}
-                        </p>
-                      </div>
-
-                      {statusBadge(
-                        worker.status
-                      )}
-
+                      <p className="text-sm text-slate-500 mt-1">
+                        {worker.mobile}
+                      </p>
                     </div>
 
-                    <div className="mt-4 space-y-3 text-sm">
-
-                      <p>
-                        <span className="font-semibold">
-                          Location:
-                        </span>{" "}
-                        {worker.district},{" "}
-                        {worker.state}
-                      </p>
-
-                      <p>
-                        <span className="font-semibold">
-                          Work:
-                        </span>{" "}
-                        {worker.workType}
-                      </p>
-
-                      <div>
-                        <span className="font-semibold">
-                          Payment:
-                        </span>{" "}
-                        {paymentBadge(
-                          worker.paymentStatus
-                        )}
-                      </div>
-
-                      <div>
-                        <span className="font-semibold">
-                          Verification:
-                        </span>{" "}
-                        {verificationBadge(
-                          worker.verificationStatus
-                        )}
-                      </div>
-
-                      <div>
-                        <span className="font-semibold">
-                          Skill:
-                        </span>{" "}
-                        {skillBadge(
-                          worker.skillLevel
-                        )}
-                      </div>
-
-                      <p>
-                        <span className="font-semibold">
-                          Registered:
-                        </span>{" "}
-                        {formatDate(
-                          worker.createdAt
-                        )}
-                      </p>
-
-                    </div>
-
-                    {/* ACCOUNT STATUS */}
-
-                    <div className="mt-4">
-
-                      <label className="block text-xs font-semibold text-slate-500 mb-1">
-                        Account Status
-                      </label>
-
-                      <select
-                        value={
-                          worker.status
-                        }
-                        disabled={
-                          updatingId ===
-                          worker._id
-                        }
-                        onChange={(
-                          e
-                        ) =>
-                          updateStatus(
-                            worker._id,
-                            e.target.value
-                          )
-                        }
-                        className="w-full border border-slate-300 px-3 py-2 text-sm"
-                      >
-
-                        <option value="Pending">
-                          Pending
-                        </option>
-
-                        <option value="Active">
-                          Active
-                        </option>
-
-                        <option value="Blocked">
-                          Blocked
-                        </option>
-
-                      </select>
-
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        viewWorker(
-                          worker._id
-                        )
-                      }
-                      className="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 font-semibold"
-                    >
-                      {detailLoading
-                        ? "Loading..."
-                        : "View & Verify"}
-                    </button>
+                    {statusBadge(worker.status)}
 
                   </div>
-                )
-              )}
+
+                  <div className="mt-4 space-y-3 text-sm">
+
+                    <p>
+                      <span className="font-semibold">
+                        Location:
+                      </span>{" "}
+                      {worker.district},{" "}
+                      {worker.state}
+                    </p>
+
+                    <p>
+                      <span className="font-semibold">
+                        Work:
+                      </span>{" "}
+                      {worker.workType}
+                    </p>
+
+                    <div>
+                      <span className="font-semibold">
+                        Payment:
+                      </span>{" "}
+                      {paymentBadge(
+                        worker.paymentStatus
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">
+                        Verification:
+                      </span>{" "}
+                      {verificationBadge(
+                        worker.verificationStatus
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">
+                        Skill:
+                      </span>{" "}
+                      {skillBadge(
+                        worker.skillLevel
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">
+                        Score:
+                      </span>{" "}
+                      {worker.verificationScore ?? 0}/100
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">
+                        Experience:
+                      </span>{" "}
+                      {worker.experienceYears ?? 0} years
+                    </div>
+
+                    <p>
+                      <span className="font-semibold">
+                        Registered:
+                      </span>{" "}
+                      {formatDate(
+                        worker.createdAt
+                      )}
+                    </p>
+
+                  </div>
+
+                  {/* ACCOUNT STATUS */}
+
+                  <div className="mt-4">
+
+                    <label className="block text-xs font-semibold text-slate-500 mb-1">
+                      Account Status
+                    </label>
+
+                    <select
+                      value={worker.status}
+                      disabled={
+                        updatingId === worker._id
+                      }
+                      onChange={(e) =>
+                        updateStatus(
+                          worker._id,
+                          e.target.value
+                        )
+                      }
+                      className="w-full border border-slate-300 px-3 py-2 text-sm"
+                    >
+                      <option value="Pending">
+                        Pending
+                      </option>
+
+                      <option value="Active">
+                        Active
+                      </option>
+
+                      <option value="Blocked">
+                        Blocked
+                      </option>
+                    </select>
+
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      viewWorker(worker._id)
+                    }
+                    className="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 font-semibold"
+                  >
+                    {detailLoading
+                      ? "Loading..."
+                      : "View & Verify"}
+                  </button>
+
+                </div>
+              ))}
 
             </div>
 
@@ -1302,132 +1244,138 @@ export default function AdminWorkers() {
 
                   <tbody>
 
-                    {workers.map(
-                      (worker) => (
-                        <tr
-                          key={
-                            worker._id
-                          }
-                          className="border-t border-slate-200 hover:bg-slate-50"
-                        >
+                    {workers.map((worker) => (
+                      <tr
+                        key={worker._id}
+                        className="border-t border-slate-200 hover:bg-slate-50"
+                      >
 
-                          <td className="px-4 py-4">
+                        <td className="px-4 py-4">
 
-                            <p className="font-bold text-slate-900">
-                              {worker.name}
-                            </p>
+                          <p className="font-bold text-slate-900">
+                            {worker.name}
+                          </p>
 
-                            <p className="text-slate-500 mt-1">
-                              {worker.mobile}
-                            </p>
+                          <p className="text-slate-500 mt-1">
+                            {worker.mobile}
+                          </p>
 
-                          </td>
+                        </td>
 
-                          <td className="px-4 py-4">
+                        <td className="px-4 py-4">
 
-                            <p className="font-medium">
-                              {worker.district}
-                            </p>
+                          <p className="font-medium">
+                            {worker.district}
+                          </p>
 
-                            <p className="text-xs text-slate-500">
-                              {worker.state}
-                            </p>
+                          <p className="text-xs text-slate-500">
+                            {worker.state}
+                          </p>
 
-                          </td>
+                        </td>
 
-                          <td className="px-4 py-4">
-                            {worker.workType}
-                          </td>
+                        <td className="px-4 py-4">
+                          {worker.workType}
+                        </td>
 
-                          <td className="px-4 py-4">
+                        <td className="px-4 py-4">
 
-                            {paymentBadge(
-                              worker.paymentStatus
-                            )}
+                          {paymentBadge(
+                            worker.paymentStatus
+                          )}
 
-                            <p className="text-xs text-slate-500 mt-1">
-                              ₹
-                              {Number(
-                                worker.paymentAmount ||
-                                  0
-                              ) / 100}
-                            </p>
+                          <p className="text-xs text-slate-500 mt-1">
+                            ₹
+                            {Number(
+                              worker.paymentAmount || 0
+                            ) / 100}
+                          </p>
 
-                          </td>
+                        </td>
 
-                          <td className="px-4 py-4">
+                        <td className="px-4 py-4">
 
-                            {verificationBadge(
-                              worker.verificationStatus
-                            )}
+                          {verificationBadge(
+                            worker.verificationStatus
+                          )}
 
-                          </td>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Score:{" "}
+                            {worker.verificationScore ??
+                              0}
+                            /100
+                          </p>
 
-                          <td className="px-4 py-4">
-                            {skillBadge(
-                              worker.skillLevel
-                            )}
-                          </td>
+                        </td>
 
-                          <td className="px-4 py-4">
+                        <td className="px-4 py-4">
 
-                            {statusBadge(
-                              worker.status
-                            )}
+                          {skillBadge(
+                            worker.skillLevel
+                          )}
 
-                            <select
-                              value={
-                                worker.status
-                              }
-                              disabled={
-                                updatingId ===
+                          <p className="text-xs text-slate-500 mt-1">
+                            {worker.experienceYears ??
+                              0}{" "}
+                            yrs
+                          </p>
+
+                        </td>
+
+                        <td className="px-4 py-4">
+
+                          {statusBadge(
+                            worker.status
+                          )}
+
+                          <select
+                            value={worker.status}
+                            disabled={
+                              updatingId ===
+                              worker._id
+                            }
+                            onChange={(e) =>
+                              updateStatus(
+                                worker._id,
+                                e.target.value
+                              )
+                            }
+                            className="mt-2 w-full min-w-[110px] border border-slate-300 px-2 py-1.5 text-xs"
+                          >
+
+                            <option value="Pending">
+                              Pending
+                            </option>
+
+                            <option value="Active">
+                              Active
+                            </option>
+
+                            <option value="Blocked">
+                              Blocked
+                            </option>
+
+                          </select>
+
+                        </td>
+
+                        <td className="px-4 py-4">
+
+                          <button
+                            onClick={() =>
+                              viewWorker(
                                 worker._id
-                              }
-                              onChange={(
-                                e
-                              ) =>
-                                updateStatus(
-                                  worker._id,
-                                  e.target.value
-                                )
-                              }
-                              className="mt-2 w-full min-w-[110px] border border-slate-300 px-2 py-1.5 text-xs"
-                            >
+                              )
+                            }
+                            className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 text-xs font-semibold"
+                          >
+                            View & Verify
+                          </button>
 
-                              <option value="Pending">
-                                Pending
-                              </option>
+                        </td>
 
-                              <option value="Active">
-                                Active
-                              </option>
-
-                              <option value="Blocked">
-                                Blocked
-                              </option>
-
-                            </select>
-
-                          </td>
-
-                          <td className="px-4 py-4">
-
-                            <button
-                              onClick={() =>
-                                viewWorker(
-                                  worker._id
-                                )
-                              }
-                              className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 text-xs font-semibold"
-                            >
-                              View & Verify
-                            </button>
-
-                          </td>
-
-                        </tr>
-                      )
-                    )}
+                      </tr>
+                    ))}
 
                   </tbody>
 
@@ -1449,7 +1397,7 @@ export default function AdminWorkers() {
       {selectedWorker && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
 
-          <div className="bg-white w-full max-w-4xl max-h-[94vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white w-full max-w-5xl max-h-[94vh] overflow-y-auto shadow-2xl">
 
             {/* MODAL HEADER */}
 
@@ -1471,9 +1419,7 @@ export default function AdminWorkers() {
 
               <button
                 onClick={() =>
-                  setSelectedWorker(
-                    null
-                  )
+                  setSelectedWorker(null)
                 }
                 className="text-white text-2xl hover:text-red-300"
               >
@@ -1508,58 +1454,42 @@ export default function AdminWorkers() {
 
                   <DetailItem
                     label="Name"
-                    value={
-                      selectedWorker.name
-                    }
+                    value={selectedWorker.name}
                   />
 
                   <DetailItem
                     label="Mobile"
-                    value={
-                      selectedWorker.mobile
-                    }
+                    value={selectedWorker.mobile}
                   />
 
                   <DetailItem
                     label="State"
-                    value={
-                      selectedWorker.state
-                    }
+                    value={selectedWorker.state}
                   />
 
                   <DetailItem
                     label="District"
-                    value={
-                      selectedWorker.district
-                    }
+                    value={selectedWorker.district}
                   />
 
                   <DetailItem
                     label="Work Type"
-                    value={
-                      selectedWorker.workType
-                    }
+                    value={selectedWorker.workType}
                   />
 
                   <DetailItem
                     label="KYC Type"
-                    value={
-                      selectedWorker.kycType
-                    }
+                    value={selectedWorker.kycType}
                   />
 
                   <DetailItem
                     label="KYC Number"
-                    value={
-                      selectedWorker.kycNumber
-                    }
+                    value={selectedWorker.kycNumber}
                   />
 
                   <DetailItem
                     label="Payment Status"
-                    value={
-                      selectedWorker.paymentStatus
-                    }
+                    value={selectedWorker.paymentStatus}
                   />
 
                   <DetailItem
@@ -1574,21 +1504,63 @@ export default function AdminWorkers() {
 
                   <DetailItem
                     label="Account Status"
+                    value={selectedWorker.status}
+                  />
+
+                  <DetailItem
+                    label="Verification"
                     value={
-                      selectedWorker.status
+                      selectedWorker.verificationStatus ||
+                      "Pending"
+                    }
+                  />
+
+                  <DetailItem
+                    label="Skill Level"
+                    value={
+                      selectedWorker.skillLevel ||
+                      "Not Assessed"
+                    }
+                  />
+
+                  <DetailItem
+                    label="Verification Score"
+                    value={`${selectedWorker.verificationScore ?? 0}/100`}
+                  />
+
+                  <DetailItem
+                    label="Experience"
+                    value={`${selectedWorker.experienceYears ?? 0} years`}
+                  />
+
+                  <DetailItem
+                    label="KYC Verified"
+                    value={
+                      selectedWorker.kycVerified
+                        ? "Yes"
+                        : "No"
+                    }
+                  />
+
+                  <DetailItem
+                    label="Skill Verified"
+                    value={
+                      selectedWorker.skillVerified
+                        ? "Yes"
+                        : "No"
                     }
                   />
 
                   <DetailItem
                     label="Registered"
-                    value={formatDate(
+                    value={formatDateTime(
                       selectedWorker.createdAt
                     )}
                   />
 
                   <DetailItem
                     label="Paid At"
-                    value={formatDate(
+                    value={formatDateTime(
                       selectedWorker.paidAt
                     )}
                   />
@@ -1617,8 +1589,8 @@ export default function AdminWorkers() {
                   </h3>
 
                   <p className="text-sm text-slate-600 mb-3">
-                    Check the uploaded document
-                    before completing verification.
+                    Uploaded document ko check
+                    karke verification complete karein.
                   </p>
 
                   <a
@@ -1646,8 +1618,8 @@ export default function AdminWorkers() {
                   </h3>
 
                   <p className="text-sm text-slate-500 mt-1">
-                    Payment complete hone ke baad
-                    worker ko manually verify karein.
+                    Worker ke KYC, skill aur experience
+                    ko manually verify karein.
                   </p>
 
                 </div>
@@ -1675,17 +1647,16 @@ export default function AdminWorkers() {
                         className="w-full border border-slate-300 px-3 py-2.5 focus:border-blue-500 outline-none"
                       >
 
-                        <option value="Pending">
-                          Pending
-                        </option>
-
-                        <option value="Verified">
-                          Verified
-                        </option>
-
-                        <option value="Rejected">
-                          Rejected
-                        </option>
+                        {VERIFICATION_STATUSES.map(
+                          (status) => (
+                            <option
+                              key={status}
+                              value={status}
+                            >
+                              {status}
+                            </option>
+                          )
+                        )}
 
                       </select>
 
@@ -1714,29 +1685,139 @@ export default function AdminWorkers() {
                           Not Assessed
                         </option>
 
-                        <option value="Entry Level">
-                          Entry Level
-                        </option>
-
-                        <option value="Intermediate">
-                          Intermediate
-                        </option>
-
-                        <option value="Expert">
-                          Expert
-                        </option>
+                        {SKILL_LEVELS.map(
+                          (level) => (
+                            <option
+                              key={level}
+                              value={level}
+                            >
+                              {level}
+                            </option>
+                          )
+                        )}
 
                       </select>
 
                     </div>
 
+                    {/* SCORE */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Verification Score
+                      </label>
+
+                      <input
+                        type="number"
+                        name="verificationScore"
+                        min="0"
+                        max="100"
+                        value={
+                          verificationForm.verificationScore
+                        }
+                        onChange={
+                          handleVerificationChange
+                        }
+                        className="w-full border border-slate-300 px-3 py-2.5 focus:border-blue-500 outline-none"
+                      />
+
+                      <p className="text-xs text-slate-500 mt-1">
+                        Score: 0–100
+                      </p>
+
+                    </div>
+
+                    {/* EXPERIENCE */}
+
+                    <div>
+
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Experience Years
+                      </label>
+
+                      <input
+                        type="number"
+                        name="experienceYears"
+                        min="0"
+                        step="1"
+                        value={
+                          verificationForm.experienceYears
+                        }
+                        onChange={
+                          handleVerificationChange
+                        }
+                        className="w-full border border-slate-300 px-3 py-2.5 focus:border-blue-500 outline-none"
+                      />
+
+                    </div>
+
+                  </div>
+
+                  {/* VERIFICATION CHECKS */}
+
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <label className="flex items-start gap-3 border border-slate-200 bg-slate-50 p-4 cursor-pointer">
+
+                      <input
+                        type="checkbox"
+                        name="kycVerified"
+                        checked={
+                          verificationForm.kycVerified
+                        }
+                        onChange={
+                          handleVerificationChange
+                        }
+                        className="mt-1 w-4 h-4"
+                      />
+
+                      <span>
+                        <span className="block font-semibold text-slate-800">
+                          KYC Verified
+                        </span>
+
+                        <span className="block text-xs text-slate-500 mt-1">
+                          Identity/KYC document verified by admin.
+                        </span>
+                      </span>
+
+                    </label>
+
+                    <label className="flex items-start gap-3 border border-slate-200 bg-slate-50 p-4 cursor-pointer">
+
+                      <input
+                        type="checkbox"
+                        name="skillVerified"
+                        checked={
+                          verificationForm.skillVerified
+                        }
+                        onChange={
+                          handleVerificationChange
+                        }
+                        className="mt-1 w-4 h-4"
+                      />
+
+                      <span>
+                        <span className="block font-semibold text-slate-800">
+                          Skill Verified
+                        </span>
+
+                        <span className="block text-xs text-slate-500 mt-1">
+                          Worker ki skill/experience verify ki gayi hai.
+                        </span>
+                      </span>
+
+                    </label>
+
                   </div>
 
                   {/* CURRENT LEVEL INFO */}
 
-                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
                     <div className="border border-slate-200 bg-slate-50 p-4">
+
                       <p className="text-xs text-slate-500">
                         Verification
                       </p>
@@ -1745,20 +1826,38 @@ export default function AdminWorkers() {
                         {selectedWorker.verificationStatus ||
                           "Pending"}
                       </p>
+
                     </div>
 
                     <div className="border border-slate-200 bg-slate-50 p-4">
+
                       <p className="text-xs text-slate-500">
-                        Skill Level
+                        Skill
                       </p>
 
                       <p className="font-bold mt-1">
                         {selectedWorker.skillLevel ||
                           "Not Assessed"}
                       </p>
+
                     </div>
 
                     <div className="border border-slate-200 bg-slate-50 p-4">
+
+                      <p className="text-xs text-slate-500">
+                        Score
+                      </p>
+
+                      <p className="font-bold mt-1">
+                        {selectedWorker.verificationScore ??
+                          0}
+                        /100
+                      </p>
+
+                    </div>
+
+                    <div className="border border-slate-200 bg-slate-50 p-4">
+
                       <p className="text-xs text-slate-500">
                         Payment
                       </p>
@@ -1766,23 +1865,24 @@ export default function AdminWorkers() {
                       <p className="font-bold mt-1">
                         {selectedWorker.paymentStatus}
                       </p>
+
                     </div>
 
                   </div>
 
-                  {/* NOTES */}
+                  {/* ADMIN NOTES */}
 
                   <div className="mt-6">
 
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Verification Notes
+                      Admin Notes
                     </label>
 
                     <textarea
-                      name="verificationNotes"
+                      name="adminNotes"
                       rows="4"
                       value={
-                        verificationForm.verificationNotes
+                        verificationForm.adminNotes
                       }
                       onChange={
                         handleVerificationChange
@@ -1802,7 +1902,7 @@ export default function AdminWorkers() {
                         <strong>
                           Verified At:
                         </strong>{" "}
-                        {formatDate(
+                        {formatDateTime(
                           selectedWorker.verifiedAt
                         )}
                       </p>
@@ -1823,9 +1923,7 @@ export default function AdminWorkers() {
                   <div className="mt-6 flex flex-col sm:flex-row gap-3">
 
                     <button
-                      onClick={
-                        saveVerification
-                      }
+                      onClick={saveVerification}
                       disabled={
                         verificationUpdating
                       }
@@ -1838,9 +1936,7 @@ export default function AdminWorkers() {
 
                     <button
                       onClick={() =>
-                        setSelectedWorker(
-                          null
-                        )
+                        setSelectedWorker(null)
                       }
                       disabled={
                         verificationUpdating
@@ -1867,16 +1963,12 @@ export default function AdminWorkers() {
                 </label>
 
                 <select
-                  value={
-                    selectedWorker.status
-                  }
+                  value={selectedWorker.status}
                   disabled={
                     updatingId ===
                     selectedWorker._id
                   }
-                  onChange={async (
-                    e
-                  ) => {
+                  onChange={async (e) => {
                     await updateStatus(
                       selectedWorker._id,
                       e.target.value
@@ -1898,6 +1990,11 @@ export default function AdminWorkers() {
                   </option>
 
                 </select>
+
+                <p className="text-xs text-slate-500 mt-2">
+                  Account Status aur Verification Status
+                  alag-alag hain.
+                </p>
 
               </div>
 
