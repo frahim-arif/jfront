@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Header from "../components/Header.jsx";
 
@@ -66,6 +67,7 @@ const API_BASE_URL = "https://jbackend-h963.onrender.com";
 export default function WorkerRegister() {
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     mobile: "",
     state: "",
     district: "",
@@ -87,6 +89,17 @@ export default function WorkerRegister() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  // =====================================================
+  // EMAIL
+  // =====================================================
+
+  const handleEmailChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      email: e.target.value.trim(),
     }));
   };
 
@@ -215,6 +228,21 @@ export default function WorkerRegister() {
       return;
     }
 
+    // EMAIL VALIDATION
+    const email = formData.email.trim().toLowerCase();
+
+    if (!email) {
+      alert("Please enter your email address.");
+      return;
+    }
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     if (!/^\d{10}$/.test(formData.mobile)) {
       alert(
         "Please enter a valid 10 digit mobile number."
@@ -306,6 +334,11 @@ export default function WorkerRegister() {
       );
 
       data.append(
+        "email",
+        email
+      );
+
+      data.append(
         "mobile",
         formData.mobile
       );
@@ -379,37 +412,37 @@ export default function WorkerRegister() {
       // =====================================================
 
       if (!response.ok) {
-  // Registration already started hai
-  // aur backend ne existing workerId diya hai
-  if (result?.workerId) {
-    localStorage.setItem(
-      "workerId",
-      String(result.workerId)
-    );
+        // Registration already started hai
+        // aur backend ne existing workerId diya hai
+        if (result?.workerId) {
+          localStorage.setItem(
+            "workerId",
+            String(result.workerId)
+          );
 
-    localStorage.setItem(
-      "pendingWorkerId",
-      String(result.workerId)
-    );
+          localStorage.setItem(
+            "pendingWorkerId",
+            String(result.workerId)
+          );
 
-    console.log(
-      "💾 Existing workerId SAVED:",
-      localStorage.getItem("workerId")
-    );
+          console.log(
+            "💾 Existing workerId SAVED:",
+            localStorage.getItem("workerId")
+          );
 
-    console.log(
-      "💾 Existing pendingWorkerId SAVED:",
-      localStorage.getItem("pendingWorkerId")
-    );
-  }
+          console.log(
+            "💾 Existing pendingWorkerId SAVED:",
+            localStorage.getItem("pendingWorkerId")
+          );
+        }
 
-  alert(
-    result?.message ||
-      `Registration failed. Error ${response.status}`
-  );
+        alert(
+          result?.message ||
+            `Registration failed. Error ${response.status}`
+        );
 
-  return;
-}
+        return;
+      }
 
       // =====================================================
       // STEP 2
@@ -441,31 +474,30 @@ export default function WorkerRegister() {
         registeredWorkerId
       );
 
-   // =====================================================
-// WORKER ID SAVE
-// Payment se pehle workerId localStorage me save kar rahe hain
-// Taaki payment ke baad Header worker ko identify kar sake
-// =====================================================
+      // =====================================================
+      // WORKER ID SAVE
+      // Payment se pehle workerId localStorage me save
+      // =====================================================
 
-localStorage.setItem(
-  "workerId",
-  String(registeredWorkerId)
-);
+      localStorage.setItem(
+        "workerId",
+        String(registeredWorkerId)
+      );
 
-localStorage.setItem(
-  "pendingWorkerId",
-  String(registeredWorkerId)
-);
+      localStorage.setItem(
+        "pendingWorkerId",
+        String(registeredWorkerId)
+      );
 
-console.log(
-  "💾 workerId SAVED:",
-  localStorage.getItem("workerId")
-);
+      console.log(
+        "💾 workerId SAVED:",
+        localStorage.getItem("workerId")
+      );
 
-console.log(
-  "💾 pendingWorkerId SAVED:",
-  localStorage.getItem("pendingWorkerId")
-);
+      console.log(
+        "💾 pendingWorkerId SAVED:",
+        localStorage.getItem("pendingWorkerId")
+      );
 
       // =====================================================
       // STEP 3
@@ -557,22 +589,21 @@ console.log(
       // PHONEPE CHECKOUT
       // =====================================================
 
-      
-console.log(
-  "🚀 Before PhonePe redirect - pendingWorkerId:",
-  localStorage.getItem("pendingWorkerId")
-);
+      console.log(
+        "🚀 Before PhonePe redirect - pendingWorkerId:",
+        localStorage.getItem("pendingWorkerId")
+      );
 
-console.log(
-  "🚀 Before PhonePe redirect - workerMerchantOrderId:",
-  localStorage.getItem("workerMerchantOrderId")
-);
+      console.log(
+        "🚀 Before PhonePe redirect - workerMerchantOrderId:",
+        localStorage.getItem(
+          "workerMerchantOrderId"
+        )
+      );
 
-console.log(
-  "🚀 Redirecting to PhonePe..."
-);
-
-
+      console.log(
+        "🚀 Redirecting to PhonePe..."
+      );
 
       window.location.href =
         paymentResult.checkoutPageUrl;
@@ -655,6 +686,34 @@ console.log(
 
               </div>
 
+              {/* EMAIL */}
+
+              <div>
+
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Email Address
+                  <span className="ml-1 text-red-500">
+                    *
+                  </span>
+                </label>
+
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleEmailChange}
+                  placeholder="Enter your email address"
+                  autoComplete="email"
+                  disabled={loading}
+                  className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
+                />
+
+                <p className="mt-1 text-xs text-slate-400">
+                  Verification updates and important JobHIR notifications will be sent to this email.
+                </p>
+
+              </div>
+
               {/* MOBILE */}
 
               <div>
@@ -673,6 +732,7 @@ console.log(
                   placeholder="10 digit mobile number"
                   maxLength={10}
                   inputMode="numeric"
+                  autoComplete="tel"
                   disabled={loading}
                   className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                 />
@@ -735,12 +795,8 @@ console.log(
                   <input
                     type="text"
                     name="district"
-                    value={
-                      formData.district
-                    }
-                    onChange={
-                      handleChange
-                    }
+                    value={formData.district}
+                    onChange={handleChange}
                     placeholder="Enter district"
                     disabled={loading}
                     className="h-12 w-full rounded-lg border border-slate-300 px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
@@ -767,12 +823,8 @@ console.log(
 
                 <select
                   name="workType"
-                  value={
-                    formData.workType
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.workType}
+                  onChange={handleChange}
                   disabled={loading}
                   className="h-12 w-full rounded-lg border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-[#9B845E] focus:ring-2 focus:ring-[#9B845E]/10 disabled:bg-slate-100"
                 >
@@ -871,7 +923,7 @@ console.log(
 
               <div>
 
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                <label className="mb-2 block font-semibold text-sm text-slate-700">
 
                   {formData.kycType ===
                   "PAN"
@@ -886,12 +938,8 @@ console.log(
 
                 <input
                   type="text"
-                  value={
-                    formData.kycNumber
-                  }
-                  onChange={
-                    handleKycNumberChange
-                  }
+                  value={formData.kycNumber}
+                  onChange={handleKycNumberChange}
                   placeholder={
                     formData.kycType ===
                     "PAN"
@@ -927,9 +975,7 @@ console.log(
                 <input
                   type="file"
                   accept=".jpg,.jpeg,.png,.pdf"
-                  onChange={
-                    handleDocumentChange
-                  }
+                  onChange={handleDocumentChange}
                   disabled={loading}
                   className="w-full cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm disabled:cursor-not-allowed"
                 />
@@ -940,11 +986,7 @@ console.log(
 
                 {formData.document && (
                   <div className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-                    ✓{" "}
-                    {
-                      formData.document
-                        .name
-                    }
+                    ✓ {formData.document.name}
                   </div>
                 )}
 
@@ -970,6 +1012,20 @@ console.log(
                   Your account will become
                   active only after the payment
                   is successfully verified.
+                </p>
+
+              </div>
+
+              {/* EMAIL INFORMATION */}
+
+              <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
+
+                <p className="text-xs leading-5 text-emerald-700">
+                  Please provide an active email
+                  address. JobHIR will use it to
+                  send verification updates and
+                  other important worker
+                  notifications.
                 </p>
 
               </div>
@@ -1013,3 +1069,4 @@ console.log(
     </>
   );
 }
+
