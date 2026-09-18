@@ -1,8 +1,15 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const API_URL = "https://jbackend-h963.onrender.com";
+
+const NAV_ITEMS = [
+  { label: "Disclaimer", path: "/disclaimer" },
+  { label: "Contact", path: "/contact" },
+  { label: "Terms", path: "/terms" },
+  { label: "Privacy", path: "/privacy" },
+  { label: "Pricing", path: "/pricing" },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,30 +21,25 @@ export default function Header() {
 
   const notificationRef = useRef(null);
 
-  // =====================================================
+  // =========================================================
   // GET WORKER ID
-  // =====================================================
+  // =========================================================
 
   const getWorkerId = () => {
     try {
       return localStorage.getItem("workerId");
     } catch (error) {
-      console.error("❌ LocalStorage Error:", error);
+      console.error("LocalStorage Error:", error);
       return null;
     }
   };
 
-  // =====================================================
+  // =========================================================
   // FETCH NOTIFICATIONS
-  // =====================================================
+  // =========================================================
 
-  const fetchNotifications = async (id) => {
+  const fetchNotifications = async (id = null) => {
     const currentWorkerId = id || getWorkerId();
-
-    console.log(
-      "🔔 Fetching notifications for:",
-      currentWorkerId
-    );
 
     if (!currentWorkerId) {
       setWorkerId(null);
@@ -63,15 +65,9 @@ export default function Header() {
 
       const result = await response.json().catch(() => null);
 
-      console.log(
-        "🔔 Notification Response:",
-        response.status,
-        result
-      );
-
       if (!response.ok) {
         console.error(
-          "❌ Notification API Error:",
+          "Notification API Error:",
           response.status,
           result
         );
@@ -85,58 +81,37 @@ export default function Header() {
           ? result.notifications
           : [];
 
-        console.log(
-          "✅ Notifications received:",
-          list.length
-        );
-
         setNotifications(list);
       } else {
         setNotifications([]);
       }
     } catch (error) {
-      console.error(
-        "❌ Notification Fetch Error:",
-        error
-      );
+      console.error("Notification Fetch Error:", error);
     } finally {
       setLoadingNotifications(false);
     }
   };
 
-  // =====================================================
-  // INITIAL WORKER CHECK
-  // =====================================================
+  // =========================================================
+  // INITIAL CHECK
+  // =========================================================
 
   useEffect(() => {
     const id = getWorkerId();
 
-    console.log(
-      "🔑 Initial Header Worker ID:",
-      id
-    );
-
     if (id) {
       setWorkerId(id);
       fetchNotifications(id);
-    } else {
-      setWorkerId(null);
-      setNotifications([]);
     }
   }, []);
 
-  // =====================================================
-  // WORKER / PAYMENT CHANGE
-  // =====================================================
+  // =========================================================
+  // WORKER / PAYMENT EVENTS
+  // =========================================================
 
   useEffect(() => {
     const handleWorkerChange = () => {
       const id = getWorkerId();
-
-      console.log(
-        "👷 Worker/payment change:",
-        id
-      );
 
       if (id) {
         setWorkerId(id);
@@ -171,27 +146,15 @@ export default function Header() {
     };
   }, []);
 
-  // =====================================================
-  // CHECK WORKER ID + REFRESH EVERY 10 SECONDS
-  // =====================================================
+  // =========================================================
+  // AUTO REFRESH EVERY 10 SECONDS
+  // =========================================================
 
   useEffect(() => {
     const interval = setInterval(() => {
       const id = getWorkerId();
 
-      console.log(
-        "⏱️ Worker ID check:",
-        id
-      );
-
       if (id !== workerId) {
-        console.log(
-          "🔄 Worker ID changed:",
-          workerId,
-          "→",
-          id
-        );
-
         if (id) {
           setWorkerId(id);
           fetchNotifications(id);
@@ -209,22 +172,18 @@ export default function Header() {
       }
     }, 10000);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [workerId]);
 
-  // =====================================================
-  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
-  // =====================================================
+  // =========================================================
+  // CLOSE NOTIFICATIONS ON OUTSIDE CLICK
+  // =========================================================
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
         notificationRef.current &&
-        !notificationRef.current.contains(
-          event.target
-        )
+        !notificationRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
       }
@@ -245,19 +204,18 @@ export default function Header() {
     };
   }, [showNotifications]);
 
-  // =====================================================
+  // =========================================================
   // UNREAD COUNT
-  // =====================================================
+  // =========================================================
 
   const unreadCount = notifications.filter(
     (notification) =>
-      notification &&
-      notification.isRead === false
+      notification && notification.isRead === false
   ).length;
 
-  // =====================================================
+  // =========================================================
   // TOGGLE NOTIFICATIONS
-  // =====================================================
+  // =========================================================
 
   const toggleNotifications = () => {
     const nextState = !showNotifications;
@@ -273,9 +231,9 @@ export default function Header() {
     }
   };
 
-  // =====================================================
+  // =========================================================
   // MARK ONE AS READ
-  // =====================================================
+  // =========================================================
 
   const markAsRead = async (notification) => {
     if (
@@ -296,12 +254,11 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
         console.error(
-          "❌ Mark read failed:",
+          "Mark read failed:",
           response.status,
           result
         );
@@ -320,16 +277,13 @@ export default function Header() {
         )
       );
     } catch (error) {
-      console.error(
-        "❌ Mark read error:",
-        error
-      );
+      console.error("Mark read error:", error);
     }
   };
 
-  // =====================================================
-  // MARK ALL READ
-  // =====================================================
+  // =========================================================
+  // MARK ALL AS READ
+  // =========================================================
 
   const markAllAsRead = async () => {
     const id = getWorkerId();
@@ -349,12 +303,11 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
         console.error(
-          "❌ Mark all read failed:",
+          "Mark all read failed:",
           response.status,
           result
         );
@@ -369,16 +322,13 @@ export default function Header() {
         }))
       );
     } catch (error) {
-      console.error(
-        "❌ Mark all read error:",
-        error
-      );
+      console.error("Mark all read error:", error);
     }
   };
 
-  // =====================================================
+  // =========================================================
   // NOTIFICATION BUTTON
-  // =====================================================
+  // =========================================================
 
   const NotificationButton = () => (
     <button
@@ -391,22 +341,20 @@ export default function Header() {
         flex
         h-10
         w-10
-        sm:h-11
-        sm:w-11
         items-center
         justify-center
         rounded-xl
         border
-        border-white/20
+        border-white/15
         bg-white/10
         text-white
-        shadow-sm
-        backdrop-blur-sm
-        transition-all
+        backdrop-blur-md
+        transition
         duration-200
         hover:bg-white/20
-        hover:shadow-md
         active:scale-95
+        sm:h-11
+        sm:w-11
       "
     >
       <svg
@@ -446,7 +394,7 @@ export default function Header() {
             justify-center
             rounded-full
             border-2
-            border-indigo-700
+            border-indigo-800
             bg-red-500
             px-1
             text-[9px]
@@ -455,21 +403,19 @@ export default function Header() {
             shadow
           "
         >
-          {unreadCount > 99
-            ? "99+"
-            : unreadCount}
+          {unreadCount > 99 ? "99+" : unreadCount}
         </span>
       )}
     </button>
   );
 
-  // =====================================================
+  // =========================================================
   // NOTIFICATION LIST
-  // =====================================================
+  // =========================================================
 
   const NotificationList = () => (
     <div className="w-full bg-white">
-      {/* HEADER */}
+      {/* Notification Header */}
 
       <div
         className="
@@ -520,7 +466,7 @@ export default function Header() {
         )}
       </div>
 
-      {/* LIST */}
+      {/* Notification List */}
 
       <div className="max-h-[420px] overflow-y-auto">
         {loadingNotifications &&
@@ -582,7 +528,16 @@ export default function Header() {
                     </h4>
 
                     {!notification.isRead && (
-                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-blue-600" />
+                      <span
+                        className="
+                          mt-1
+                          h-2.5
+                          w-2.5
+                          flex-shrink-0
+                          rounded-full
+                          bg-blue-600
+                        "
+                      />
                     )}
                   </div>
 
@@ -595,7 +550,7 @@ export default function Header() {
                     <p className="mt-2 text-[11px] text-gray-400">
                       {new Date(
                         notification.createdAt
-                      ).toLocaleString()}
+                      ).toLocaleString("en-IN")}
                     </p>
                   )}
                 </div>
@@ -607,9 +562,18 @@ export default function Header() {
     </div>
   );
 
-  // =====================================================
+  // =========================================================
+  // CLOSE MOBILE MENU
+  // =========================================================
+
+  const handleMobileLinkClick = () => {
+    setIsOpen(false);
+    setShowNotifications(false);
+  };
+
+  // =========================================================
   // HEADER
-  // =====================================================
+  // =========================================================
 
   return (
     <header
@@ -626,7 +590,11 @@ export default function Header() {
         shadow-lg
       "
     >
-     <div className="w-full px-0 sm:px-5 lg:px-8">
+      {/* =====================================================
+          MAIN HEADER
+      ===================================================== */}
+
+      <div className="w-full px-3 sm:px-5 lg:px-8">
         <div
           className="
             flex
@@ -634,7 +602,7 @@ export default function Header() {
             items-center
             justify-between
             gap-3
-            sm:min-h-[76px]
+            sm:min-h-[74px]
           "
         >
           {/* =================================================
@@ -643,6 +611,7 @@ export default function Header() {
 
           <Link
             to="/"
+            onClick={() => setIsOpen(false)}
             className="
               flex
               flex-shrink-0
@@ -653,7 +622,7 @@ export default function Header() {
             <div
               className="
                 rounded-xl
-                bg-white/95
+                bg-white
                 px-2
                 py-1
                 shadow-md
@@ -663,7 +632,7 @@ export default function Header() {
             >
               <img
                 src="/images/logo.png"
-                alt="Jobhir"
+                alt="JobHir"
                 className="
                   h-8
                   w-auto
@@ -686,7 +655,6 @@ export default function Header() {
                 py-0.5
                 text-[8px]
                 font-semibold
-                leading-tight
                 text-emerald-100
                 sm:text-[9px]
               "
@@ -696,7 +664,7 @@ export default function Header() {
           </Link>
 
           {/* =================================================
-              DESKTOP
+              DESKTOP NAVIGATION
           ================================================= */}
 
           <div
@@ -708,7 +676,7 @@ export default function Header() {
               lg:gap-6
             "
           >
-            {/* NOTIFICATION */}
+            {/* Notifications */}
 
             {workerId && (
               <div
@@ -722,7 +690,7 @@ export default function Header() {
                     className="
                       absolute
                       right-0
-                      top-14
+                      top-[52px]
                       z-[100]
                       w-[360px]
                       overflow-hidden
@@ -739,81 +707,64 @@ export default function Header() {
               </div>
             )}
 
-            {/* NAVIGATION */}
+            {/* Navigation */}
 
-            <nav
-              className="
-                flex
-                items-center
-                gap-3
-                lg:gap-5
-              "
-            >
-              {[
-                "disclaimer",
-                "contact",
-                "terms",
-                "privacy",
-                "pricing",
-              ].map((page) => (
+            <nav className="flex items-center gap-1 lg:gap-2">
+              {NAV_ITEMS.map((item) => (
                 <Link
-                  key={page}
-                  to={`/${page}`}
+                  key={item.path}
+                  to={item.path}
                   className="
                     rounded-lg
-                    px-2
+                    px-2.5
                     py-2
                     text-xs
                     font-semibold
                     text-white/90
-                    transition-all
-                    duration-200
+                    transition
                     hover:bg-white/10
                     hover:text-white
+                    lg:px-3
                     lg:text-sm
                   "
                 >
-                  {page
-                    .replace("-", " ")
-                    .toUpperCase()}
+                  {item.label}
                 </Link>
               ))}
-
-              {/* OFFER JOB */}
-
-              <Link
-                to="/offer-job"
-                className="
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-cyan-400
-                  to-blue-500
-                  px-4
-                  py-2.5
-                  text-xs
-                  font-extrabold
-                  text-white
-                  shadow-md
-                  shadow-blue-950/20
-                  ring-1
-                  ring-white/20
-                  transition-all
-                  duration-200
-                  hover:-translate-y-0.5
-                  hover:from-cyan-300
-                  hover:to-blue-400
-                  hover:shadow-lg
-                  lg:px-5
-                  lg:text-sm
-                "
-              >
-                Job Post
-              </Link>
             </nav>
+
+            {/* Post Job */}
+
+            <Link
+              to="/offer-job"
+              className="
+                rounded-xl
+                bg-gradient-to-r
+                from-cyan-400
+                to-blue-500
+                px-4
+                py-2.5
+                text-xs
+                font-extrabold
+                text-white
+                shadow-md
+                ring-1
+                ring-white/20
+                transition
+                hover:-translate-y-0.5
+                hover:from-cyan-300
+                hover:to-blue-400
+                hover:shadow-lg
+                lg:px-5
+                lg:text-sm
+              "
+            >
+              Job Post
+            </Link>
           </div>
 
           {/* =================================================
-              MOBILE
+              MOBILE ACTIONS
           ================================================= */}
 
           <div
@@ -824,7 +775,7 @@ export default function Header() {
               md:hidden
             "
           >
-            {/* NOTIFICATION */}
+            {/* Notifications */}
 
             {workerId && (
               <div
@@ -839,14 +790,14 @@ export default function Header() {
                       fixed
                       left-3
                       right-3
-                      top-[68px]
+                      top-[74px]
                       z-[100]
                       overflow-hidden
                       rounded-2xl
                       border
                       border-slate-200
                       bg-white
-                      
+                      shadow-2xl
                     "
                   >
                     <NotificationList />
@@ -855,10 +806,11 @@ export default function Header() {
               </div>
             )}
 
-            {/* OFFER JOB */}
+            {/* Job Post */}
 
             <Link
               to="/offer-job"
+              onClick={() => setIsOpen(false)}
               className="
                 rounded-xl
                 bg-gradient-to-r
@@ -877,18 +829,15 @@ export default function Header() {
                 hover:to-blue-400
               "
             >
-             Job Post
+              Job Post
             </Link>
 
-            {/* MENU BUTTON */}
+            {/* Menu Button */}
 
             <button
               type="button"
               onClick={() =>
-                setIsOpen(
-                  (previous) =>
-                    !previous
-                )
+                setIsOpen((previous) => !previous)
               }
               className="
                 flex
@@ -905,7 +854,10 @@ export default function Header() {
                 transition
                 hover:bg-white/20
               "
-              aria-label="Menu"
+              aria-label={
+                isOpen ? "Close menu" : "Open menu"
+              }
+              aria-expanded={isOpen}
             >
               {isOpen ? (
                 <svg
@@ -959,20 +911,12 @@ export default function Header() {
             md:hidden
           "
         >
-          <div className="space-y-1">
-            {[
-              "disclaimer",
-              "contact",
-              "terms",
-              "privacy",
-              "pricing",
-            ].map((page) => (
+          <nav className="space-y-1">
+            {NAV_ITEMS.map((item) => (
               <Link
-                key={page}
-                to={`/${page}`}
-                onClick={() =>
-                  setIsOpen(false)
-                }
+                key={item.path}
+                to={item.path}
+                onClick={handleMobileLinkClick}
                 className="
                   block
                   rounded-xl
@@ -986,21 +930,15 @@ export default function Header() {
                   hover:text-white
                 "
               >
-                {page
-                  .replace("-", " ")
-                  .toUpperCase()}
+                {item.label}
               </Link>
             ))}
 
-            {/* MOBILE POST JOB */}
-
             <Link
               to="/offer-job"
-              onClick={() =>
-                setIsOpen(false)
-              }
+              onClick={handleMobileLinkClick}
               className="
-                mt-2
+                mt-3
                 block
                 rounded-xl
                 bg-gradient-to-r
@@ -1017,7 +955,7 @@ export default function Header() {
             >
               + Offer Job
             </Link>
-          </div>
+          </nav>
         </div>
       )}
     </header>
