@@ -839,14 +839,14 @@ export default function Header() {
                       fixed
                       left-3
                       right-3
-                      top-[72px]
+                      top-[68px]
                       z-[100]
                       overflow-hidden
                       rounded-2xl
                       border
                       border-slate-200
                       bg-white
-                      shadow-2xl
+                      
                     "
                   >
                     <NotificationList />
