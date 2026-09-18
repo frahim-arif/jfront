@@ -819,10 +819,7 @@ export default function App() {
                   Explore Opportunities
                 </span>
 
-                <h5 className="mt-3 text-2xl font-extrabold text-slate-800 sm:text-3xl">
-                  Select a category to see available
-                  jobs matching your skills.
-                </h5>
+                
 
     
               </div>
