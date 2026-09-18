@@ -1,16 +1,28 @@
-
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const API_URL = "https://jbackend-h963.onrender.com";
 
+const NAV_ITEMS = [
+  { label: "Home", path: "/" },
+  { label: "Disclaimer", path: "/disclaimer" },
+  { label: "Contact", path: "/contact" },
+  { label: "Terms", path: "/terms" },
+  { label: "Privacy", path: "/privacy" },
+  { label: "Pricing", path: "/pricing" },
+];
+
 export default function Header() {
+  const location = useLocation();
+
   const [isOpen, setIsOpen] = useState(false);
   const [workerId, setWorkerId] = useState(null);
 
   const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] =
+    useState(false);
+  const [loadingNotifications, setLoadingNotifications] =
+    useState(false);
 
   const notificationRef = useRef(null);
 
@@ -22,7 +34,7 @@ export default function Header() {
     try {
       return localStorage.getItem("workerId");
     } catch (error) {
-      console.error("❌ LocalStorage Error:", error);
+      console.error("LocalStorage Error:", error);
       return null;
     }
   };
@@ -33,11 +45,6 @@ export default function Header() {
 
   const fetchNotifications = async (id) => {
     const currentWorkerId = id || getWorkerId();
-
-    console.log(
-      "🔔 Fetching notifications for:",
-      currentWorkerId
-    );
 
     if (!currentWorkerId) {
       setWorkerId(null);
@@ -61,17 +68,13 @@ export default function Header() {
         }
       );
 
-      const result = await response.json().catch(() => null);
-
-      console.log(
-        "🔔 Notification Response:",
-        response.status,
-        result
-      );
+      const result = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         console.error(
-          "❌ Notification API Error:",
+          "Notification API Error:",
           response.status,
           result
         );
@@ -81,22 +84,17 @@ export default function Header() {
       }
 
       if (result?.success) {
-        const list = Array.isArray(result.notifications)
-          ? result.notifications
-          : [];
-
-        console.log(
-          "✅ Notifications received:",
-          list.length
+        setNotifications(
+          Array.isArray(result.notifications)
+            ? result.notifications
+            : []
         );
-
-        setNotifications(list);
       } else {
         setNotifications([]);
       }
     } catch (error) {
       console.error(
-        "❌ Notification Fetch Error:",
+        "Notification Fetch Error:",
         error
       );
     } finally {
@@ -111,11 +109,6 @@ export default function Header() {
   useEffect(() => {
     const id = getWorkerId();
 
-    console.log(
-      "🔑 Initial Header Worker ID:",
-      id
-    );
-
     if (id) {
       setWorkerId(id);
       fetchNotifications(id);
@@ -126,17 +119,12 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // WORKER / PAYMENT CHANGE
+  // PAYMENT / REGISTRATION EVENT
   // =====================================================
 
   useEffect(() => {
     const handleWorkerChange = () => {
       const id = getWorkerId();
-
-      console.log(
-        "👷 Worker/payment change:",
-        id
-      );
 
       if (id) {
         setWorkerId(id);
@@ -172,26 +160,14 @@ export default function Header() {
   }, []);
 
   // =====================================================
-  // CHECK WORKER ID + REFRESH EVERY 10 SECONDS
+  // AUTO REFRESH NOTIFICATIONS
   // =====================================================
 
   useEffect(() => {
     const interval = setInterval(() => {
       const id = getWorkerId();
 
-      console.log(
-        "⏱️ Worker ID check:",
-        id
-      );
-
       if (id !== workerId) {
-        console.log(
-          "🔄 Worker ID changed:",
-          workerId,
-          "→",
-          id
-        );
-
         if (id) {
           setWorkerId(id);
           fetchNotifications(id);
@@ -209,13 +185,11 @@ export default function Header() {
       }
     }, 10000);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [workerId]);
 
   // =====================================================
-  // CLOSE NOTIFICATION WHEN CLICK OUTSIDE
+  // CLOSE NOTIFICATION OUTSIDE
   // =====================================================
 
   useEffect(() => {
@@ -246,6 +220,15 @@ export default function Header() {
   }, [showNotifications]);
 
   // =====================================================
+  // CLOSE MOBILE MENU ON ROUTE CHANGE
+  // =====================================================
+
+  useEffect(() => {
+    setIsOpen(false);
+    setShowNotifications(false);
+  }, [location.pathname]);
+
+  // =====================================================
   // UNREAD COUNT
   // =====================================================
 
@@ -274,7 +257,7 @@ export default function Header() {
   };
 
   // =====================================================
-  // MARK ONE AS READ
+  // MARK ONE READ
   // =====================================================
 
   const markAsRead = async (notification) => {
@@ -296,16 +279,16 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         console.error(
-          "❌ Mark read failed:",
+          "Mark read failed:",
           response.status,
           result
         );
-
         return;
       }
 
@@ -321,7 +304,7 @@ export default function Header() {
       );
     } catch (error) {
       console.error(
-        "❌ Mark read error:",
+        "Mark read error:",
         error
       );
     }
@@ -334,9 +317,7 @@ export default function Header() {
   const markAllAsRead = async () => {
     const id = getWorkerId();
 
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     try {
       const response = await fetch(
@@ -349,16 +330,16 @@ export default function Header() {
         }
       );
 
-      const result =
-        await response.json().catch(() => null);
+      const result = await response
+        .json()
+        .catch(() => null);
 
       if (!response.ok) {
         console.error(
-          "❌ Mark all read failed:",
+          "Mark all read failed:",
           response.status,
           result
         );
-
         return;
       }
 
@@ -370,10 +351,22 @@ export default function Header() {
       );
     } catch (error) {
       console.error(
-        "❌ Mark all read error:",
+        "Mark all read error:",
         error
       );
     }
+  };
+
+  // =====================================================
+  // ACTIVE LINK
+  // =====================================================
+
+  const isActive = (path) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+
+    return location.pathname === path;
   };
 
   // =====================================================
@@ -391,33 +384,32 @@ export default function Header() {
         flex
         h-10
         w-10
-        sm:h-11
-        sm:w-11
         items-center
         justify-center
         rounded-xl
         border
-        border-white/20
+        border-white/15
         bg-white/10
         text-white
-        shadow-sm
-        backdrop-blur-sm
-        transition-all
+        backdrop-blur-md
+        transition
         duration-200
+        hover:border-white/25
         hover:bg-white/20
-        hover:shadow-md
         active:scale-95
+        sm:h-11
+        sm:w-11
       "
     >
       <svg
-        className={`h-5 w-5 sm:h-6 sm:w-6 ${
+        className={`h-5 w-5 ${
           unreadCount > 0
             ? "text-yellow-300"
             : "text-white"
         }`}
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.8"
         viewBox="0 0 24 24"
       >
         <path
@@ -425,7 +417,6 @@ export default function Header() {
           strokeLinejoin="round"
           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
         />
-
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -440,19 +431,19 @@ export default function Header() {
             -right-1
             -top-1
             flex
-            min-h-[19px]
-            min-w-[19px]
+            min-h-[18px]
+            min-w-[18px]
             items-center
             justify-center
             rounded-full
             border-2
-            border-indigo-700
+            border-indigo-800
             bg-red-500
             px-1
-            text-[9px]
-            font-bold
+            text-[8px]
+            font-black
             text-white
-            shadow
+            shadow-md
           "
         >
           {unreadCount > 99
@@ -469,6 +460,7 @@ export default function Header() {
 
   const NotificationList = () => (
     <div className="w-full bg-white">
+
       {/* HEADER */}
 
       <div
@@ -483,20 +475,24 @@ export default function Header() {
           via-indigo-700
           to-purple-700
           px-4
-          py-3
+          py-3.5
           text-white
         "
       >
         <div>
-          <h3 className="text-sm font-bold">
+          <h3 className="text-sm font-black">
             Job Notifications
           </h3>
 
-          {unreadCount > 0 && (
-            <p className="mt-0.5 text-xs text-blue-100">
-              {unreadCount} unread
-            </p>
-          )}
+          <p className="mt-0.5 text-[10px] text-blue-100">
+            {unreadCount > 0
+              ? `${unreadCount} unread notification${
+                  unreadCount > 1
+                    ? "s"
+                    : ""
+                }`
+              : "Stay updated with new jobs"}
+          </p>
         </div>
 
         {unreadCount > 0 && (
@@ -505,11 +501,13 @@ export default function Header() {
             onClick={markAllAsRead}
             className="
               rounded-lg
+              border
+              border-white/15
               bg-white/10
-              px-2.5
+              px-3
               py-1.5
-              text-xs
-              font-semibold
+              text-[10px]
+              font-bold
               text-white
               transition
               hover:bg-white/20
@@ -523,31 +521,36 @@ export default function Header() {
       {/* LIST */}
 
       <div className="max-h-[420px] overflow-y-auto">
+
         {loadingNotifications &&
         notifications.length === 0 ? (
-          <div className="px-5 py-10 text-center">
-            <div className="mb-2 text-3xl">
+          <div className="px-5 py-12 text-center">
+
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-xl">
               🔔
             </div>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm font-semibold text-slate-600">
               Loading notifications...
             </p>
+
           </div>
         ) : notifications.length === 0 ? (
-          <div className="px-5 py-10 text-center">
-            <div className="mb-2 text-3xl">
+          <div className="px-5 py-12 text-center">
+
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
               🔔
             </div>
 
-            <p className="text-sm font-semibold text-gray-700">
+            <p className="text-sm font-black text-slate-700">
               No job notifications
             </p>
 
-            <p className="mt-1 text-xs leading-5 text-gray-400">
+            <p className="mx-auto mt-1 max-w-[260px] text-xs leading-5 text-slate-400">
               New jobs matching your work type
               and district will appear here.
             </p>
+
           </div>
         ) : (
           notifications.map((notification) => (
@@ -557,52 +560,77 @@ export default function Header() {
               onClick={() =>
                 markAsRead(notification)
               }
-              className={`w-full border-b border-slate-100 p-4 text-left transition ${
-                !notification.isRead
-                  ? "bg-blue-50 hover:bg-blue-100"
-                  : "bg-white hover:bg-slate-50"
-              }`}
+              className={`
+                w-full
+                border-b
+                border-slate-100
+                p-4
+                text-left
+                transition
+                ${
+                  !notification.isRead
+                    ? "bg-blue-50/80 hover:bg-blue-100"
+                    : "bg-white hover:bg-slate-50"
+                }
+              `}
             >
               <div className="flex gap-3">
+
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
-                    !notification.isRead
-                      ? "bg-gradient-to-br from-blue-100 to-purple-100"
-                      : "bg-gray-100"
-                  }`}
+                  className={`
+                    flex
+                    h-10
+                    w-10
+                    flex-shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    text-base
+                    ${
+                      !notification.isRead
+                        ? "bg-gradient-to-br from-blue-100 to-purple-100"
+                        : "bg-slate-100"
+                    }
+                  `}
                 >
                   🔔
                 </div>
 
                 <div className="min-w-0 flex-1">
+
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-gray-800">
+
+                    <h4 className="line-clamp-1 text-sm font-black text-slate-800">
                       {notification.title ||
                         "New Job Available"}
                     </h4>
 
                     {!notification.isRead && (
-                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-blue-600" />
+                      <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-600" />
                     )}
+
                   </div>
 
-                  <p className="mt-1 text-sm leading-5 text-gray-600">
+                  <p className="mt-1 line-clamp-3 text-xs leading-5 text-slate-600">
                     {notification.message ||
                       "You have a new job notification."}
                   </p>
 
                   {notification.createdAt && (
-                    <p className="mt-2 text-[11px] text-gray-400">
+                    <p className="mt-2 text-[10px] font-medium text-slate-400">
                       {new Date(
                         notification.createdAt
-                      ).toLocaleString()}
+                      ).toLocaleString("en-IN")}
                     </p>
                   )}
+
                 </div>
+
               </div>
             </button>
           ))
         )}
+
       </div>
     </div>
   );
@@ -615,28 +643,41 @@ export default function Header() {
     <header
       className="
         relative
-        z-50
+        z-[100]
         w-full
         border-b
-        border-indigo-900/30
+        border-white/10
         bg-gradient-to-r
-        from-blue-800
-        via-indigo-800
-        to-purple-800
+        from-[#0f3f91]
+        via-[#263bb0]
+        to-[#5b21b6]
         shadow-lg
       "
     >
-      <div className="w-full px-3 sm:px-5 lg:px-8">
+
+      {/* =================================================
+          FULL WIDTH HEADER INNER
+      ================================================= */}
+
+      <div className="w-full">
+
         <div
           className="
             flex
-            min-h-[68px]
+            min-h-[72px]
+            w-full
             items-center
             justify-between
             gap-3
+            px-3
             sm:min-h-[76px]
+            sm:px-5
+            lg:px-8
+            xl:px-10
+            2xl:px-12
           "
         >
+
           {/* =================================================
               LOGO
           ================================================= */}
@@ -644,70 +685,111 @@ export default function Header() {
           <Link
             to="/"
             className="
+              group
               flex
               flex-shrink-0
-              flex-col
-              items-start
+              items-center
+              gap-2.5
             "
           >
+
             <div
               className="
+                flex
+                h-[44px]
+                items-center
+                justify-center
                 rounded-xl
-                bg-white/95
-                px-2
-                py-1
-                shadow-md
+                bg-white
+                px-2.5
+                shadow-lg
                 ring-1
                 ring-white/20
+                transition
+                duration-200
+                group-hover:shadow-xl
+                sm:h-[50px]
+                sm:px-3
               "
             >
               <img
                 src="/images/logo.png"
-                alt="Jobhir"
+                alt="JobHir"
                 className="
-                  h-8
+                  h-7
                   w-auto
                   object-contain
-                  sm:h-10
+                  sm:h-9
                 "
               />
             </div>
 
-            <span
-              className="
-                mt-1
-                inline-flex
-                whitespace-nowrap
-                rounded-full
-                border
-                border-emerald-300/30
-                bg-emerald-400/15
-                px-2
-                py-0.5
-                text-[8px]
-                font-semibold
-                leading-tight
-                text-emerald-100
-                sm:text-[9px]
-              "
-            >
-              100% Secure
-            </span>
+            <div className="hidden sm:block">
+
+              <p className="text-base font-black tracking-tight text-white">
+                JOBHIR
+              </p>
+
+              <div className="mt-0.5 flex items-center gap-1.5">
+
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+
+                <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-100">
+                  100% Secure
+                </span>
+
+              </div>
+
+            </div>
+
           </Link>
 
           {/* =================================================
-              DESKTOP
+              DESKTOP NAV
           ================================================= */}
 
-          <div
-            className="
-              hidden
-              items-center
-              gap-4
-              md:flex
-              lg:gap-6
-            "
-          >
+          <div className="hidden items-center gap-3 md:flex">
+
+            {/* NAVIGATION */}
+
+            <nav className="flex items-center gap-0.5 lg:gap-1">
+
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`
+                    relative
+                    rounded-lg
+                    px-2.5
+                    py-2
+                    text-xs
+                    font-bold
+                    transition
+                    duration-200
+                    lg:px-3
+                    lg:text-[13px]
+                    ${
+                      isActive(item.path)
+                        ? "bg-white/15 text-white"
+                        : "text-white/75 hover:bg-white/10 hover:text-white"
+                    }
+                  `}
+                >
+                  {item.label}
+
+                  {isActive(item.path) && (
+                    <span className="absolute bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-cyan-300" />
+                  )}
+                </Link>
+              ))}
+
+            </nav>
+
+            {/* DIVIDER */}
+
+            <div className="mx-1 h-8 w-px bg-white/15" />
+
             {/* NOTIFICATION */}
 
             {workerId && (
@@ -715,6 +797,7 @@ export default function Header() {
                 ref={notificationRef}
                 className="relative"
               >
+
                 <NotificationButton />
 
                 {showNotifications && (
@@ -722,9 +805,9 @@ export default function Header() {
                     className="
                       absolute
                       right-0
-                      top-14
-                      z-[100]
-                      w-[360px]
+                      top-[calc(100%+12px)]
+                      z-[200]
+                      w-[370px]
                       overflow-hidden
                       rounded-2xl
                       border
@@ -736,94 +819,56 @@ export default function Header() {
                     <NotificationList />
                   </div>
                 )}
+
               </div>
             )}
 
-            {/* NAVIGATION */}
+            {/* POST JOB */}
 
-            <nav
+            <Link
+              to="/offer-job"
               className="
-                flex
+                ml-1
+                inline-flex
                 items-center
-                gap-3
-                lg:gap-5
+                gap-1.5
+                rounded-xl
+                bg-gradient-to-r
+                from-cyan-400
+                to-blue-500
+                px-4
+                py-2.5
+                text-xs
+                font-black
+                text-white
+                shadow-lg
+                shadow-blue-950/20
+                ring-1
+                ring-white/20
+                transition
+                duration-200
+                hover:-translate-y-0.5
+                hover:from-cyan-300
+                hover:to-blue-400
+                hover:shadow-xl
+                lg:px-5
+                lg:text-sm
               "
             >
-              {[
-                "disclaimer",
-                "contact",
-                "terms",
-                "privacy",
-                "pricing",
-              ].map((page) => (
-                <Link
-                  key={page}
-                  to={`/${page}`}
-                  className="
-                    rounded-lg
-                    px-2
-                    py-2
-                    text-xs
-                    font-semibold
-                    text-white/90
-                    transition-all
-                    duration-200
-                    hover:bg-white/10
-                    hover:text-white
-                    lg:text-sm
-                  "
-                >
-                  {page
-                    .replace("-", " ")
-                    .toUpperCase()}
-                </Link>
-              ))}
+              <span className="text-base leading-none">
+                +
+              </span>
+              Post Job
+            </Link>
 
-              {/* OFFER JOB */}
-
-              <Link
-                to="/offer-job"
-                className="
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-cyan-400
-                  to-blue-500
-                  px-4
-                  py-2.5
-                  text-xs
-                  font-extrabold
-                  text-white
-                  shadow-md
-                  shadow-blue-950/20
-                  ring-1
-                  ring-white/20
-                  transition-all
-                  duration-200
-                  hover:-translate-y-0.5
-                  hover:from-cyan-300
-                  hover:to-blue-400
-                  hover:shadow-lg
-                  lg:px-5
-                  lg:text-sm
-                "
-              >
-                Job Post
-              </Link>
-            </nav>
           </div>
 
           {/* =================================================
-              MOBILE
+              MOBILE ACTIONS
           ================================================= */}
 
-          <div
-            className="
-              flex
-              items-center
-              gap-1.5
-              md:hidden
-            "
-          >
+          <div className="flex items-center gap-1.5 md:hidden">
+
             {/* NOTIFICATION */}
 
             {workerId && (
@@ -831,6 +876,7 @@ export default function Header() {
                 ref={notificationRef}
                 className="relative"
               >
+
                 <NotificationButton />
 
                 {showNotifications && (
@@ -839,8 +885,8 @@ export default function Header() {
                       fixed
                       left-3
                       right-3
-                      top-[72px]
-                      z-[100]
+                      top-[80px]
+                      z-[200]
                       overflow-hidden
                       rounded-2xl
                       border
@@ -852,35 +898,35 @@ export default function Header() {
                     <NotificationList />
                   </div>
                 )}
+
               </div>
             )}
 
-            {/* OFFER JOB */}
+            {/* POST JOB */}
 
             <Link
               to="/offer-job"
               className="
+                inline-flex
+                h-10
+                items-center
                 rounded-xl
                 bg-gradient-to-r
                 from-cyan-400
                 to-blue-500
                 px-3
-                py-2
-                text-[11px]
-                font-extrabold
+                text-[10px]
+                font-black
                 text-white
                 shadow-md
                 ring-1
                 ring-white/20
-                transition
-                hover:from-cyan-300
-                hover:to-blue-400
               "
             >
-             Job Post
+              + Job
             </Link>
 
-            {/* MENU BUTTON */}
+            {/* MENU */}
 
             <button
               type="button"
@@ -890,6 +936,8 @@ export default function Header() {
                     !previous
                 )
               }
+              aria-label="Open menu"
+              aria-expanded={isOpen}
               className="
                 flex
                 h-10
@@ -898,18 +946,18 @@ export default function Header() {
                 justify-center
                 rounded-xl
                 border
-                border-white/20
+                border-white/15
                 bg-white/10
                 text-white
-                backdrop-blur-sm
+                backdrop-blur
                 transition
                 hover:bg-white/20
+                active:scale-95
               "
-              aria-label="Menu"
             >
               {isOpen ? (
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -923,7 +971,7 @@ export default function Header() {
                 </svg>
               ) : (
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -937,8 +985,11 @@ export default function Header() {
                 </svg>
               )}
             </button>
+
           </div>
+
         </div>
+
       </div>
 
       {/* =====================================================
@@ -951,44 +1002,46 @@ export default function Header() {
             border-t
             border-white/10
             bg-gradient-to-b
-            from-indigo-800
-            to-purple-900
-            px-4
-            py-4
-            shadow-inner
+            from-[#172f91]
+            to-[#4c1d95]
+            px-3
+            py-3
+            shadow-2xl
             md:hidden
           "
         >
-          <div className="space-y-1">
-            {[
-              "disclaimer",
-              "contact",
-              "terms",
-              "privacy",
-              "pricing",
-            ].map((page) => (
+
+          <div className="grid gap-1">
+
+            {NAV_ITEMS.map((item) => (
               <Link
-                key={page}
-                to={`/${page}`}
+                key={item.path}
+                to={item.path}
                 onClick={() =>
                   setIsOpen(false)
                 }
-                className="
-                  block
+                className={`
+                  flex
+                  items-center
+                  justify-between
                   rounded-xl
-                  px-3
-                  py-2.5
+                  px-4
+                  py-3
                   text-sm
-                  font-semibold
-                  text-white/90
+                  font-bold
                   transition
-                  hover:bg-white/10
-                  hover:text-white
-                "
+                  ${
+                    isActive(item.path)
+                      ? "bg-white/15 text-white"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                  }
+                `}
               >
-                {page
-                  .replace("-", " ")
-                  .toUpperCase()}
+                <span>{item.label}</span>
+
+                <span className="text-white/40">
+                  →
+                </span>
               </Link>
             ))}
 
@@ -1001,25 +1054,29 @@ export default function Header() {
               }
               className="
                 mt-2
-                block
+                flex
+                items-center
+                justify-center
                 rounded-xl
                 bg-gradient-to-r
                 from-cyan-400
                 to-blue-500
                 px-4
                 py-3
-                text-center
                 text-sm
-                font-extrabold
+                font-black
                 text-white
                 shadow-lg
               "
             >
-              + Offer Job
+              + Post a Job
             </Link>
+
           </div>
+
         </div>
       )}
+
     </header>
   );
 }
