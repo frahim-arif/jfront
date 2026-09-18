@@ -651,18 +651,11 @@ export default function App() {
             {/* LEFT */}
 
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600 sm:text-xs">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600 text-center sm:text-xs">
                 Job Search
               </p>
 
-              <h1 className="mt-1 text-xl font-extrabold text-slate-900 sm:text-2xl">
-                Find Jobs Near You
-              </h1>
-
-              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                Search genuine job opportunities by
-                state and work category.
-              </p>
+            
             </div>
 
             {/* RIGHT */}
@@ -826,14 +819,12 @@ export default function App() {
                   Explore Opportunities
                 </span>
 
-                <h2 className="mt-3 text-2xl font-extrabold text-slate-800 sm:text-3xl">
-                  Choose Your Work Category
-                </h2>
-
-                <p className="mx-auto mt-1 max-w-2xl text-xs text-slate-500 sm:text-sm">
+                <h5 className="mt-3 text-2xl font-extrabold text-slate-800 sm:text-3xl">
                   Select a category to see available
                   jobs matching your skills.
-                </p>
+                </h5>
+
+    
               </div>
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
