@@ -806,70 +806,242 @@ export default function App() {
           )}
 
         {/* ==================================================
-            CATEGORY VIEW
-        ================================================== */}
+    CATEGORY VIEW
+================================================== */}
 
-        {!loadingJobs &&
-          availableJobs.length > 0 &&
-          !selectedWorkType && (
-            <section>
+{!loadingJobs &&
+  availableJobs.length > 0 &&
+  !selectedWorkType && (
+    <section className="mt-2">
+      {/* Section Heading */}
+      <div className="mb-7 flex flex-col items-center text-center">
+        <span className="mb-3 inline-flex items-center gap-2 border border-indigo-100 bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-indigo-700 shadow-sm">
+          <span className="h-1.5 w-1.5 bg-indigo-600" />
+          Explore Opportunities
+        </span>
 
-              <div className="mb-6 text-center">
-                <span className="inline-flex border border-blue-100 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-1.5 text-xs font-bold text-indigo-700">
-                  Explore Opportunities
+        <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          Find Jobs by Work Type
+        </h2>
+
+        <p className="mt-2 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
+          Choose your work category and discover available
+          opportunities near you.
+        </p>
+      </div>
+
+      {/* Category Grid */}
+      <div
+        className="
+          grid
+          grid-cols-2
+          gap-3
+          sm:grid-cols-3
+          sm:gap-4
+          md:grid-cols-4
+          lg:grid-cols-5
+          xl:grid-cols-6
+          2xl:grid-cols-7
+        "
+      >
+        {workTypeCategories.map(({ workType, count }) => (
+          <button
+            key={workType}
+            type="button"
+            onClick={() => setSelectedWorkType(workType)}
+            className="
+              group
+              relative
+              overflow-hidden
+              border
+              border-slate-200
+              bg-white
+              p-4
+              text-left
+              shadow-sm
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:border-indigo-200
+              hover:shadow-xl
+              hover:shadow-indigo-100/70
+              active:translate-y-0
+              sm:p-5
+            "
+          >
+            {/* Top Gradient Line */}
+            <div
+              className="
+                absolute
+                left-0
+                top-0
+                h-[3px]
+                w-full
+                bg-gradient-to-r
+                from-blue-500
+                via-indigo-500
+                to-purple-600
+                opacity-80
+                transition-all
+                duration-300
+                group-hover:h-1
+              "
+            />
+
+            {/* Soft Background Glow */}
+            <div
+              className="
+                pointer-events-none
+                absolute
+                -right-8
+                -top-8
+                h-20
+                w-20
+                rounded-full
+                bg-indigo-50
+                opacity-0
+                blur-2xl
+                transition-all
+                duration-500
+                group-hover:opacity-100
+              "
+            />
+
+            {/* Icon + Count */}
+            <div className="relative mb-5 flex items-center justify-between">
+              <div
+                className="
+                  flex
+                  h-11
+                  w-11
+                  items-center
+                  justify-center
+                  border
+                  border-indigo-100
+                  bg-gradient-to-br
+                  from-blue-50
+                  via-indigo-50
+                  to-purple-50
+                  text-indigo-700
+                  shadow-sm
+                  transition-all
+                  duration-300
+                  group-hover:border-indigo-500
+                  group-hover:bg-gradient-to-br
+                  group-hover:from-blue-600
+                  group-hover:via-indigo-600
+                  group-hover:to-purple-600
+                  group-hover:text-white
+                  group-hover:shadow-lg
+                  group-hover:shadow-indigo-200
+                "
+              >
+                <span className="text-base font-black">
+                  {workType.charAt(0).toUpperCase()}
                 </span>
-
-                
-
-    
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
+              <span
+                className="
+                  flex
+                  h-7
+                  min-w-[30px]
+                  items-center
+                  justify-center
+                  border
+                  border-indigo-100
+                  bg-indigo-50
+                  px-2
+                  text-[11px]
+                  font-extrabold
+                  text-indigo-700
+                  transition-all
+                  duration-300
+                  group-hover:border-indigo-200
+                  group-hover:bg-indigo-100
+                "
+              >
+                {count}
+              </span>
+            </div>
 
-                {workTypeCategories.map(
-                  ({ workType, count }) => (
-                    <button
-                      key={workType}
-                      type="button"
-                      onClick={() =>
-                        setSelectedWorkType(
-                          workType
-                        )
-                      }
-                      className="group relative overflow-hidden border border-slate-200 bg-white p-4 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100 sm:p-5"
-                    >
-                      <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600" />
+            {/* Work Type */}
+            <div className="relative min-h-[48px]">
+              <h3
+                className="
+                  text-sm
+                  font-extrabold
+                  leading-5
+                  text-slate-800
+                  transition-colors
+                  duration-200
+                  group-hover:text-indigo-700
+                  sm:text-base
+                "
+              >
+                {workType}
+              </h3>
 
-                      <div className="mb-4 flex h-10 w-10 items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 text-blue-700 transition-all duration-300 group-hover:from-blue-600 group-hover:to-purple-600 group-hover:text-white">
-                        <span className="text-sm font-extrabold">
-                          {workType
-                            .charAt(0)
-                            .toUpperCase()}
-                        </span>
-                      </div>
+              <p className="mt-1 text-[10px] font-medium text-slate-400 sm:text-[11px]">
+                {count === 1 ? "1 job available" : `${count} jobs available`}
+              </p>
+            </div>
 
-                      <div className="flex min-h-[48px] items-center">
-                        <h3 className="text-sm font-extrabold leading-5 text-slate-800 transition group-hover:text-indigo-700 sm:text-base">
-                          {workType}
-                        </h3>
-                      </div>
+            {/* Bottom */}
+            <div
+              className="
+                relative
+                mt-4
+                flex
+                items-center
+                justify-between
+                border-t
+                border-slate-100
+                pt-3
+              "
+            >
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                Explore
+              </span>
 
-                      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                        <span className="text-[11px] font-medium text-slate-400 sm:text-xs">
-                          Available
-                        </span>
-
-                        <span className="flex h-7 min-w-[30px] items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 px-2 text-xs font-extrabold text-indigo-700 ring-1 ring-inset ring-indigo-100">
-                          {count}
-                        </span>
-                      </div>
-                    </button>
-                  )
-                )}
-
-              </div>
-            </section>
-          )}
+              <span
+                className="
+                  flex
+                  h-7
+                  w-7
+                  items-center
+                  justify-center
+                  border
+                  border-slate-200
+                  bg-slate-50
+                  text-slate-500
+                  transition-all
+                  duration-300
+                  group-hover:border-indigo-200
+                  group-hover:bg-indigo-600
+                  group-hover:text-white
+                "
+              >
+                <svg
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </section>
+  )}
 
         {/* ==================================================
             SELECTED CATEGORY
