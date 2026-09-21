@@ -138,33 +138,186 @@ const getJobAddress = (job) =>
   "Location provided by employer";
 
 // ======================================================
-// WORK TYPE ICON
+// WORK TYPE ICONS
 // ======================================================
 
-const getWorkTypeIcon = (workType) => {
+const getWorkTypeIconData = (workType) => {
   const type = normalizeWorkType(workType);
 
   const icons = {
-    mason: Hammer,
-    carpenter: Hammer,
-    painter: Paintbrush,
-    electrician: Zap,
-    plumber: Wrench,
-    gardener: Sprout,
-    cleaner: Sparkles,
-    welder: Construction,
-    driver: Car,
-    "construction worker": HardHat,
-    helper: HandHelping,
-    "ac technician": Snowflake,
-    mechanic: Settings,
-    "tiles worker": Layers3,
-    "furniture worker": Sofa,
-    "home care": HeartHandshake,
-    "graphic designer": Palette,
+    mason: {
+      icon: Hammer,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    carpenter: {
+      icon: Hammer,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      hover: "group-hover:bg-amber-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    painter: {
+      icon: Paintbrush,
+      color: "text-pink-600",
+      bg: "bg-pink-50",
+      border: "border-pink-200",
+      hover: "group-hover:bg-pink-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    electrician: {
+      icon: Zap,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      hover: "group-hover:bg-yellow-500",
+      hoverText: "group-hover:text-white",
+    },
+
+    plumber: {
+      icon: Wrench,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      hover: "group-hover:bg-blue-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    gardener: {
+      icon: Sprout,
+      color: "text-green-600",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      hover: "group-hover:bg-green-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    cleaner: {
+      icon: Sparkles,
+      color: "text-cyan-600",
+      bg: "bg-cyan-50",
+      border: "border-cyan-200",
+      hover: "group-hover:bg-cyan-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    welder: {
+      icon: Construction,
+      color: "text-red-600",
+      bg: "bg-red-50",
+      border: "border-red-200",
+      hover: "group-hover:bg-red-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    driver: {
+      icon: Car,
+      color: "text-violet-600",
+      bg: "bg-violet-50",
+      border: "border-violet-200",
+      hover: "group-hover:bg-violet-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "construction worker": {
+      icon: HardHat,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    helper: {
+      icon: HandHelping,
+      color: "text-teal-600",
+      bg: "bg-teal-50",
+      border: "border-teal-200",
+      hover: "group-hover:bg-teal-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "ac technician": {
+      icon: Snowflake,
+      color: "text-sky-600",
+      bg: "bg-sky-50",
+      border: "border-sky-200",
+      hover: "group-hover:bg-sky-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    mechanic: {
+      icon: Settings,
+      color: "text-slate-600",
+      bg: "bg-slate-50",
+      border: "border-slate-200",
+      hover: "group-hover:bg-slate-700",
+      hoverText: "group-hover:text-white",
+    },
+
+    "tiles worker": {
+      icon: Layers3,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "furniture worker": {
+      icon: Sofa,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "home care": {
+      icon: HeartHandshake,
+      color: "text-rose-600",
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      hover: "group-hover:bg-rose-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "graphic designer": {
+      icon: Palette,
+      color: "text-fuchsia-600",
+      bg: "bg-fuchsia-50",
+      border: "border-fuchsia-200",
+      hover: "group-hover:bg-fuchsia-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    other: {
+      icon: BriefcaseBusiness,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    },
   };
 
-  return icons[type] || BriefcaseBusiness;
+  return (
+    icons[type] || {
+      icon: BriefcaseBusiness,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    }
+  );
 };
 
 // ======================================================
