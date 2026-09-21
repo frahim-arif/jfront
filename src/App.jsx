@@ -1090,7 +1090,7 @@ export default function App() {
           STATE SUMMARY
       ================================================== */}
 
-      <section
+      {/* <section
         id="jobs"
         className="w-full scroll-mt-24 px-3 pt-3 sm:px-5 lg:px-8 xl:px-10"
       >
@@ -1146,7 +1146,7 @@ export default function App() {
 
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ==================================================
           MAIN JOB AREA
