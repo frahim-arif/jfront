@@ -885,149 +885,162 @@ export default function App() {
             </div>
           )}
 
-        {/* ==================================================
-            CATEGORY VIEW
-        ================================================== */}
+       {/* ==================================================
+    CATEGORY VIEW
+================================================== */}
 
-        {!loadingJobs &&
-          availableJobs.length > 0 &&
-          !selectedWorkType && (
-            <section className="mt-2">
+{!loadingJobs &&
+  availableJobs.length > 0 &&
+  !selectedWorkType && (
+    <section className="mt-2">
 
-              <div className="mb-7 flex flex-col items-center text-center">
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold text-indigo-600">
+          <span className="h-1.5 w-1.5 bg-indigo-600" />
+          Explore Jobs
+        </div>
 
-                <span className="mb-3 inline-flex items-center gap-2 border border-indigo-100 bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-indigo-700 shadow-sm">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Find Jobs by Work Type
+        </h2>
 
-                  <span className="h-1.5 w-1.5 bg-indigo-600" />
+        <p className="mx-auto mt-2 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
+          Choose a work category to find available jobs near you.
+        </p>
+      </div>
 
-                  Explore Opportunities
+      {/* Categories */}
+      <div
+        className="
+          grid
+          grid-cols-2
+          gap-3
+          sm:grid-cols-3
+          md:grid-cols-4
+          lg:grid-cols-5
+          xl:grid-cols-6
+        "
+      >
+        {workTypeCategories.map(({ workType, count }) => (
+          <button
+            key={workType}
+            type="button"
+            onClick={() => setSelectedWorkType(workType)}
+            className="
+              group
+              border
+              border-slate-200
+              bg-white
+              p-4
+              text-left
+              transition
+              duration-200
+              hover:border-indigo-400
+              hover:bg-indigo-50/40
+              active:bg-indigo-100
+              sm:p-5
+            "
+          >
 
-                </span>
+            {/* Top */}
+            <div className="flex items-center justify-between">
 
-                <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-                  Find Jobs by Work Type
-                </h2>
-
-                <p className="mt-2 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
-                  Choose your work category and discover available
-                  opportunities near you.
-                </p>
-
-              </div>
-
+              {/* Simple Icon */}
               <div
                 className="
-                  grid
-                  grid-cols-2
-                  gap-3
-                  sm:grid-cols-3
-                  sm:gap-4
-                  md:grid-cols-4
-                  lg:grid-cols-5
-                  xl:grid-cols-6
-                  2xl:grid-cols-7
+                  flex
+                  h-10
+                  w-10
+                  items-center
+                  justify-center
+                  border
+                  border-indigo-200
+                  bg-indigo-50
+                  text-sm
+                  font-bold
+                  text-indigo-600
+                  transition
+                  group-hover:bg-indigo-600
+                  group-hover:text-white
                 "
               >
-
-                {workTypeCategories.map(
-                  ({ workType, count }) => (
-                    <button
-                      key={workType}
-                      type="button"
-                      onClick={() =>
-                        setSelectedWorkType(
-                          workType
-                        )
-                      }
-                      className="
-                        group
-                        relative
-                        overflow-hidden
-                        border
-                        border-slate-200
-                        bg-white
-                        p-4
-                        text-left
-                        shadow-sm
-                        transition-all
-                        duration-300
-                        hover:-translate-y-1
-                        hover:border-indigo-200
-                        hover:shadow-xl
-                        hover:shadow-indigo-100/70
-                        active:translate-y-0
-                        sm:p-5
-                      "
-                    >
-
-                      <div className="absolute left-0 top-0 h-[3px] w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 opacity-80 transition-all duration-300 group-hover:h-1" />
-
-                      <div className="relative mb-5 flex items-center justify-between">
-
-                        <div className="flex h-11 w-11 items-center justify-center border border-indigo-100 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-indigo-700 shadow-sm transition-all duration-300 group-hover:border-indigo-500 group-hover:from-blue-600 group-hover:via-indigo-600 group-hover:to-purple-600 group-hover:text-white">
-
-                          <span className="text-base font-black">
-                            {workType
-                              .charAt(0)
-                              .toUpperCase()}
-                          </span>
-
-                        </div>
-
-                        <span className="flex h-7 min-w-[30px] items-center justify-center border border-indigo-100 bg-indigo-50 px-2 text-[11px] font-extrabold text-indigo-700">
-                          {count}
-                        </span>
-
-                      </div>
-
-                      <div className="relative min-h-[48px]">
-
-                        <h3 className="text-sm font-extrabold leading-5 text-slate-800 transition-colors duration-200 group-hover:text-indigo-700 sm:text-base">
-                          {workType}
-                        </h3>
-
-                        <p className="mt-1 text-[10px] font-medium text-slate-400 sm:text-[11px]">
-                          {count === 1
-                            ? "1 job available"
-                            : `${count} jobs available`}
-                        </p>
-
-                      </div>
-
-                      <div className="relative mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-
-                        <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                          Explore
-                        </span>
-
-                        <span className="flex h-7 w-7 items-center justify-center border border-slate-200 bg-slate-50 text-slate-500 transition-all duration-300 group-hover:border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white">
-
-                          <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-
-                        </span>
-
-                      </div>
-
-                    </button>
-                  )
-                )}
-
+                {workType.charAt(0).toUpperCase()}
               </div>
 
-            </section>
-          )}
+              {/* Count */}
+              <span
+                className="
+                  flex
+                  h-6
+                  min-w-[26px]
+                  items-center
+                  justify-center
+                  bg-slate-100
+                  px-2
+                  text-[11px]
+                  font-bold
+                  text-slate-600
+                  group-hover:bg-indigo-100
+                  group-hover:text-indigo-700
+                "
+              >
+                {count}
+              </span>
+
+            </div>
+
+            {/* Name */}
+            <div className="mt-4">
+
+              <h3
+                className="
+                  text-sm
+                  font-bold
+                  text-slate-800
+                  group-hover:text-indigo-700
+                  sm:text-base
+                "
+              >
+                {workType}
+              </h3>
+
+              <p className="mt-1 text-[11px] text-slate-400">
+                {count === 1
+                  ? "1 job available"
+                  : `${count} jobs available`}
+              </p>
+
+            </div>
+
+            {/* Bottom */}
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+
+              <span className="text-[10px] font-semibold text-slate-400">
+                View Jobs
+              </span>
+
+              <span
+                className="
+                  text-sm
+                  font-bold
+                  text-slate-400
+                  transition
+                  group-hover:translate-x-1
+                  group-hover:text-indigo-600
+                "
+              >
+                →
+              </span>
+
+            </div>
+
+          </button>
+        ))}
+      </div>
+
+    </section>
+  )}
 
         {/* ==================================================
             SELECTED CATEGORY
