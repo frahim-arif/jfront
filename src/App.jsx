@@ -138,33 +138,224 @@ const getJobAddress = (job) =>
   "Location provided by employer";
 
 // ======================================================
-// WORK TYPE ICON
+// WORK TYPE ICONS / COLORS
 // ======================================================
 
-const getWorkTypeIcon = (workType) => {
+const getWorkTypeIconData = (workType) => {
   const type = normalizeWorkType(workType);
 
   const icons = {
-    mason: Hammer,
-    carpenter: Hammer,
-    painter: Paintbrush,
-    electrician: Zap,
-    plumber: Wrench,
-    gardener: Sprout,
-    cleaner: Sparkles,
-    welder: Construction,
-    driver: Car,
-    "construction worker": HardHat,
-    helper: HandHelping,
-    "ac technician": Snowflake,
-    mechanic: Settings,
-    "tiles worker": Layers3,
-    "furniture worker": Sofa,
-    "home care": HeartHandshake,
-    "graphic designer": Palette,
+    mason: {
+      icon: Hammer,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      accent: "bg-orange-500",
+      soft: "from-orange-50 to-white",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    carpenter: {
+      icon: Hammer,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      accent: "bg-amber-500",
+      soft: "from-amber-50 to-white",
+      hover: "group-hover:bg-amber-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    painter: {
+      icon: Paintbrush,
+      color: "text-pink-600",
+      bg: "bg-pink-50",
+      border: "border-pink-200",
+      accent: "bg-pink-500",
+      soft: "from-pink-50 to-white",
+      hover: "group-hover:bg-pink-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    electrician: {
+      icon: Zap,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      accent: "bg-yellow-500",
+      soft: "from-yellow-50 to-white",
+      hover: "group-hover:bg-yellow-500",
+      hoverText: "group-hover:text-white",
+    },
+
+    plumber: {
+      icon: Wrench,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      accent: "bg-blue-500",
+      soft: "from-blue-50 to-white",
+      hover: "group-hover:bg-blue-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    gardener: {
+      icon: Sprout,
+      color: "text-green-600",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      accent: "bg-green-500",
+      soft: "from-green-50 to-white",
+      hover: "group-hover:bg-green-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    cleaner: {
+      icon: Sparkles,
+      color: "text-cyan-600",
+      bg: "bg-cyan-50",
+      border: "border-cyan-200",
+      accent: "bg-cyan-500",
+      soft: "from-cyan-50 to-white",
+      hover: "group-hover:bg-cyan-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    welder: {
+      icon: Construction,
+      color: "text-red-600",
+      bg: "bg-red-50",
+      border: "border-red-200",
+      accent: "bg-red-500",
+      soft: "from-red-50 to-white",
+      hover: "group-hover:bg-red-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    driver: {
+      icon: Car,
+      color: "text-violet-600",
+      bg: "bg-violet-50",
+      border: "border-violet-200",
+      accent: "bg-violet-500",
+      soft: "from-violet-50 to-white",
+      hover: "group-hover:bg-violet-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "construction worker": {
+      icon: HardHat,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      accent: "bg-orange-500",
+      soft: "from-orange-50 to-white",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    helper: {
+      icon: HandHelping,
+      color: "text-teal-600",
+      bg: "bg-teal-50",
+      border: "border-teal-200",
+      accent: "bg-teal-500",
+      soft: "from-teal-50 to-white",
+      hover: "group-hover:bg-teal-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "ac technician": {
+      icon: Snowflake,
+      color: "text-sky-600",
+      bg: "bg-sky-50",
+      border: "border-sky-200",
+      accent: "bg-sky-500",
+      soft: "from-sky-50 to-white",
+      hover: "group-hover:bg-sky-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    mechanic: {
+      icon: Settings,
+      color: "text-slate-600",
+      bg: "bg-slate-50",
+      border: "border-slate-200",
+      accent: "bg-slate-600",
+      soft: "from-slate-50 to-white",
+      hover: "group-hover:bg-slate-700",
+      hoverText: "group-hover:text-white",
+    },
+
+    "tiles worker": {
+      icon: Layers3,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      accent: "bg-indigo-500",
+      soft: "from-indigo-50 to-white",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "furniture worker": {
+      icon: Sofa,
+      color: "text-orange-600",
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      accent: "bg-orange-500",
+      soft: "from-orange-50 to-white",
+      hover: "group-hover:bg-orange-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "home care": {
+      icon: HeartHandshake,
+      color: "text-rose-600",
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      accent: "bg-rose-500",
+      soft: "from-rose-50 to-white",
+      hover: "group-hover:bg-rose-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    "graphic designer": {
+      icon: Palette,
+      color: "text-fuchsia-600",
+      bg: "bg-fuchsia-50",
+      border: "border-fuchsia-200",
+      accent: "bg-fuchsia-500",
+      soft: "from-fuchsia-50 to-white",
+      hover: "group-hover:bg-fuchsia-600",
+      hoverText: "group-hover:text-white",
+    },
+
+    other: {
+      icon: BriefcaseBusiness,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      accent: "bg-indigo-500",
+      soft: "from-indigo-50 to-white",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    },
   };
 
-  return icons[type] || BriefcaseBusiness;
+  return (
+    icons[type] || {
+      icon: BriefcaseBusiness,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      accent: "bg-indigo-500",
+      soft: "from-indigo-50 to-white",
+      hover: "group-hover:bg-indigo-600",
+      hoverText: "group-hover:text-white",
+    }
+  );
 };
 
 // ======================================================
@@ -937,151 +1128,235 @@ export default function App() {
             </div>
           )}
 
-        {/* ==================================================
-            CATEGORY VIEW
-        ================================================== */}
+       {/* ==================================================
+    CATEGORY VIEW
+================================================== */}
 
-        {!loadingJobs &&
-          availableJobs.length > 0 &&
-          !selectedWorkType && (
-            <section className="mt-2">
+{!loadingJobs &&
+  availableJobs.length > 0 &&
+  !selectedWorkType && (
+    <section className="mt-2">
 
-              {/* HEADER */}
+      {/* SECTION HEADER */}
 
-              <div className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-7 border-b border-slate-200 pb-5">
 
-                <div>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
 
-                  <div className="mb-2 flex items-center gap-2">
+          <div>
 
-                    <span className="h-1 w-8 bg-indigo-600" />
+            <div className="mb-2 flex items-center gap-2">
 
-                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">
-                      Explore Jobs
+              <span className="h-1 w-9 bg-gradient-to-r from-blue-600 to-purple-600" />
+
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-600">
+                Explore Opportunities
+              </span>
+
+            </div>
+
+            <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+              Find Jobs by Category
+            </h2>
+
+            <p className="mt-1.5 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
+              Choose your work category and discover available
+              opportunities near you.
+            </p>
+
+          </div>
+
+          {/* TOTAL */}
+
+          <div className="flex w-fit items-center gap-3 border border-slate-200 bg-white px-4 py-3 shadow-sm">
+
+            <div className="flex h-9 w-9 items-center justify-center bg-indigo-50 text-indigo-600">
+
+              <BriefcaseBusiness
+                className="h-4.5 w-4.5"
+                strokeWidth={2.2}
+              />
+
+            </div>
+
+            <div>
+
+              <p className="text-lg font-black leading-none text-slate-900">
+                {availableJobs.length}
+              </p>
+
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                Jobs Available
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      {/* CATEGORY GRID */}
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+
+        {workTypeCategories.map(
+          ({ workType, count }) => {
+
+            const {
+              icon: Icon,
+              color,
+              bg,
+              border,
+              accent,
+              soft,
+              hover,
+              hoverText,
+            } = getWorkTypeIconData(workType);
+
+            return (
+              <button
+                key={workType}
+                type="button"
+                onClick={() =>
+                  setSelectedWorkType(workType)
+                }
+                className="
+                  group relative overflow-hidden
+                  border border-slate-200
+                  bg-white text-left
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:border-slate-300
+                  hover:shadow-xl
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-indigo-500
+                  focus:ring-offset-2
+                "
+              >
+
+                {/* COLOR TOP LINE */}
+
+                <div
+                  className={`h-1 w-full ${accent}`}
+                />
+
+                {/* SOFT BACKGROUND */}
+
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${soft} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                />
+
+                <div className="relative p-4">
+
+                  {/* ICON + ARROW */}
+
+                  <div className="mb-5 flex items-center justify-between">
+
+                    <div
+                      className={`
+                        flex h-12 w-12
+                        items-center justify-center
+                        border ${border} ${bg} ${color}
+                        transition-all duration-300
+                        ${hover} ${hoverText}
+                        group-hover:scale-110
+                        group-hover:shadow-md
+                      `}
+                    >
+
+                      <Icon
+                        className="h-6 w-6"
+                        strokeWidth={2.2}
+                      />
+
+                    </div>
+
+                    <div
+                      className="
+                        flex h-8 w-8
+                        items-center justify-center
+                        border border-slate-100
+                        bg-white
+                        text-slate-300
+                        transition-all duration-300
+                        group-hover:border-slate-200
+                        group-hover:text-slate-700
+                      "
+                    >
+
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                      />
+
+                    </div>
+
+                  </div>
+
+
+                  {/* CATEGORY NAME */}
+
+                  <h3 className="min-h-[40px] text-sm font-black leading-5 text-slate-800 transition-colors group-hover:text-slate-950">
+                    {workType}
+                  </h3>
+
+
+                  {/* COUNT */}
+
+                  <div className="mt-3 flex items-baseline gap-1.5">
+
+                    <span
+                      className={`
+                        text-xl font-black
+                        ${color}
+                      `}
+                    >
+                      {count}
+                    </span>
+
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      {count === 1
+                        ? "Job"
+                        : "Jobs"}
                     </span>
 
                   </div>
 
-                  <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                    Find Jobs by Category
-                  </h2>
 
-                  <p className="mt-1 text-sm text-slate-500">
-                    Choose a work category and find suitable jobs near you.
-                  </p>
+                  {/* BOTTOM */}
+
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+
+                    <span className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
+                      Explore
+                    </span>
+
+                    <span
+                      className={`
+                        text-[10px]
+                        font-black
+                        ${color}
+                      `}
+                    >
+                      View Jobs
+                    </span>
+
+                  </div>
 
                 </div>
 
-                <div className="flex w-fit items-center gap-2 border border-slate-200 bg-white px-4 py-2">
+              </button>
+            );
+          }
+        )}
 
-                  <BriefcaseBusiness className="h-4 w-4 text-indigo-600" />
+      </div>
 
-                  <span className="text-sm font-bold text-slate-700">
-                    {availableJobs.length}
-                  </span>
-
-                  <span className="text-xs text-slate-500">
-                    Jobs Available
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* CATEGORY GRID */}
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-
-                {workTypeCategories.map(
-                  ({ workType, count }) => {
-
-                    const Icon =
-                      getWorkTypeIcon(
-                        workType
-                      );
-
-                    return (
-                      <button
-                        key={workType}
-                        type="button"
-                        onClick={() =>
-                          setSelectedWorkType(
-                            workType
-                          )
-                        }
-                        className="group relative overflow-hidden border border-slate-200 bg-white text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md"
-                      >
-
-                        {/* TOP ACCENT */}
-
-                        <div className="h-1 w-full bg-indigo-600 transition-all duration-200 group-hover:bg-indigo-700" />
-
-                        <div className="p-4">
-
-                          {/* ICON */}
-
-                          <div className="mb-4 flex items-center justify-between">
-
-                            <div className="flex h-11 w-11 items-center justify-center border border-indigo-100 bg-indigo-50 text-indigo-600 transition-all duration-200 group-hover:bg-indigo-600 group-hover:text-white">
-
-                              <Icon
-                                className="h-5 w-5"
-                                strokeWidth={2}
-                              />
-
-                            </div>
-
-                            <ArrowRight className="h-4 w-4 text-slate-300 transition-all duration-200 group-hover:translate-x-1 group-hover:text-indigo-600" />
-
-                          </div>
-
-                          {/* NAME */}
-
-                          <h3 className="line-clamp-2 min-h-[40px] text-sm font-extrabold leading-5 text-slate-800">
-                            {workType}
-                          </h3>
-
-                          {/* COUNT */}
-
-                          <div className="mt-3 flex items-center gap-1.5">
-
-                            <span className="text-lg font-black text-indigo-600">
-                              {count}
-                            </span>
-
-                            <span className="text-[11px] font-medium text-slate-400">
-                              {count === 1
-                                ? "Job"
-                                : "Jobs"}
-                            </span>
-
-                          </div>
-
-                          {/* FOOTER */}
-
-                          <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                              Explore
-                            </span>
-
-                            <span className="text-[11px] font-bold text-indigo-600">
-                              View Jobs
-                            </span>
-
-                          </div>
-
-                        </div>
-
-                      </button>
-                    );
-                  }
-                )}
-
-              </div>
-
-            </section>
-          )}
+    </section>
+  )}
 
         {/* ==================================================
             SELECTED CATEGORY
@@ -1102,13 +1377,25 @@ export default function App() {
                     {/* ICON */}
 
                     {(() => {
-                      const Icon =
-                        getWorkTypeIcon(
-                          selectedWorkType
-                        );
+  const {
+    icon: Icon,
+    color,
+    bg,
+    border,
+    accent,
+  } = getWorkTypeIconData(
+    selectedWorkType
+  );
 
                       return (
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-indigo-600 text-white sm:h-14 sm:w-14">
+                        <div
+  className={`
+    flex h-12 w-12 shrink-0
+    items-center justify-center
+    border ${border} ${bg} ${color}
+    sm:h-14 sm:w-14
+  `}
+>
 
                           <Icon
                             className="h-6 w-6"
@@ -1208,10 +1495,15 @@ export default function App() {
 
                   {categoryJobs.map((job) => {
 
-                    const Icon =
-                      getWorkTypeIcon(
-                        job?.workType
-                      );
+                    const {
+  icon: Icon,
+  color,
+  bg,
+  border,
+  accent,
+} = getWorkTypeIconData(
+  job?.workType || selectedWorkType
+);
 
                     const state =
                       getJobState(job);
@@ -1233,7 +1525,7 @@ export default function App() {
 
                         {/* TOP ACCENT */}
 
-                        <div className="h-1 w-full bg-indigo-600" />
+                        <div className={`h-1 w-full ${accent}`} />
 
                         <div className="flex flex-1 flex-col p-4">
 
