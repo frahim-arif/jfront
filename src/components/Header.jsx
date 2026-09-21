@@ -610,474 +610,552 @@ export default function Header() {
   // HEADER
   // =========================================================
 
-  return (
-    <header
-      className="
-        relative z-50 w-full
-        border-b border-white/10
-        bg-gradient-to-r
-        from-[#071631]
-        via-[#101f4a]
-        to-[#25104f]
-        shadow-[0_10px_35px_rgba(2,6,23,0.28)]
-      "
-    >
-      {/* Ambient Glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="
-            absolute -left-24 -top-24
-            h-48 w-48 bg-cyan-400/10
-            blur-3xl
-          "
-        />
+ return (
+  <header
+    className="
+      relative z-50 w-full
+      border-b border-slate-200
+      bg-white
+      shadow-[0_6px_25px_rgba(15,23,42,0.08)]
+    "
+  >
+    {/* =====================================================
+        AMBIENT GLOW
+    ===================================================== */}
 
-        <div
-          className="
-            absolute -bottom-28 right-10
-            h-52 w-52 bg-purple-500/10
-            blur-3xl
-          "
-        />
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className="
+          absolute -left-24 -top-24
+          h-48 w-48
+          bg-cyan-400/10
+          blur-3xl
+        "
+      />
 
-        <div
-          className="
-            absolute inset-x-0 bottom-0 h-px
-            bg-gradient-to-r
-            from-transparent via-cyan-300/30 to-transparent
-          "
-        />
-      </div>
+      <div
+        className="
+          absolute -bottom-28 right-10
+          h-52 w-52
+          bg-indigo-500/10
+          blur-3xl
+        "
+      />
 
-      {/* =====================================================
-          MAIN HEADER
-      ===================================================== */}
+      <div
+        className="
+          absolute inset-x-0 bottom-0 h-px
+          bg-gradient-to-r
+          from-transparent
+          via-blue-400/30
+          to-transparent
+        "
+      />
+    </div>
 
-      <div className="relative w-full px-3 sm:px-5 lg:px-8">
-        <div
+    {/* =====================================================
+        MAIN HEADER
+    ===================================================== */}
+
+    <div className="relative w-full px-3 sm:px-5 lg:px-8">
+      <div
+        className="
+          flex min-h-[70px]
+          items-center justify-between
+          gap-3
+          sm:min-h-[76px]
+        "
+      >
+
+        {/* =================================================
+            LOGO
+        ================================================= */}
+
+        <Link
+          to="/"
+          onClick={() => setIsOpen(false)}
           className="
-            flex min-h-[70px] items-center
-            justify-between gap-3
-            sm:min-h-[76px]
+            group relative flex flex-shrink-0
+            items-center
           "
         >
-         {/* =================================================
-    LOGO
-================================================= */}
+          {/* Logo Glow */}
 
-<Link
-  to="/"
-  onClick={() => setIsOpen(false)}
-  className="
-    group relative flex flex-shrink-0
-    items-center
-  "
->
-  {/* Outer Glow */}
-  <span
-    className="
-      pointer-events-none absolute
-      -inset-2 rounded-2xl
-      bg-cyan-400/10
-      opacity-0 blur-xl
-      transition-all duration-500
-      group-hover:opacity-100
-      group-hover:bg-cyan-300/20
-    "
-  />
+          <span
+            className="
+              pointer-events-none absolute
+              -inset-3
+              rounded-2xl
+              bg-cyan-400/10
+              opacity-0
+              blur-xl
+              transition-all duration-500
+              group-hover:opacity-100
+              group-hover:bg-cyan-300/20
+            "
+          />
 
-  {/* Logo Frame */}
-  <div
-    className="
-      relative z-10
-      flex items-center justify-center
-      rounded-2xl
-      border border-white/20
-      bg-white/[0.06]
-      px-2.5 py-1.5
-      shadow-[0_8px_25px_rgba(0,0,0,0.22)]
-      backdrop-blur-md
-      transition-all duration-300
-
-      group-hover:-translate-y-0.5
-      group-hover:border-cyan-300/40
-      group-hover:bg-white/[0.09]
-      group-hover:shadow-[0_12px_35px_rgba(34,211,238,0.20)]
-
-      sm:px-3 sm:py-2
-    "
-  >
-    {/* Shine */}
-    <span
-      className="
-        pointer-events-none
-        absolute inset-y-0
-        -left-full z-20
-        w-1/2
-        skew-x-[-20deg]
-        bg-gradient-to-r
-        from-transparent
-        via-white/20
-        to-transparent
-        transition-all duration-700
-        group-hover:left-[125%]
-      "
-    />
-
-    {/* Logo */}
-    <img
-      src="/images/logo.png"
-      alt="JobHir"
-      className="
-        relative z-10
-        h-9 w-auto
-        object-contain
-        drop-shadow-[0_5px_12px_rgba(0,0,0,0.35)]
-        transition-all duration-300
-        group-hover:scale-[1.04]
-        group-hover:drop-shadow-[0_6px_18px_rgba(34,211,238,0.30)]
-        sm:h-11
-      "
-    />
-  </div>
-
-  {/* Secure Badge */}
-  <span
-    className="
-      absolute
-      -bottom-2
-      left-1/2
-      z-30
-      flex
-      -translate-x-1/2
-      items-center
-      gap-1
-
-      whitespace-nowrap
-      rounded-full
-
-      border border-emerald-300/30
-      bg-[#0b2440]/95
-
-      px-2.5 py-0.5
-
-      text-[7px]
-      font-extrabold
-      uppercase
-      tracking-[0.1em]
-      text-emerald-200
-
-      shadow-[0_4px_12px_rgba(0,0,0,0.25)]
-      backdrop-blur-md
-
-      transition-all duration-300
-
-      group-hover:border-emerald-200/50
-      group-hover:bg-emerald-500/15
-      group-hover:text-emerald-100
-
-      sm:text-[8px]
-    "
-  >
-    <ShieldCheck
-      size={9}
-      strokeWidth={2.5}
-    />
-
-    Secure
-  </span>
-</Link>
-          {/* =================================================
-              DESKTOP
-          ================================================= */}
-
-          <div className="hidden items-center gap-3 md:flex lg:gap-5">
-            {/* Notifications */}
-            {workerId && (
-              <div
-                ref={notificationRef}
-                className="relative"
-              >
-                <NotificationButton />
-
-                {showNotifications && (
-                  <div
-                    className="
-                      absolute right-0 top-[56px]
-                      z-[100] w-[370px]
-                      overflow-hidden
-                      border border-slate-200
-                      bg-white
-                      shadow-[0_24px_60px_rgba(15,23,42,0.28)]
-                    "
-                  >
-                    <NotificationList />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Navigation */}
-            <nav
-              className="
-                flex items-center
-                border-l border-white/10
-                pl-3 lg:pl-4
-              "
-            >
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="
-                    relative px-2.5 py-2
-                    text-xs font-semibold
-                    text-white/75
-                    transition-all duration-200
-                    hover:text-white
-                    lg:px-3 lg:text-sm
-                  "
-                >
-                  {item.label}
-
-                  <span
-                    className="
-                      absolute bottom-0 left-1/2
-                      h-px w-0 -translate-x-1/2
-                      bg-cyan-300
-                      transition-all duration-300
-                      group-hover:w-1/2
-                    "
-                  />
-                </Link>
-              ))}
-            </nav>
-
-            {/* Job Post */}
-            <Link
-              to="/offer-job"
-              className="
-                group relative overflow-hidden
-                border border-cyan-200/25
-                bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
-                px-4 py-2.5
-                text-xs font-black
-                text-white
-                shadow-[0_8px_22px_rgba(37,99,235,0.28)]
-                transition-all duration-300
-                hover:-translate-y-0.5
-                hover:shadow-[0_12px_30px_rgba(34,211,238,0.28)]
-                lg:px-5 lg:text-sm
-              "
-            >
-              <span
-                className="
-                  absolute inset-y-0
-                  -left-full w-1/2
-                  skew-x-[-20deg]
-                  bg-white/25
-                  transition-all duration-700
-                  group-hover:left-[125%]
-                "
-              />
-
-              <span
-                className="
-                  relative z-10
-                  flex items-center gap-1.5
-                "
-              >
-                <Plus size={16} strokeWidth={3} />
-                Job Post
-              </span>
-            </Link>
-          </div>
-
-          {/* =================================================
-              MOBILE ACTIONS
-          ================================================= */}
+          {/* Logo Frame */}
 
           <div
             className="
-              flex items-center gap-1.5
-              md:hidden
+              relative z-10
+              flex items-center justify-center
+              rounded-2xl
+              border border-slate-200
+              bg-white
+              px-2.5 py-1.5
+              shadow-[0_6px_18px_rgba(15,23,42,0.10)]
+              transition-all duration-300
+
+              group-hover:-translate-y-0.5
+              group-hover:border-cyan-300
+              group-hover:shadow-[0_10px_28px_rgba(34,211,238,0.18)]
+
+              sm:px-3 sm:py-2
             "
           >
-            {/* Mobile Notifications */}
-            {workerId && (
-              <div
-                ref={notificationRef}
-                className="relative"
-              >
-                <NotificationButton />
+            {/* Shine */}
 
-                {showNotifications && (
-                  <div
-                    className="
-                      fixed left-3 right-3 top-[78px]
-                      z-[100]
-                      overflow-hidden
-                      border border-slate-200
-                      bg-white
-                      shadow-[0_24px_60px_rgba(15,23,42,0.3)]
-                    "
-                  >
-                    <NotificationList />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Mobile Job Post */}
-            <Link
-              to="/offer-job"
-              onClick={() => setIsOpen(false)}
+            <span
               className="
-                flex items-center gap-1
-                border border-cyan-200/25
+                pointer-events-none
+                absolute inset-y-0
+                -left-full z-20
+                w-1/2
+                skew-x-[-20deg]
                 bg-gradient-to-r
-                from-cyan-400 to-blue-500
-                px-3 py-2
-                text-[11px] font-black
-                text-white
-                shadow-md
-                transition-all
-                active:scale-95
+                from-transparent
+                via-cyan-100/50
+                to-transparent
+                transition-all duration-700
+                group-hover:left-[125%]
               "
-            >
-              <Plus size={14} strokeWidth={3} />
-              Job Post
-            </Link>
+            />
 
-            {/* Menu */}
-            <button
-              type="button"
-              onClick={() =>
-                setIsOpen((previous) => !previous)
-              }
+            {/* Logo */}
+
+            <img
+              src="/images/logo.png"
+              alt="JobHir"
               className="
-                flex h-10 w-10
-                items-center justify-center
-                border border-white/15
-                bg-white/[0.06]
-                text-white
-                transition-all duration-200
-                hover:border-white/25
-                hover:bg-white/[0.12]
-                active:scale-95
+                relative z-10
+                h-9 w-auto
+                object-contain
+                drop-shadow-[0_4px_10px_rgba(15,23,42,0.18)]
+                transition-all duration-300
+                group-hover:scale-[1.04]
+                group-hover:drop-shadow-[0_5px_14px_rgba(34,211,238,0.25)]
+                sm:h-11
               "
-              aria-label={
-                isOpen ? "Close menu" : "Open menu"
-              }
-              aria-expanded={isOpen}
-            >
-              {isOpen ? (
-                <X size={22} />
-              ) : (
-                <Menu size={22} />
-              )}
-            </button>
+            />
           </div>
-        </div>
-      </div>
 
-      {/* =====================================================
-          MOBILE MENU
-      ===================================================== */}
+          {/* Secure Badge */}
 
-      {isOpen && (
+          <span
+            className="
+              absolute
+              -bottom-2
+              left-1/2
+              z-30
+              flex
+              -translate-x-1/2
+              items-center
+              gap-1
+              whitespace-nowrap
+              rounded-full
+              border border-emerald-200
+              bg-white
+              px-2.5 py-0.5
+              text-[7px]
+              font-extrabold
+              uppercase
+              tracking-[0.1em]
+              text-emerald-600
+              shadow-[0_3px_10px_rgba(15,23,42,0.12)]
+              transition-all duration-300
+              group-hover:border-emerald-300
+              group-hover:bg-emerald-50
+              group-hover:text-emerald-700
+              sm:text-[8px]
+            "
+          >
+            <ShieldCheck
+              size={9}
+              strokeWidth={2.5}
+            />
+
+            Secure
+          </span>
+        </Link>
+
+        {/* =================================================
+            DESKTOP
+        ================================================= */}
+
         <div
           className="
-            relative border-t border-white/10
-            bg-[#0d1d42]/98
-            px-4 py-4
-            shadow-[inset_0_8px_20px_rgba(0,0,0,0.12)]
-            md:hidden
+            hidden items-center
+            gap-3
+            md:flex
+            lg:gap-5
           "
         >
-          <nav className="space-y-0.5">
+
+          {/* Notifications */}
+
+          {workerId && (
+            <div
+              ref={notificationRef}
+              className="relative"
+            >
+              <NotificationButton />
+
+              {showNotifications && (
+                <div
+                  className="
+                    absolute
+                    right-0
+                    top-[56px]
+                    z-[100]
+                    w-[370px]
+                    overflow-hidden
+                    border border-slate-200
+                    bg-white
+                    shadow-[0_24px_60px_rgba(15,23,42,0.18)]
+                  "
+                >
+                  <NotificationList />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Navigation */}
+
+          <nav
+            className="
+              flex items-center
+              border-l border-slate-200
+              pl-3
+              lg:pl-4
+            "
+          >
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={handleMobileLinkClick}
                 className="
-                  group flex items-center
-                  justify-between
-                  border-b border-white/[0.06]
-                  px-2 py-3
-                  text-sm font-semibold
-                  text-white/80
+                  group relative
+                  px-2.5 py-2
+                  text-xs
+                  font-semibold
+                  text-slate-600
                   transition-all duration-200
-                  hover:bg-white/[0.05]
-                  hover:text-white
+                  hover:text-slate-950
+                  lg:px-3
+                  lg:text-sm
                 "
               >
-                <span>{item.label}</span>
+                {item.label}
 
-                <ChevronRight
-                  size={16}
+                <span
                   className="
-                    text-white/25
-                    transition-all
-                    group-hover:translate-x-1
-                    group-hover:text-cyan-300
+                    absolute
+                    bottom-0
+                    left-1/2
+                    h-0.5
+                    w-0
+                    -translate-x-1/2
+                    rounded-full
+                    bg-gradient-to-r
+                    from-cyan-400
+                    to-blue-600
+                    transition-all duration-300
+                    group-hover:w-1/2
                   "
                 />
               </Link>
             ))}
+          </nav>
 
-            {/* Mobile Offer Job */}
-            <Link
-              to="/offer-job"
-              onClick={handleMobileLinkClick}
+          {/* =================================================
+              JOB POST
+          ================================================= */}
+
+          <Link
+            to="/offer-job"
+            className="
+              group relative
+              overflow-hidden
+              border border-blue-500/20
+              bg-gradient-to-r
+              from-cyan-400
+              via-blue-500
+              to-indigo-500
+              px-4 py-2.5
+              text-xs
+              font-black
+              text-white
+              shadow-[0_7px_20px_rgba(37,99,235,0.20)]
+              transition-all duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_10px_28px_rgba(37,99,235,0.28)]
+              lg:px-5
+              lg:text-sm
+            "
+          >
+            {/* Shine */}
+
+            <span
               className="
-                group relative mt-4
-                flex items-center
-                justify-center gap-2
-                overflow-hidden
-                border border-cyan-200/25
-                bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
-                px-4 py-3
-                text-sm font-black
-                text-white
-                shadow-[0_10px_25px_rgba(37,99,235,0.25)]
+                absolute
+                inset-y-0
+                -left-full
+                w-1/2
+                skew-x-[-20deg]
+                bg-white/25
+                transition-all duration-700
+                group-hover:left-[125%]
+              "
+            />
+
+            <span
+              className="
+                relative z-10
+                flex items-center gap-1.5
               "
             >
-              <span
-                className="
-                  absolute inset-y-0
-                  -left-full w-1/2
-                  skew-x-[-20deg]
-                  bg-white/20
-                  transition-all duration-700
-                  group-hover:left-[125%]
-                "
+              <Plus
+                size={16}
+                strokeWidth={3}
               />
 
-              <BriefcaseBusiness
-                size={17}
-                className="relative z-10"
-              />
+              Job Post
+            </span>
+          </Link>
+        </div>
 
-              <span className="relative z-10">
-                Offer a Job
+        {/* =================================================
+            MOBILE ACTIONS
+        ================================================= */}
+
+        <div
+          className="
+            flex items-center
+            gap-1.5
+            md:hidden
+          "
+        >
+
+          {/* Mobile Notifications */}
+
+          {workerId && (
+            <div
+              ref={notificationRef}
+              className="relative"
+            >
+              <NotificationButton />
+
+              {showNotifications && (
+                <div
+                  className="
+                    fixed
+                    left-3
+                    right-3
+                    top-[78px]
+                    z-[100]
+                    overflow-hidden
+                    border border-slate-200
+                    bg-white
+                    shadow-[0_24px_60px_rgba(15,23,42,0.20)]
+                  "
+                >
+                  <NotificationList />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Mobile Job Post */}
+
+          <Link
+            to="/offer-job"
+            onClick={() => setIsOpen(false)}
+            className="
+              flex items-center
+              gap-1
+              border border-blue-500/20
+              bg-gradient-to-r
+              from-cyan-400
+              to-blue-500
+              px-3 py-2
+              text-[11px]
+              font-black
+              text-white
+              shadow-[0_5px_14px_rgba(37,99,235,0.18)]
+              transition-all
+              active:scale-95
+            "
+          >
+            <Plus
+              size={14}
+              strokeWidth={3}
+            />
+
+            Job Post
+          </Link>
+
+          {/* Menu */}
+
+          <button
+            type="button"
+            onClick={() =>
+              setIsOpen((previous) => !previous)
+            }
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-xl
+              border border-slate-200
+              bg-slate-50
+              text-slate-700
+              shadow-sm
+              transition-all duration-200
+              hover:border-blue-200
+              hover:bg-blue-50
+              hover:text-blue-600
+              active:scale-95
+            "
+            aria-label={
+              isOpen
+                ? "Close menu"
+                : "Open menu"
+            }
+            aria-expanded={isOpen}
+          >
+            {isOpen ? (
+              <X size={22} />
+            ) : (
+              <Menu size={22} />
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {/* =====================================================
+        MOBILE MENU
+    ===================================================== */}
+
+    {isOpen && (
+      <div
+        className="
+          relative
+          border-t border-slate-200
+          bg-white
+          px-4 py-4
+          shadow-[0_12px_25px_rgba(15,23,42,0.08)]
+          md:hidden
+        "
+      >
+        <nav className="space-y-0.5">
+
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={handleMobileLinkClick}
+              className="
+                group
+                flex items-center
+                justify-between
+                border-b border-slate-100
+                px-2 py-3
+                text-sm
+                font-semibold
+                text-slate-600
+                transition-all duration-200
+                hover:bg-slate-50
+                hover:text-blue-600
+              "
+            >
+              <span>
+                {item.label}
               </span>
 
               <ChevronRight
                 size={16}
-                className="relative z-10"
+                className="
+                  text-slate-300
+                  transition-all
+                  group-hover:translate-x-1
+                  group-hover:text-blue-500
+                "
               />
             </Link>
-          </nav>
-        </div>
-      )}
-    </header>
-  );
+          ))}
+
+          {/* Mobile Offer Job */}
+
+          <Link
+            to="/offer-job"
+            onClick={handleMobileLinkClick}
+            className="
+              group relative
+              mt-4
+              flex items-center
+              justify-center
+              gap-2
+              overflow-hidden
+              border border-blue-500/20
+              bg-gradient-to-r
+              from-cyan-400
+              via-blue-500
+              to-indigo-500
+              px-4 py-3
+              text-sm
+              font-black
+              text-white
+              shadow-[0_10px_25px_rgba(37,99,235,0.20)]
+            "
+          >
+            {/* Shine */}
+
+            <span
+              className="
+                absolute
+                inset-y-0
+                -left-full
+                w-1/2
+                skew-x-[-20deg]
+                bg-white/20
+                transition-all duration-700
+                group-hover:left-[125%]
+              "
+            />
+
+            <BriefcaseBusiness
+              size={17}
+              className="relative z-10"
+            />
+
+            <span className="relative z-10">
+              Offer a Job
+            </span>
+
+            <ChevronRight
+              size={16}
+              className="relative z-10"
+            />
+          </Link>
+        </nav>
+      </div>
+    )}
+  </header>
+);
 }
