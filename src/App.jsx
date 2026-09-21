@@ -1218,7 +1218,7 @@ export default function App() {
                             </div>
                           )}
 
-                          {job?.createdAt && (
+                          {/* {job?.createdAt && (
                             <div className="flex items-center justify-between pt-1">
 
                               <span className="text-[10px] font-medium text-slate-400">
@@ -1237,7 +1237,7 @@ export default function App() {
                               </span>
 
                             </div>
-                          )}
+                          )} */}
 
                         </div>
 
