@@ -950,100 +950,137 @@ export default function App() {
             </div>
 
             {/* RIGHT */}
+<div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
 
-            <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+  {/* Mobile: Post + Register side by side */}
+  <div className="grid w-full grid-cols-2 gap-2 sm:contents">
 
-              <button
-  type="button"
-  onClick={() => navigate("/offer-job")}
-  className="
-    group relative w-full overflow-hidden
-    bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900
-    px-5 py-3
-    text-sm font-extrabold text-white
-    shadow-lg shadow-indigo-500/30
-    transition-all duration-300
-    hover:-translate-y-1
-    hover:shadow-xl hover:shadow-purple-500/40
-    active:translate-y-0
-    sm:w-auto
-  "
->
-  {/* Blinking Glow */}
-  <span
+    <button
+      type="button"
+      onClick={() => navigate("/offer-job")}
+      className="
+        group relative w-full overflow-hidden
+        bg-gradient-to-r from-blue-900 
+        px-3 py-3
+        text-sm font-extrabold text-white
+        shadow-lg shadow-indigo-500/30
+        transition-all duration-300
+        hover:-translate-y-1
+        hover:shadow-xl hover:shadow-purple-500/40
+        active:translate-y-0
+        sm:w-auto sm:px-5
+      "
+    >
+      {/* Blinking Glow */}
+      <span
+        className="
+          absolute inset-0
+          -translate-x-full
+          bg-gradient-to-r
+          from-transparent
+          via-white/35
+          to-transparent
+          animate-[shimmer_2.2s_infinite]
+        "
+      />
+
+      {/* Outer Blink */}
+      <span
+        className="
+          absolute -inset-1
+          bg-gradient-to-r
+          from-cyan-400
+          via-yellow-300
+          to-pink-400
+          opacity-0
+          blur-md
+          animate-pulse
+        "
+      />
+
+      {/* Content */}
+      <span className="relative z-10 flex items-center justify-center gap-1.5">
+        <span className="text-lg leading-none">+</span>
+
+        <span className="whitespace-nowrap">
+          Post a Job
+        </span>
+
+        {/* Live indicator */}
+        <span className="relative ml-0.5 flex h-2.5 w-2.5">
+          <span className="absolute inline-flex h-full w-full animate-ping bg-yellow-300 opacity-80" />
+          <span className="relative inline-flex h-2.5 w-2.5 bg-yellow-300 shadow-sm shadow-yellow-300/80" />
+        </span>
+      </span>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => navigate("/worker-register")}
+      className="
+        w-full
+        border border-indigo-200
+        bg-indigo-50
+        px-3 py-3
+        text-sm font-bold
+        text-indigo-700
+        transition-all duration-200
+        hover:border-indigo-300
+        hover:bg-indigo-100
+        hover:-translate-y-0.5
+        sm:w-auto sm:px-5
+      "
+    >
+      Register
+    </button>
+
+  </div>
+
+  {/* State Selector */}
+  <select
+    value={selectedState}
+    onChange={(event) => {
+      setSelectedState(event.target.value);
+      setSelectedWorkType(null);
+
+      setTimeout(
+        scrollToJobs,
+        50
+      );
+    }}
     className="
-      absolute inset-0
-      bg-gradient-to-r from-transparent via-white/35 to-transparent
-      -translate-x-full
-      animate-[shimmer_2.2s_infinite]
+      h-11
+      w-full
+      border border-slate-200
+      bg-slate-50
+      px-3
+      text-sm
+      font-semibold
+      text-slate-700
+      outline-none
+      transition
+      focus:border-blue-500
+      focus:bg-white
+      focus:ring-4
+      focus:ring-blue-100
+      sm:w-52
     "
-  />
+  >
+    <option value="All">
+      All India
+    </option>
 
-  {/* Outer Blink */}
-  <span
-    className="
-      absolute -inset-1
-      bg-gradient-to-r from-cyan-400 via-yellow-300 to-pink-400
-      opacity-0
-      blur-md
-      animate-pulse
-    "
-  />
+    {stateList.map((state) => (
+      <option
+        key={state}
+        value={state}
+      >
+        {state}
+      </option>
+    ))}
+  </select>
 
-  {/* Button Content */}
-  <span className="relative z-10 flex items-center justify-center gap-2">
-    <span className="text-lg leading-none">+</span>
-    <span>Post a Job</span>
-
-    {/* Live indicator */}
-    <span className="relative ml-1 flex h-2.5 w-2.5">
-      <span className="absolute inline-flex h-full w-full animate-ping bg-yellow-300 opacity-80" />
-      <span className="relative inline-flex h-2.5 w-2.5 bg-yellow-300 shadow-sm shadow-yellow-300/80" />
-    </span>
-  </span>
-</button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  navigate("/worker-register")
-                }
-                className="w-full border border-indigo-200 bg-indigo-50 px-5 py-3 text-sm font-bold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100 sm:w-auto"
-              >
-                Register
-              </button>
-
-              <select
-                value={selectedState}
-                onChange={(event) => {
-                  setSelectedState(
-                    event.target.value
-                  );
-
-                  setSelectedWorkType(null);
-
-                  setTimeout(
-                    scrollToJobs,
-                    50
-                  );
-                }}
-                className="h-11 w-full border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:w-52"
-              >
-                <option value="All">
-                  All India
-                </option>
-
-                {stateList.map((state) => (
-                  <option
-                    key={state}
-                    value={state}
-                  >
-                    {state}
-                  </option>
-                ))}
-              </select>
-
-            </div>
+</div>
 
           </div>
         </div>
