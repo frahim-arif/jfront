@@ -726,13 +726,13 @@ export default function App() {
                 Register
               </button>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={scrollToHealthcare}
                 className="w-full border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-bold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 sm:w-auto"
               >
                 Healthcare Jobs
-              </button>
+              </button> */}
 
               <select
                 value={selectedState}
