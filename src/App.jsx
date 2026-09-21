@@ -954,14 +954,54 @@ export default function App() {
             <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
 
               <button
-                type="button"
-                onClick={() =>
-                  navigate("/offer-job")
-                }
-                className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-5 py-3 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:w-auto"
-              >
-                + Post a Job
-              </button>
+  type="button"
+  onClick={() => navigate("/offer-job")}
+  className="
+    group relative w-full overflow-hidden
+    bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
+    px-5 py-3
+    text-sm font-extrabold text-white
+    shadow-lg shadow-indigo-500/30
+    transition-all duration-300
+    hover:-translate-y-1
+    hover:shadow-xl hover:shadow-purple-500/40
+    active:translate-y-0
+    sm:w-auto
+  "
+>
+  {/* Blinking Glow */}
+  <span
+    className="
+      absolute inset-0
+      bg-gradient-to-r from-transparent via-white/35 to-transparent
+      -translate-x-full
+      animate-[shimmer_2.2s_infinite]
+    "
+  />
+
+  {/* Outer Blink */}
+  <span
+    className="
+      absolute -inset-1
+      bg-gradient-to-r from-cyan-400 via-yellow-300 to-pink-400
+      opacity-0
+      blur-md
+      animate-pulse
+    "
+  />
+
+  {/* Button Content */}
+  <span className="relative z-10 flex items-center justify-center gap-2">
+    <span className="text-lg leading-none">+</span>
+    <span>Post a Job</span>
+
+    {/* Live indicator */}
+    <span className="relative ml-1 flex h-2.5 w-2.5">
+      <span className="absolute inline-flex h-full w-full animate-ping bg-yellow-300 opacity-80" />
+      <span className="relative inline-flex h-2.5 w-2.5 bg-yellow-300 shadow-sm shadow-yellow-300/80" />
+    </span>
+  </span>
+</button>
 
               <button
                 type="button"
