@@ -960,7 +960,7 @@ export default function App() {
       onClick={() => navigate("/offer-job")}
       className="
         group relative w-full overflow-hidden
-        bg-gradient-to-r from-blue-900 
+        bg-blue-900 
         px-3 py-3
         text-sm font-extrabold text-white
         shadow-lg shadow-indigo-500/30
