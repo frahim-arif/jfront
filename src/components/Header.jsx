@@ -661,66 +661,132 @@ export default function Header() {
             sm:min-h-[76px]
           "
         >
-          {/* =================================================
-              LOGO
-          ================================================= */}
+         {/* =================================================
+    LOGO
+================================================= */}
 
-          <Link
-            to="/"
-            onClick={() => setIsOpen(false)}
-            className="
-              group relative flex flex-shrink-0
-              items-center
-            "
-          >
-            {/* Logo Glow */}
-            <span
-              className="
-                pointer-events-none absolute
-                -inset-3 bg-cyan-400/10
-                opacity-0 blur-xl
-                transition-opacity duration-500
-                group-hover:opacity-100
-              "
-            />
+<Link
+  to="/"
+  onClick={() => setIsOpen(false)}
+  className="
+    group relative flex flex-shrink-0
+    items-center
+  "
+>
+  {/* Outer Glow */}
+  <span
+    className="
+      pointer-events-none absolute
+      -inset-2 rounded-2xl
+      bg-cyan-400/10
+      opacity-0 blur-xl
+      transition-all duration-500
+      group-hover:opacity-100
+      group-hover:bg-cyan-300/20
+    "
+  />
 
-            {/* ORIGINAL LOGO — NO WHITE BACKGROUND */}
-            <img
-              src="/images/logo.png"
-              alt="JobHir"
-              className="
-                relative z-10 h-9 w-auto
-                object-contain
-                drop-shadow-[0_5px_12px_rgba(0,0,0,0.28)]
-                transition-all duration-300
-                group-hover:scale-[1.03]
-                group-hover:drop-shadow-[0_7px_18px_rgba(34,211,238,0.25)]
-                sm:h-11
-              "
-            />
+  {/* Logo Frame */}
+  <div
+    className="
+      relative z-10
+      flex items-center justify-center
+      rounded-2xl
+      border border-white/20
+      bg-white/[0.06]
+      px-2.5 py-1.5
+      shadow-[0_8px_25px_rgba(0,0,0,0.22)]
+      backdrop-blur-md
+      transition-all duration-300
 
-            {/* Secure Badge */}
-            <span
-              className="
-                absolute -bottom-2 left-1/2 z-20
-                flex -translate-x-1/2
-                items-center gap-1
-                whitespace-nowrap
-                border border-emerald-300/25
-                bg-[#0b2440]/95
-                px-2 py-0.5
-                text-[7px] font-bold
-                uppercase tracking-[0.08em]
-                text-emerald-200
-                shadow-lg
-                sm:text-[8px]
-              "
-            >
-              <ShieldCheck size={9} />
-              Secure
-            </span>
-          </Link>
+      group-hover:-translate-y-0.5
+      group-hover:border-cyan-300/40
+      group-hover:bg-white/[0.09]
+      group-hover:shadow-[0_12px_35px_rgba(34,211,238,0.20)]
 
+      sm:px-3 sm:py-2
+    "
+  >
+    {/* Shine */}
+    <span
+      className="
+        pointer-events-none
+        absolute inset-y-0
+        -left-full z-20
+        w-1/2
+        skew-x-[-20deg]
+        bg-gradient-to-r
+        from-transparent
+        via-white/20
+        to-transparent
+        transition-all duration-700
+        group-hover:left-[125%]
+      "
+    />
+
+    {/* Logo */}
+    <img
+      src="/images/logo.png"
+      alt="JobHir"
+      className="
+        relative z-10
+        h-9 w-auto
+        object-contain
+        drop-shadow-[0_5px_12px_rgba(0,0,0,0.35)]
+        transition-all duration-300
+        group-hover:scale-[1.04]
+        group-hover:drop-shadow-[0_6px_18px_rgba(34,211,238,0.30)]
+        sm:h-11
+      "
+    />
+  </div>
+
+  {/* Secure Badge */}
+  <span
+    className="
+      absolute
+      -bottom-2
+      left-1/2
+      z-30
+      flex
+      -translate-x-1/2
+      items-center
+      gap-1
+
+      whitespace-nowrap
+      rounded-full
+
+      border border-emerald-300/30
+      bg-[#0b2440]/95
+
+      px-2.5 py-0.5
+
+      text-[7px]
+      font-extrabold
+      uppercase
+      tracking-[0.1em]
+      text-emerald-200
+
+      shadow-[0_4px_12px_rgba(0,0,0,0.25)]
+      backdrop-blur-md
+
+      transition-all duration-300
+
+      group-hover:border-emerald-200/50
+      group-hover:bg-emerald-500/15
+      group-hover:text-emerald-100
+
+      sm:text-[8px]
+    "
+  >
+    <ShieldCheck
+      size={9}
+      strokeWidth={2.5}
+    />
+
+    Secure
+  </span>
+</Link>
           {/* =================================================
               DESKTOP
           ================================================= */}
