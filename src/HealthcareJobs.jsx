@@ -372,72 +372,148 @@ export default function HealthcareJobs() {
         </div>
       </div>
 
-      {/* ===================================================
-          HOSPITALS
-      =================================================== */}
+  
+{/* ===================================================
+    HOSPITALS - ONE BUTTON
+=================================================== */}
 
-      {!selectedHospital && (
-        <div className="p-4 sm:p-5">
+{!selectedHospital && (
+  <div className="p-4 sm:p-5">
 
-          <div className="mb-4">
-            <h3 className="text-base font-extrabold text-slate-900">
-              Choose Hospital
-            </h3>
+    <div className="mb-4">
+      <h3 className="text-base font-extrabold text-slate-900">
+        Hospital Jobs
+      </h3>
 
-            <p className="mt-1 text-xs text-slate-500">
-              Select a hospital to see available jobs.
+      <p className="mt-1 text-xs text-slate-500">
+        Click below to view all hospital opportunities.
+      </p>
+    </div>
+
+    {/* ONE HOSPITAL BUTTON */}
+    <div className="flex justify-center">
+      <button
+        type="button"
+        onClick={() => {
+          // Open first hospital list through a simple selection area
+          const hospitalSection =
+            document.getElementById("all-hospitals-list");
+
+          hospitalSection?.classList.remove("hidden");
+
+          setTimeout(() => {
+            hospitalSection?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }, 50);
+        }}
+        className="group flex w-full max-w-md items-center justify-between gap-4 border border-emerald-200 bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-4 text-left text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
+      >
+
+        <div className="flex items-center gap-3">
+
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-white/15 text-2xl">
+            🏥
+          </div>
+
+          <div>
+            <p className="text-sm font-black">
+              Hospitals
+            </p>
+
+            <p className="mt-0.5 text-[11px] text-emerald-100">
+              View all {hospitals.length} hospital opportunities
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        </div>
 
-            {hospitals.map((hospital) => (
-              <button
-                key={hospital.id}
-                type="button"
-                onClick={() => openHospital(hospital)}
-                className="group relative overflow-hidden border border-slate-200 bg-white p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+        <span className="text-2xl transition-transform group-hover:translate-x-1">
+          →
+        </span>
+
+      </button>
+    </div>
+
+    {/* =================================================
+        ALL HOSPITALS - HIDDEN UNTIL BUTTON CLICK
+    ================================================= */}
+
+    <div
+      id="all-hospitals-list"
+      className="mt-5 hidden"
+    >
+
+      <div className="mb-3 flex items-center justify-between">
+
+        <div>
+          <h4 className="text-sm font-extrabold text-slate-900">
+            Select Hospital
+          </h4>
+
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            Choose a hospital to view available jobs.
+          </p>
+        </div>
+
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+
+        {hospitals.map((hospital) => (
+          <button
+            key={hospital.id}
+            type="button"
+            onClick={() => openHospital(hospital)}
+            className="group relative overflow-hidden border border-slate-200 bg-white p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+          >
+
+            <div
+              className={`absolute left-0 top-0 h-1 w-full bg-gradient-to-r ${hospital.accent}`}
+            />
+
+            <div className="flex items-center gap-3">
+
+              <div
+                className={`flex h-12 w-12 shrink-0 items-center justify-center bg-gradient-to-br ${hospital.accent} text-sm font-black text-white shadow-sm`}
               >
+                {hospital.shortName}
+              </div>
 
-                <div
-                  className={`absolute left-0 top-0 h-1 w-full bg-gradient-to-r ${hospital.accent}`}
-                />
+              <div className="min-w-0 flex-1">
 
-                <div className="flex items-center gap-3">
+                <h4 className="truncate text-sm font-extrabold text-slate-900 group-hover:text-emerald-700">
+                  {hospital.name}
+                </h4>
 
-                  <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center bg-gradient-to-br ${hospital.accent} text-sm font-black text-white shadow-sm`}
-                  >
-                    {hospital.shortName}
-                  </div>
+                <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+                  <LocationIcon size={14} />
 
-                  <div className="min-w-0 flex-1">
-
-                    <h4 className="truncate text-sm font-extrabold text-slate-900 group-hover:text-emerald-700">
-                      {hospital.name}
-                    </h4>
-
-                    <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-                      <LocationIcon size={14} />
-                      <span className="truncate">
-                        {hospital.location}
-                      </span>
-                    </div>
-
-                  </div>
-
-                  <span className="text-lg text-slate-400 transition group-hover:translate-x-1 group-hover:text-emerald-600">
-                    →
+                  <span className="truncate">
+                    {hospital.location}
                   </span>
-
                 </div>
 
-              </button>
-            ))}
+              </div>
 
-          </div>
-        </div>
-      )}
+              <span className="text-lg text-slate-400 transition group-hover:translate-x-1 group-hover:text-emerald-600">
+                →
+              </span>
+
+            </div>
+
+          </button>
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+
 
       {/* ===================================================
           SELECTED HOSPITAL / JOBS
