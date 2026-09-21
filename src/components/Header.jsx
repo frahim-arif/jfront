@@ -337,6 +337,7 @@ export default function Header() {
       aria-label="Notifications"
       aria-expanded={showNotifications}
       className="
+        group
         relative
         flex
         h-10
@@ -345,24 +346,34 @@ export default function Header() {
         justify-center
         rounded-xl
         border
-        border-white/15
+        border-white/20
         bg-white/10
         text-white
+        shadow-sm
         backdrop-blur-md
-        transition
+        transition-all
         duration-200
+        hover:border-white/30
         hover:bg-white/20
+        hover:shadow-lg
         active:scale-95
         sm:h-11
         sm:w-11
       "
     >
       <svg
-        className={`h-5 w-5 sm:h-6 sm:w-6 ${
-          unreadCount > 0
-            ? "text-yellow-300"
-            : "text-white"
-        }`}
+        className={`
+          h-5 w-5
+          transition-transform
+          duration-200
+          group-hover:scale-110
+          sm:h-6 sm:w-6
+          ${
+            unreadCount > 0
+              ? "text-yellow-300"
+              : "text-white"
+          }
+        `}
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -382,29 +393,45 @@ export default function Header() {
       </svg>
 
       {unreadCount > 0 && (
-        <span
-          className="
-            absolute
-            -right-1
-            -top-1
-            flex
-            min-h-[19px]
-            min-w-[19px]
-            items-center
-            justify-center
-            rounded-full
-            border-2
-            border-indigo-800
-            bg-red-500
-            px-1
-            text-[9px]
-            font-bold
-            text-white
-            shadow
-          "
-        >
-          {unreadCount > 99 ? "99+" : unreadCount}
-        </span>
+        <>
+          <span
+            className="
+              absolute
+              -right-1
+              -top-1
+              h-2.5
+              w-2.5
+              animate-ping
+              rounded-full
+              bg-yellow-300
+              opacity-75
+            "
+          />
+
+          <span
+            className="
+              absolute
+              -right-1
+              -top-1
+              flex
+              min-h-[19px]
+              min-w-[19px]
+              items-center
+              justify-center
+              rounded-full
+              border-2
+              border-[#172554]
+              bg-red-500
+              px-1
+              text-[9px]
+              font-black
+              text-white
+              shadow-lg
+            "
+          >
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        </>
       )}
     </button>
   );
@@ -415,13 +442,12 @@ export default function Header() {
 
   const NotificationList = () => (
     <div className="w-full bg-white">
-      {/* Notification Header */}
 
+      {/* Notification Header */}
       <div
         className="
-          flex
-          items-center
-          justify-between
+          relative
+          overflow-hidden
           border-b
           border-slate-100
           bg-gradient-to-r
@@ -433,64 +459,84 @@ export default function Header() {
           text-white
         "
       >
-        <div>
-          <h3 className="text-sm font-bold">
-            Job Notifications
-          </h3>
+        <div
+          className="
+            pointer-events-none
+            absolute
+            inset-0
+            bg-gradient-to-r
+            from-transparent
+            via-white/10
+            to-transparent
+          "
+        />
+
+        <div className="relative flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-black">
+              Job Notifications
+            </h3>
+
+            {unreadCount > 0 && (
+              <p className="mt-0.5 text-xs font-medium text-blue-100">
+                {unreadCount} unread
+              </p>
+            )}
+          </div>
 
           {unreadCount > 0 && (
-            <p className="mt-0.5 text-xs text-blue-100">
-              {unreadCount} unread
-            </p>
+            <button
+              type="button"
+              onClick={markAllAsRead}
+              className="
+                border
+                border-white/20
+                bg-white/10
+                px-2.5
+                py-1.5
+                text-xs
+                font-bold
+                text-white
+                backdrop-blur-sm
+                transition
+                hover:bg-white/20
+              "
+            >
+              Mark all read
+            </button>
           )}
         </div>
-
-        {unreadCount > 0 && (
-          <button
-            type="button"
-            onClick={markAllAsRead}
-            className="
-              rounded-lg
-              bg-white/10
-              px-2.5
-              py-1.5
-              text-xs
-              font-semibold
-              text-white
-              transition
-              hover:bg-white/20
-            "
-          >
-            Mark all read
-          </button>
-        )}
       </div>
 
       {/* Notification List */}
-
       <div className="max-h-[420px] overflow-y-auto">
+
         {loadingNotifications &&
         notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
-            <div className="mb-2 text-3xl">
-              🔔
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border border-blue-100 bg-blue-50">
+              <span className="animate-bounce text-2xl">
+                🔔
+              </span>
             </div>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm font-medium text-slate-500">
               Loading notifications...
             </p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="px-5 py-10 text-center">
-            <div className="mb-2 text-3xl">
-              🔔
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border border-slate-200 bg-slate-50">
+              <span className="text-2xl">
+                🔔
+              </span>
             </div>
 
-            <p className="text-sm font-semibold text-gray-700">
+            <p className="text-sm font-bold text-slate-700">
               No job notifications
             </p>
 
-            <p className="mt-1 text-xs leading-5 text-gray-400">
+            <p className="mt-1 text-xs leading-5 text-slate-400">
               New jobs matching your work type
               and district will appear here.
             </p>
@@ -503,26 +549,45 @@ export default function Header() {
               onClick={() =>
                 markAsRead(notification)
               }
-              className={`w-full border-b border-slate-100 p-4 text-left transition ${
-                !notification.isRead
-                  ? "bg-blue-50 hover:bg-blue-100"
-                  : "bg-white hover:bg-slate-50"
-              }`}
+              className={`
+                w-full
+                border-b
+                border-slate-100
+                p-4
+                text-left
+                transition
+                ${
+                  !notification.isRead
+                    ? "bg-blue-50 hover:bg-blue-100"
+                    : "bg-white hover:bg-slate-50"
+                }
+              `}
             >
               <div className="flex gap-3">
+
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
-                    !notification.isRead
-                      ? "bg-gradient-to-br from-blue-100 to-purple-100"
-                      : "bg-gray-100"
-                  }`}
+                  className={`
+                    flex
+                    h-10
+                    w-10
+                    flex-shrink-0
+                    items-center
+                    justify-center
+                    border
+                    ${
+                      !notification.isRead
+                        ? "border-blue-200 bg-gradient-to-br from-blue-100 to-purple-100"
+                        : "border-slate-200 bg-slate-100"
+                    }
+                  `}
                 >
                   🔔
                 </div>
 
                 <div className="min-w-0 flex-1">
+
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-gray-800">
+                    <h4 className="text-sm font-bold text-slate-800">
                       {notification.title ||
                         "New Job Available"}
                     </h4>
@@ -534,30 +599,34 @@ export default function Header() {
                           h-2.5
                           w-2.5
                           flex-shrink-0
+                          animate-pulse
                           rounded-full
                           bg-blue-600
+                          shadow-[0_0_8px_rgba(37,99,235,0.7)]
                         "
                       />
                     )}
                   </div>
 
-                  <p className="mt-1 text-sm leading-5 text-gray-600">
+                  <p className="mt-1 text-sm leading-5 text-slate-600">
                     {notification.message ||
                       "You have a new job notification."}
                   </p>
 
                   {notification.createdAt && (
-                    <p className="mt-2 text-[11px] text-gray-400">
+                    <p className="mt-2 text-[11px] font-medium text-slate-400">
                       {new Date(
                         notification.createdAt
                       ).toLocaleString("en-IN")}
                     </p>
                   )}
+
                 </div>
               </div>
             </button>
           ))
         )}
+
       </div>
     </div>
   );
@@ -582,29 +651,63 @@ export default function Header() {
         z-50
         w-full
         border-b
-        border-indigo-900/30
+        border-white/10
         bg-gradient-to-r
-        from-blue-800
-        via-indigo-800
-        to-purple-800
-        shadow-lg
+        from-[#071a3d]
+        via-[#172554]
+        to-[#3b176d]
+        shadow-[0_8px_30px_rgba(15,23,42,0.28)]
       "
     >
+
+      {/* =====================================================
+          DECORATIVE GLOW
+      ===================================================== */}
+
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="
+            absolute
+            -left-20
+            top-0
+            h-32
+            w-32
+            rounded-full
+            bg-cyan-400/10
+            blur-3xl
+          "
+        />
+
+        <div
+          className="
+            absolute
+            -right-20
+            bottom-0
+            h-40
+            w-40
+            rounded-full
+            bg-purple-400/10
+            blur-3xl
+          "
+        />
+      </div>
+
       {/* =====================================================
           MAIN HEADER
       ===================================================== */}
 
-      <div className="w-full px-3 sm:px-5 lg:px-8">
+      <div className="relative w-full px-3 sm:px-5 lg:px-8">
         <div
           className="
             flex
-            min-h-[68px]
+            min-h-[70px]
             items-center
             justify-between
             gap-3
-            sm:min-h-[74px]
+            sm:min-h-[76px]
           "
         >
+
           {/* =================================================
               LOGO
           ================================================= */}
@@ -613,54 +716,127 @@ export default function Header() {
             to="/"
             onClick={() => setIsOpen(false)}
             className="
+              group
               flex
               flex-shrink-0
               flex-col
               items-start
             "
           >
+
+            {/* Logo Outer Frame */}
             <div
               className="
-                rounded-xl
-                bg-white
-                px-2
-                py-1
-                shadow-md
-                ring-1
-                ring-white/20
+                relative
+                overflow-hidden
+                rounded-2xl
+                border
+                border-white/30
+                bg-gradient-to-br
+                from-white
+                via-slate-50
+                to-blue-50
+                p-1
+                shadow-[0_8px_30px_rgba(0,0,0,0.22)]
+                ring-2
+                ring-white/10
+                transition-all
+                duration-300
+                group-hover:-translate-y-0.5
+                group-hover:scale-[1.02]
+                group-hover:border-cyan-200/80
+                group-hover:ring-cyan-300/20
+                group-hover:shadow-[0_12px_38px_rgba(34,211,238,0.28)]
               "
             >
-              <img
-                src="/images/logo.png"
-                alt="JobHir"
+
+              {/* Logo Shine */}
+              <span
                 className="
-                  h-8
-                  w-auto
-                  object-contain
-                  sm:h-10
+                  pointer-events-none
+                  absolute
+                  inset-y-0
+                  -left-full
+                  z-20
+                  w-1/2
+                  rotate-12
+                  bg-gradient-to-r
+                  from-transparent
+                  via-white/80
+                  to-transparent
+                  transition-all
+                  duration-700
+                  group-hover:left-[120%]
                 "
               />
+
+              {/* Inner Frame */}
+              <div
+                className="
+                  relative
+                  flex
+                  items-center
+                  justify-center
+                  rounded-xl
+                  border
+                  border-slate-100
+                  bg-white
+                  px-2
+                  py-1.5
+                  sm:px-2.5
+                  sm:py-2
+                "
+              >
+                <img
+                  src="/images/logo.png"
+                  alt="JobHir"
+                  className="
+                    h-8
+                    w-auto
+                    object-contain
+                    sm:h-10
+                  "
+                />
+              </div>
             </div>
 
+            {/* Secure Badge */}
             <span
               className="
-                mt-1
+                mt-1.5
+                ml-1
                 inline-flex
-                whitespace-nowrap
+                items-center
+                gap-1.5
                 rounded-full
                 border
                 border-emerald-300/30
                 bg-emerald-400/15
-                px-2
+                px-2.5
                 py-0.5
                 text-[8px]
-                font-semibold
+                font-bold
+                tracking-wide
                 text-emerald-100
+                shadow-sm
+                backdrop-blur-sm
                 sm:text-[9px]
               "
             >
+              <span
+                className="
+                  h-1.5
+                  w-1.5
+                  animate-pulse
+                  rounded-full
+                  bg-emerald-300
+                  shadow-[0_0_7px_rgba(110,231,183,0.9)]
+                "
+              />
+
               100% Secure
             </span>
+
           </Link>
 
           {/* =================================================
@@ -671,11 +847,12 @@ export default function Header() {
             className="
               hidden
               items-center
-              gap-4
+              gap-3
               md:flex
-              lg:gap-6
+              lg:gap-5
             "
           >
+
             {/* Notifications */}
 
             {workerId && (
@@ -690,7 +867,7 @@ export default function Header() {
                     className="
                       absolute
                       right-0
-                      top-[52px]
+                      top-[54px]
                       z-[100]
                       w-[360px]
                       overflow-hidden
@@ -698,7 +875,7 @@ export default function Header() {
                       border
                       border-slate-200
                       bg-white
-                      shadow-2xl
+                      shadow-[0_20px_50px_rgba(15,23,42,0.25)]
                     "
                   >
                     <NotificationList />
@@ -715,13 +892,17 @@ export default function Header() {
                   key={item.path}
                   to={item.path}
                   className="
-                    rounded-lg
+                    rounded-xl
+                    border
+                    border-transparent
                     px-2.5
                     py-2
                     text-xs
                     font-semibold
-                    text-white/90
-                    transition
+                    text-white/85
+                    transition-all
+                    duration-200
+                    hover:border-white/10
                     hover:bg-white/10
                     hover:text-white
                     lg:px-3
@@ -738,29 +919,56 @@ export default function Header() {
             <Link
               to="/offer-job"
               className="
+                group
+                relative
+                overflow-hidden
                 rounded-xl
+                border
+                border-cyan-200/30
                 bg-gradient-to-r
                 from-cyan-400
-                to-blue-500
+                via-blue-500
+                to-indigo-500
                 px-4
                 py-2.5
                 text-xs
                 font-extrabold
                 text-white
-                shadow-md
+                shadow-lg
+                shadow-blue-900/20
                 ring-1
-                ring-white/20
-                transition
+                ring-white/10
+                transition-all
+                duration-300
                 hover:-translate-y-0.5
-                hover:from-cyan-300
-                hover:to-blue-400
-                hover:shadow-lg
+                hover:shadow-xl
+                hover:shadow-cyan-500/20
                 lg:px-5
                 lg:text-sm
               "
             >
-              Job Post
+              <span
+                className="
+                  absolute
+                  inset-y-0
+                  -left-full
+                  w-1/2
+                  skew-x-[-20deg]
+                  bg-white/20
+                  transition-all
+                  duration-700
+                  group-hover:left-[120%]
+                "
+              />
+
+              <span className="relative z-10 flex items-center gap-1.5">
+                <span className="text-base leading-none">
+                  +
+                </span>
+                Job Post
+              </span>
             </Link>
+
           </div>
 
           {/* =================================================
@@ -775,6 +983,7 @@ export default function Header() {
               md:hidden
             "
           >
+
             {/* Notifications */}
 
             {workerId && (
@@ -790,14 +999,14 @@ export default function Header() {
                       fixed
                       left-3
                       right-3
-                      top-[74px]
+                      top-[78px]
                       z-[100]
                       overflow-hidden
                       rounded-2xl
                       border
                       border-slate-200
                       bg-white
-                      shadow-2xl
+                      shadow-[0_20px_50px_rgba(15,23,42,0.28)]
                     "
                   >
                     <NotificationList />
@@ -812,7 +1021,12 @@ export default function Header() {
               to="/offer-job"
               onClick={() => setIsOpen(false)}
               className="
+                group
+                relative
+                overflow-hidden
                 rounded-xl
+                border
+                border-cyan-200/30
                 bg-gradient-to-r
                 from-cyan-400
                 to-blue-500
@@ -823,13 +1037,16 @@ export default function Header() {
                 text-white
                 shadow-md
                 ring-1
-                ring-white/20
-                transition
+                ring-white/10
+                transition-all
+                duration-200
                 hover:from-cyan-300
                 hover:to-blue-400
               "
             >
-              Job Post
+              <span className="relative z-10">
+                Job Post
+              </span>
             </Link>
 
             {/* Menu Button */}
@@ -850,12 +1067,19 @@ export default function Header() {
                 border-white/20
                 bg-white/10
                 text-white
+                shadow-sm
                 backdrop-blur-sm
-                transition
+                transition-all
+                duration-200
+                hover:border-white/30
                 hover:bg-white/20
+                hover:shadow-lg
+                active:scale-95
               "
               aria-label={
-                isOpen ? "Close menu" : "Open menu"
+                isOpen
+                  ? "Close menu"
+                  : "Open menu"
               }
               aria-expanded={isOpen}
             >
@@ -889,7 +1113,9 @@ export default function Header() {
                 </svg>
               )}
             </button>
+
           </div>
+
         </div>
       </div>
 
@@ -900,18 +1126,21 @@ export default function Header() {
       {isOpen && (
         <div
           className="
+            relative
             border-t
             border-white/10
             bg-gradient-to-b
-            from-indigo-800
-            to-purple-900
+            from-[#172554]
+            to-[#3b176d]
             px-4
             py-4
-            shadow-inner
+            shadow-[inset_0_8px_20px_rgba(0,0,0,0.12)]
             md:hidden
           "
         >
+
           <nav className="space-y-1">
+
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.path}
@@ -920,12 +1149,16 @@ export default function Header() {
                 className="
                   block
                   rounded-xl
+                  border
+                  border-transparent
                   px-3
                   py-2.5
                   text-sm
                   font-semibold
                   text-white/90
-                  transition
+                  transition-all
+                  duration-200
+                  hover:border-white/10
                   hover:bg-white/10
                   hover:text-white
                 "
@@ -938,12 +1171,18 @@ export default function Header() {
               to="/offer-job"
               onClick={handleMobileLinkClick}
               className="
+                group
+                relative
                 mt-3
                 block
+                overflow-hidden
                 rounded-xl
+                border
+                border-cyan-200/30
                 bg-gradient-to-r
                 from-cyan-400
-                to-blue-500
+                via-blue-500
+                to-indigo-500
                 px-4
                 py-3
                 text-center
@@ -951,10 +1190,28 @@ export default function Header() {
                 font-extrabold
                 text-white
                 shadow-lg
+                shadow-blue-950/20
               "
             >
-              + Offer Job
+              <span
+                className="
+                  absolute
+                  inset-y-0
+                  -left-full
+                  w-1/2
+                  skew-x-[-20deg]
+                  bg-white/20
+                  transition-all
+                  duration-700
+                  group-hover:left-[120%]
+                "
+              />
+
+              <span className="relative z-10">
+                + Offer Job
+              </span>
             </Link>
+
           </nav>
         </div>
       )}
