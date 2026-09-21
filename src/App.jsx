@@ -1155,14 +1155,7 @@ export default function App() {
 
             </div>
 
-            <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-              Find Jobs by Category
-            </h2>
-
-            <p className="mt-1.5 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
-              Choose your work category and discover available
-              opportunities near you.
-            </p>
+            
 
           </div>
 
