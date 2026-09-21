@@ -1152,653 +1152,485 @@ export default function App() {
           MAIN JOB AREA
       ================================================== */}
 
-      <main className="w-full px-3 py-6 sm:px-5 sm:py-8 lg:px-8 xl:px-10">
+     <main className="w-full px-3 py-6 sm:px-5 sm:py-8 lg:px-8 xl:px-10">
 
-        {/* ==================================================
-            LOADING
-        ================================================== */}
+  {/* LOADING */}
+  {loadingJobs && (
+    <div className="flex min-h-[350px] items-center justify-center">
+      <div className="relative h-16 w-16">
+        <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
 
-        {loadingJobs && (
-          <div className="flex min-h-[350px] items-center justify-center">
+        <div className="absolute inset-0 animate-spin rounded-full border-4 border-blue-600 border-r-purple-600 border-t-transparent" />
 
-            <div className="relative h-16 w-16">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-3 w-3 animate-pulse rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
+        </div>
+      </div>
+    </div>
+  )}
 
-              <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
-
-              <div className="absolute inset-0 animate-spin rounded-full border-4 border-blue-600 border-r-purple-600 border-t-transparent" />
-
-              <div className="absolute inset-0 flex items-center justify-center">
-
-                <div className="h-3 w-3 animate-pulse rounded-full bg-gradient-to-r from-blue-600 to-purple-600" />
-
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* ==================================================
-            NO JOBS
-        ================================================== */}
-
-        {!loadingJobs &&
-          availableJobs.length === 0 && (
-            <div className="flex min-h-[350px] items-center justify-center">
-
-              <div className="w-full max-w-lg border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
-                  <Search className="h-7 w-7 text-indigo-600" />
-                </div>
-
-                <p className="text-lg font-extrabold text-slate-800">
-                  No jobs found
-                </p>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  Try selecting another state.
-                </p>
-
-              </div>
-
-            </div>
-          )}
-
-       {/* ==================================================
-    CATEGORY VIEW
-================================================== */}
-
-{!loadingJobs &&
-  availableJobs.length > 0 &&
-  !selectedWorkType && (
-    <section className="mt-2">
-
-      {/* SECTION HEADER */}
-
-      <div className="mb-7 border-b border-slate-200 pb-5">
-
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-
-          {/* <div>
-
-            <div className="mb-2 flex items-center gap-2">
-
-              <span className="h-1 w-9 bg-gradient-to-r from-blue-600 to-purple-600" />
-
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-indigo-600">
-                Explore Opportunities
-              </span>
-
-            </div>
-          </div> */}
-
-          {/* TOTAL */}
-
-          {/* <div className="flex w-fit items-center gap-3 border border-slate-200 bg-white px-4 py-3 shadow-sm">
-
-            <div className="flex h-9 w-9 items-center justify-center bg-indigo-50 text-indigo-600">
-
-              <BriefcaseBusiness
-                className="h-4.5 w-4.5"
-                strokeWidth={2.2}
-              />
-
-            </div>
-
-            <div>
-
-              <p className="text-lg font-black leading-none text-slate-900">
-                {availableJobs.length}
-              </p>
-
-              <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                Jobs Available
-              </p>
-
-            </div>
-
-          </div> */}
-
+  {/* NO JOBS */}
+  {!loadingJobs && availableJobs.length === 0 && (
+    <div className="flex min-h-[350px] items-center justify-center">
+      <div className="w-full max-w-lg border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+          <Search className="h-7 w-7 text-indigo-600" />
         </div>
 
+        <p className="text-lg font-extrabold text-slate-800">
+          No jobs found
+        </p>
+
+        <p className="mt-1 text-sm text-slate-500">
+          Try selecting another state.
+        </p>
       </div>
+    </div>
+  )}
 
-
-      {/* CATEGORY GRID */}
+  {/* CATEGORY VIEW */}
+  {!loadingJobs && availableJobs.length > 0 && !selectedWorkType && (
+    <section className="mt-2">
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        {workTypeCategories.map(({ workType, count }) => {
+          const {
+            icon: Icon,
+            color,
+            bg,
+            border,
+            accent,
+            soft,
+            hover,
+            hoverText,
+          } = getWorkTypeIconData(workType);
 
-        {workTypeCategories.map(
-          ({ workType, count }) => {
+          return (
+            <button
+              key={workType}
+              type="button"
+              onClick={() => setSelectedWorkType(workType)}
+              className="
+                group relative overflow-hidden
+                border border-slate-200
+                bg-white text-left
+                transition-all duration-300
+                hover:-translate-y-1
+                hover:border-slate-300
+                hover:shadow-xl
+                focus:outline-none
+                focus:ring-2
+                focus:ring-indigo-500
+                focus:ring-offset-2
+              "
+            >
+              <div className={`h-1 w-full ${accent}`} />
 
+              <div
+                className={`
+                  absolute inset-0
+                  bg-gradient-to-br ${soft}
+                  opacity-0
+                  transition-opacity duration-300
+                  group-hover:opacity-100
+                `}
+              />
+
+              <div className="relative p-4">
+
+                <div className="mb-5 flex items-center justify-between">
+                  <div
+                    className={`
+                      flex h-12 w-12
+                      items-center justify-center
+                      border ${border} ${bg} ${color}
+                      transition-all duration-300
+                      ${hover} ${hoverText}
+                      group-hover:scale-110
+                      group-hover:shadow-md
+                    `}
+                  >
+                    <Icon
+                      className="h-6 w-6"
+                      strokeWidth={2.2}
+                    />
+                  </div>
+
+                  <span
+                    className="
+                      flex h-8 w-8
+                      items-center justify-center
+                      border border-slate-100
+                      bg-white
+                      text-slate-300
+                      transition-all duration-300
+                      group-hover:border-slate-200
+                      group-hover:text-slate-700
+                    "
+                  >
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+
+                <h3 className="min-h-[40px] text-sm font-black leading-5 text-slate-800 transition-colors group-hover:text-slate-950">
+                  {workType}
+                </h3>
+
+                <div className="mt-3 flex items-baseline gap-1.5">
+                  <span className={`text-xl font-black ${color}`}>
+                    {count}
+                  </span>
+
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    {count === 1 ? "Job" : "Jobs"}
+                  </span>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+                  <span className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
+                    Explore
+                  </span>
+
+                  <span className={`text-[10px] font-black ${color}`}>
+                    View Jobs
+                  </span>
+                </div>
+
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+    </section>
+  )}
+
+  {/* SELECTED CATEGORY */}
+  {!loadingJobs && selectedWorkType && (
+    <section className="mt-2">
+
+      <div className="mb-6 border border-slate-200 bg-white">
+        <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+
+          {(() => {
+            const {
+              icon: Icon,
+              color,
+              bg,
+              border,
+            } = getWorkTypeIconData(selectedWorkType);
+
+            return (
+              <div className="flex items-center gap-4">
+
+                <div
+                  className={`
+                    flex h-12 w-12 shrink-0
+                    items-center justify-center
+                    border ${border} ${bg} ${color}
+                    sm:h-14 sm:w-14
+                  `}
+                >
+                  <Icon
+                    className="h-6 w-6"
+                    strokeWidth={2}
+                  />
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">
+                    Job Category
+                  </span>
+
+                  <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">
+                    {selectedWorkType}
+                  </h2>
+
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {categoryJobs.length}{" "}
+                    {categoryJobs.length === 1 ? "job" : "jobs"}{" "}
+                    available in this category
+                  </p>
+                </div>
+
+              </div>
+            );
+          })()}
+
+          <button
+            type="button"
+            onClick={() => setSelectedWorkType(null)}
+            className="
+              inline-flex w-full
+              items-center justify-center gap-2
+              border border-slate-200
+              bg-white
+              px-4 py-2.5
+              text-sm font-bold
+              text-slate-700
+              transition
+              hover:border-indigo-300
+              hover:bg-indigo-50
+              hover:text-indigo-700
+              sm:w-auto
+            "
+          >
+            <ArrowLeft className="h-4 w-4" />
+            All Categories
+          </button>
+
+        </div>
+      </div>
+
+      {/* NO CATEGORY JOBS */}
+      {categoryJobs.length === 0 && (
+        <div className="border border-slate-200 bg-white px-6 py-14 text-center">
+
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border border-slate-200 bg-slate-50">
+            <Search className="h-6 w-6 text-slate-400" />
+          </div>
+
+          <h3 className="text-base font-extrabold text-slate-800">
+            No jobs found
+          </h3>
+
+          <p className="mt-1 text-sm text-slate-500">
+            There are currently no jobs available in this category.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setSelectedWorkType(null)}
+            className="
+              mt-5 inline-flex
+              items-center gap-2
+              bg-indigo-600
+              px-5 py-2.5
+              text-sm font-bold
+              text-white
+              transition
+              hover:bg-indigo-700
+            "
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Browse Categories
+          </button>
+
+        </div>
+      )}
+
+      {/* JOB GRID */}
+      {categoryJobs.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+          {categoryJobs.map((job) => {
             const {
               icon: Icon,
               color,
               bg,
               border,
               accent,
-              soft,
-              hover,
-              hoverText,
-            } = getWorkTypeIconData(workType);
+            } = getWorkTypeIconData(
+              job?.workType || selectedWorkType
+            );
+
+            const state = getJobState(job);
+            const district = getJobDistrict(job);
+            const address = getJobAddress(job);
 
             return (
-              <button
-                key={workType}
-                type="button"
-                onClick={() =>
-                  setSelectedWorkType(workType)
-                }
+              <article
+                key={job?._id || job?.id}
                 className="
-                  group relative overflow-hidden
+                  group relative flex h-full flex-col
+                  overflow-hidden
                   border border-slate-200
-                  bg-white text-left
-                  transition-all duration-300
-                  hover:-translate-y-1
-                  hover:border-slate-300
-                  hover:shadow-xl
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-indigo-500
-                  focus:ring-offset-2
+                  bg-white
+                  transition-all duration-200
+                  hover:-translate-y-0.5
+                  hover:border-indigo-300
+                  hover:shadow-lg
                 "
               >
+                <div className={`h-1 w-full ${accent}`} />
 
-                {/* COLOR TOP LINE */}
+                <div className="flex flex-1 flex-col p-4">
 
-                <div
-                  className={`h-1 w-full ${accent}`}
-                />
+                  {/* TITLE */}
+                  <div className="mb-4 flex items-start justify-between gap-3">
 
-                {/* SOFT BACKGROUND */}
+                    <div className="flex min-w-0 items-center gap-3">
 
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${soft} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-                />
+                      <div
+                        className={`
+                          flex h-10 w-10 shrink-0
+                          items-center justify-center
+                          border ${border} ${bg} ${color}
+                        `}
+                      >
+                        <Icon
+                          className="h-5 w-5"
+                          strokeWidth={2}
+                        />
+                      </div>
 
-                <div className="relative p-4">
+                      <div className="min-w-0">
+                        <h3 className="line-clamp-2 text-sm font-extrabold leading-5 text-slate-900">
+                          {job?.title ||
+                            job?.workType ||
+                            "Job Opportunity"}
+                        </h3>
 
-                  {/* ICON + ARROW */}
-
-                  <div className="mb-5 flex items-center justify-between">
-
-                    <div
-                      className={`
-                        flex h-12 w-12
-                        items-center justify-center
-                        border ${border} ${bg} ${color}
-                        transition-all duration-300
-                        ${hover} ${hoverText}
-                        group-hover:scale-110
-                        group-hover:shadow-md
-                      `}
-                    >
-
-                      <Icon
-                        className="h-6 w-6"
-                        strokeWidth={2.2}
-                      />
+                        <p className={`mt-0.5 text-[11px] font-bold ${color}`}>
+                          {job?.workType || selectedWorkType}
+                        </p>
+                      </div>
 
                     </div>
 
-                    <div
-                      className="
-                        flex h-8 w-8
-                        items-center justify-center
-                        border border-slate-100
-                        bg-white
-                        text-slate-300
-                        transition-all duration-300
-                        group-hover:border-slate-200
-                        group-hover:text-slate-700
-                      "
+                    <span className="shrink-0 border border-emerald-100 bg-emerald-50 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
+                      Available
+                    </span>
+
+                  </div>
+
+                  {/* DESCRIPTION */}
+                  {job?.description && (
+                    <p className="mb-4 line-clamp-3 text-xs leading-5 text-slate-500">
+                      {job.description}
+                    </p>
+                  )}
+
+                  {/* PAYMENT */}
+                  <div className="mb-4 border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-3.5">
+
+                    <div className="mb-1 flex items-center gap-1.5">
+                      <IndianRupee className="h-3.5 w-3.5 text-indigo-600" />
+
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500">
+                        Job Payment
+                      </span>
+                    </div>
+
+                    <div className="text-xl font-black text-slate-900">
+                      ₹
+                      {Number(job?.amount || 0).toLocaleString("en-IN")}
+                    </div>
+
+                  </div>
+
+                  {/* DETAILS */}
+                  <div className="space-y-2.5">
+
+                    {job?.workType && (
+                      <div className="flex items-center gap-2.5">
+
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
+                          <BriefcaseBusiness className="h-3.5 w-3.5" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                            Work
+                          </p>
+
+                          <p className="truncate text-xs font-semibold text-slate-700">
+                            {job.workType}
+                          </p>
+                        </div>
+
+                      </div>
+                    )}
+
+                    {(state || district) && (
+                      <div className="flex items-center gap-2.5">
+
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
+                          <MapPinned className="h-3.5 w-3.5" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                            Location
+                          </p>
+
+                          <p className="truncate text-xs font-semibold text-slate-700">
+                            {[district, state]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        </div>
+
+                      </div>
+                    )}
+
+                    {address && (
+                      <div className="flex items-start gap-2.5">
+
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
+                          <MapPin className="h-3.5 w-3.5" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                            Address
+                          </p>
+
+                          <p className="line-clamp-2 text-xs font-medium leading-4 text-slate-600">
+                            {address}
+                          </p>
+                        </div>
+
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* APPLY */}
+                  <div className="mt-auto pt-5">
+
+                    <button
+                      type="button"
+                      onClick={() => handleApply(job)}
+                      className={`
+                        flex w-full
+                        items-center justify-center gap-2
+                        ${accent}
+                        px-4 py-3
+                        text-sm font-extrabold
+                        text-white
+                        shadow-sm
+                        transition-all duration-200
+                        hover:brightness-95
+                        hover:shadow-md
+                        active:scale-[0.98]
+                      `}
                     >
+                      Apply Now
 
                       <ArrowRight
-                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                        className="
+                          h-4 w-4
+                          transition-transform duration-200
+                          group-hover:translate-x-1
+                        "
                       />
-
-                    </div>
-
-                  </div>
-
-
-                  {/* CATEGORY NAME */}
-
-                  <h3 className="min-h-[40px] text-sm font-black leading-5 text-slate-800 transition-colors group-hover:text-slate-950">
-                    {workType}
-                  </h3>
-
-
-                  {/* COUNT */}
-
-                  <div className="mt-3 flex items-baseline gap-1.5">
-
-                    <span
-                      className={`
-                        text-xl font-black
-                        ${color}
-                      `}
-                    >
-                      {count}
-                    </span>
-
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      {count === 1
-                        ? "Job"
-                        : "Jobs"}
-                    </span>
-
-                  </div>
-
-
-                  {/* BOTTOM */}
-
-                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-
-                    <span className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
-                      Explore
-                    </span>
-
-                    <span
-                      className={`
-                        text-[10px]
-                        font-black
-                        ${color}
-                      `}
-                    >
-                      View Jobs
-                    </span>
+                    </button>
 
                   </div>
 
                 </div>
-
-              </button>
+              </article>
             );
-          }
-        )}
+          })}
 
-      </div>
+        </div>
+      )}
 
     </section>
   )}
 
-        {/* ==================================================
-            SELECTED CATEGORY
-        ================================================== */}
-
-        {!loadingJobs &&
-          selectedWorkType && (
-            <section className="mt-2">
-
-              {/* CATEGORY HEADER */}
-
-              <div className="mb-6 border border-slate-200 bg-white">
-
-                <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-
-                  <div className="flex items-center gap-4">
-
-                    {/* ICON */}
-
-                    {(() => {
-  const {
-    icon: Icon,
-    color,
-    bg,
-    border,
-    accent,
-  } = getWorkTypeIconData(
-    selectedWorkType
-  );
-
-                      return (
-                        <div
-  className={`
-    flex h-12 w-12 shrink-0
-    items-center justify-center
-    border ${border} ${bg} ${color}
-    sm:h-14 sm:w-14
-  `}
->
-
-                          <Icon
-                            className="h-6 w-6"
-                            strokeWidth={2}
-                          />
-
-                        </div>
-                      );
-                    })()}
-
-                    <div>
-
-                      <div className="mb-1 flex items-center gap-2">
-
-                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">
-                          Job Category
-                        </span>
-
-                      </div>
-
-                      <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">
-                        {selectedWorkType}
-                      </h2>
-
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        {categoryJobs.length}{" "}
-                        {categoryJobs.length === 1
-                          ? "job"
-                          : "jobs"}{" "}
-                        available in this category
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  {/* BACK BUTTON */}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setSelectedWorkType(null)
-                    }
-                    className="inline-flex w-full items-center justify-center gap-2 border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 sm:w-auto"
-                  >
-
-                    <ArrowLeft className="h-4 w-4" />
-
-                    All Categories
-
-                  </button>
-
-                </div>
-
-              </div>
-
-              {/* NO CATEGORY JOBS */}
-
-              {categoryJobs.length === 0 && (
-                <div className="border border-slate-200 bg-white px-6 py-14 text-center">
-
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border border-slate-200 bg-slate-50">
-
-                    <Search className="h-6 w-6 text-slate-400" />
-
-                  </div>
-
-                  <h3 className="text-base font-extrabold text-slate-800">
-                    No jobs found
-                  </h3>
-
-                  <p className="mt-1 text-sm text-slate-500">
-                    There are currently no jobs available in this category.
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setSelectedWorkType(null)
-                    }
-                    className="mt-5 inline-flex items-center gap-2 bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-700"
-                  >
-
-                    <ArrowLeft className="h-4 w-4" />
-
-                    Browse Categories
-
-                  </button>
-
-                </div>
-              )}
-
-              {/* JOB GRID */}
-
-              {categoryJobs.length > 0 && (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-                  {categoryJobs.map((job) => {
-
-                    const {
-  icon: Icon,
-  color,
-  bg,
-  border,
-  accent,
-} = getWorkTypeIconData(
-  job?.workType || selectedWorkType
-);
-
-                    const state =
-                      getJobState(job);
-
-                    const district =
-                      getJobDistrict(job);
-
-                    const address =
-                      getJobAddress(job);
-
-                    return (
-                      <article
-                        key={
-                          job?._id ||
-                          job?.id
-                        }
-                        className="group relative flex h-full flex-col overflow-hidden border border-slate-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg"
-                      >
-
-                        {/* TOP ACCENT */}
-
-                        <div className={`h-1 w-full ${accent}`} />
-
-                        <div className="flex flex-1 flex-col p-4">
-
-                          {/* TITLE ROW */}
-
-                          <div className="mb-4 flex items-start justify-between gap-3">
-
-                            <div className="flex min-w-0 items-center gap-3">
-
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-indigo-100 bg-indigo-50 text-indigo-600">
-
-                                <Icon
-                                  className="h-5 w-5"
-                                  strokeWidth={2}
-                                />
-
-                              </div>
-
-                              <div className="min-w-0">
-
-                                <h3 className="line-clamp-2 text-sm font-extrabold leading-5 text-slate-900">
-                                  {job?.title ||
-                                    job?.workType ||
-                                    "Job Opportunity"}
-                                </h3>
-
-                                <p className="mt-0.5 text-[11px] font-medium text-indigo-600">
-                                  {job?.workType ||
-                                    selectedWorkType}
-                                </p>
-
-                              </div>
-
-                            </div>
-
-                            {/* STATUS */}
-
-                            <span className="shrink-0 border border-emerald-100 bg-emerald-50 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
-                              Available
-                            </span>
-
-                          </div>
-
-                          {/* DESCRIPTION */}
-
-                          {job?.description && (
-                            <p className="mb-4 line-clamp-3 text-xs leading-5 text-slate-500">
-                              {job.description}
-                            </p>
-                          )}
-
-                          {/* AMOUNT */}
-
-                          <div className="mb-4 border border-indigo-100 bg-indigo-50/60 p-3">
-
-                            <div className="mb-1 flex items-center gap-1.5">
-
-                              <IndianRupee className="h-3.5 w-3.5 text-indigo-600" />
-
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500">
-                                Job Payment
-                              </span>
-
-                            </div>
-
-                            <div className="text-xl font-black text-slate-900">
-
-                              ₹
-                              {Number(
-                                job?.amount || 0
-                              ).toLocaleString(
-                                "en-IN"
-                              )}
-
-                            </div>
-
-                          </div>
-
-                          {/* DETAILS */}
-
-                          <div className="space-y-2.5">
-
-                            {/* WORK */}
-
-                            {job?.workType && (
-                              <div className="flex items-center gap-2.5">
-
-                                <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
-
-                                  <BriefcaseBusiness className="h-3.5 w-3.5" />
-
-                                </div>
-
-                                <div className="min-w-0">
-
-                                  <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                    Work
-                                  </p>
-
-                                  <p className="truncate text-xs font-semibold text-slate-700">
-                                    {job.workType}
-                                  </p>
-
-                                </div>
-
-                              </div>
-                            )}
-
-                            {/* LOCATION */}
-
-                            {(state || district) && (
-                              <div className="flex items-center gap-2.5">
-
-                                <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
-
-                                  <MapPinned className="h-3.5 w-3.5" />
-
-                                </div>
-
-                                <div className="min-w-0">
-
-                                  <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                    Location
-                                  </p>
-
-                                  <p className="truncate text-xs font-semibold text-slate-700">
-                                    {[
-                                      district,
-                                      state,
-                                    ]
-                                      .filter(
-                                        Boolean
-                                      )
-                                      .join(
-                                        ", "
-                                      )}
-                                  </p>
-
-                                </div>
-
-                              </div>
-                            )}
-
-                            {/* ADDRESS */}
-
-                            {address && (
-                              <div className="flex items-start gap-2.5">
-
-                                <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-50 text-slate-500">
-
-                                  <MapPin className="h-3.5 w-3.5" />
-
-                                </div>
-
-                                <div className="min-w-0">
-
-                                  <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                    Address
-                                  </p>
-
-                                  <p className="line-clamp-2 text-xs font-medium leading-4 text-slate-600">
-                                    {address}
-                                  </p>
-
-                                </div>
-
-                              </div>
-                            )}
-
-                          </div>
-
-                          {/* APPLY BUTTON */}
-
-                          <div className="mt-auto pt-5">
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleApply(
-                                  job
-                                )
-                              }
-                              className="flex w-full items-center justify-center gap-2 bg-indigo-600 px-4 py-3 text-sm font-extrabold text-white transition-all duration-200 hover:bg-indigo-700 active:scale-[0.98]"
-                            >
-
-                              Apply Now
-
-                              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-
-                            </button>
-
-                          </div>
-
-                        </div>
-
-                      </article>
-                    );
-                  })}
-
-                </div>
-              )}
-
-            </section>
-          )}
-
-      </main>
+</main>
 
       {/* ==================================================
           HEALTHCARE JOBS
