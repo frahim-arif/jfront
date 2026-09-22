@@ -1662,7 +1662,7 @@ export default function App() {
   className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
 >
   <BriefcaseBusiness size={19} />
-  Kaam Kar Rahe Workers
+  Now Workers
 </button>
 
       {/* ==================================================
