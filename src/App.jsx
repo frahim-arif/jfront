@@ -1038,33 +1038,41 @@ export default function App() {
   </div>
 
   {/* State Selector */}
+<div className="relative w-full sm:w-52">
+  <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+    <span className="text-lg leading-none">🇮🇳</span>
+  </div>
+
   <select
     value={selectedState}
     onChange={(event) => {
       setSelectedState(event.target.value);
       setSelectedWorkType(null);
 
-      setTimeout(
-        scrollToJobs,
-        50
-      );
+      setTimeout(scrollToJobs, 50);
     }}
     className="
       h-11
       w-full
+      appearance-none
       border border-slate-200
-      bg-slate-50
-      px-3
+      bg-gradient-to-r from-orange-50 via-white to-green-50
+      pl-10
+      pr-9
       text-sm
-      font-semibold
+      font-bold
       text-slate-700
+      shadow-sm
       outline-none
-      transition
+      transition-all
+      duration-200
+      hover:border-slate-300
+      hover:shadow-md
       focus:border-blue-500
       focus:bg-white
       focus:ring-4
       focus:ring-blue-100
-      sm:w-52
+      cursor-pointer
     "
   >
     <option value="All">
@@ -1080,6 +1088,22 @@ export default function App() {
       </option>
     ))}
   </select>
+
+  {/* Custom Arrow */}
+  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+    <svg
+      className="h-4 w-4 text-slate-500"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z"
+        clipRule="evenodd"
+      />
+    </svg>
+  </div>
+</div>
 
 </div>
 
