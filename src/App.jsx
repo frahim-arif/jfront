@@ -1241,14 +1241,14 @@ export default function App() {
                 <div className="mb-5 flex items-center justify-between">
                   <div
                     className={`
-                      flex h-12 w-12
-                      items-center justify-center
-                      border ${border} ${bg} ${color}
-                      transition-all duration-300
-                      ${hover} ${hoverText}
-                      group-hover:scale-110
-                      group-hover:shadow-md
-                    `}
+  flex h-10 w-10 shrink-0
+  items-center justify-center
+  rounded-lg
+  border ${border} ${bg} ${color}
+  shadow-sm
+  transition-all duration-300
+  group-hover:scale-105
+`}
                   >
                     <Icon
                       className="h-6 w-6"
@@ -1440,18 +1440,20 @@ export default function App() {
 
             return (
               <article
-                key={job?._id || job?.id}
-                className="
-                  group relative flex h-full flex-col
-                  overflow-hidden
-                  border border-slate-200
-                  bg-white
-                  transition-all duration-200
-                  hover:-translate-y-0.5
-                  hover:border-indigo-300
-                  hover:shadow-lg
-                "
-              >
+  key={job?._id || job?.id}
+  className="
+    group relative flex h-full flex-col
+    overflow-hidden
+    rounded-xl
+    border border-slate-200
+    bg-white
+    shadow-[0_4px_18px_rgba(15,23,42,0.06)]
+    transition-all duration-300
+    hover:-translate-y-1
+    hover:border-indigo-300
+    hover:shadow-[0_14px_35px_rgba(79,70,229,0.14)]
+  "
+>
                 <div className={`h-1 w-full ${accent}`} />
 
                 <div className="flex flex-1 flex-col p-4">
@@ -1488,9 +1490,18 @@ export default function App() {
 
                     </div>
 
-                    <span className="shrink-0 border border-emerald-100 bg-emerald-50 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
-                      Available
-                    </span>
+                    <span className="
+  shrink-0 rounded-md
+  border border-emerald-100
+  bg-emerald-50
+  px-2 py-1
+  text-[9px] font-bold
+  uppercase tracking-wider
+  text-emerald-700
+  shadow-sm
+">
+  Available
+</span>
 
                   </div>
 
