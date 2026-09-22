@@ -1152,7 +1152,19 @@ export default function App() {
           MAIN JOB AREA
       ================================================== */}
 
-     <main className="w-full px-3 py-6 sm:px-5 sm:py-8 lg:px-8 xl:px-10">
+     <main
+  className="
+    w-full
+    rounded-2xl
+    border border-slate-200
+    bg-white
+    px-3 py-6
+    shadow-[0_8px_30px_rgba(15,23,42,0.06)]
+    sm:px-5 sm:py-8
+    lg:px-8
+    xl:px-10
+  "
+>
 
   {/* LOADING */}
   {loadingJobs && (
