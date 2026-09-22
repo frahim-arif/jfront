@@ -43,6 +43,7 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import HealthcareJobs from "./HealthcareJobs";
 
+
 // ======================================================
 // API
 // ======================================================
@@ -1654,6 +1655,15 @@ export default function App() {
   )}
 
 </main>
+
+<button
+  type="button"
+  onClick={() => navigate("/working-workers")}
+  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
+>
+  <BriefcaseBusiness size={19} />
+  Kaam Kar Rahe Workers
+</button>
 
       {/* ==================================================
           HEALTHCARE JOBS

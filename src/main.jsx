@@ -26,6 +26,7 @@ import HealthcareJobs from "./HealthcareJobs";
 import AdminDashboard from "./App/Admin/dashboard/page.jsx";
 import AdminLogin from "./App/Admin/login/page.jsx";
 import AdminWorkers from "./App/Admin/workers/page.jsx";
+import WorkingWorkers from "./pages/WorkingWorkers.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,7 +78,11 @@ const router = createBrowserRouter([
     path: "/disclaimer",
     element: <Disclaimer />,
   },
-
+  
+{
+  path: "/working-workers",
+  element: <WorkingWorkers />,
+},
   
   // OFFER JOB
   {
