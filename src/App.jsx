@@ -1157,9 +1157,9 @@ export default function App() {
     w-full
     rounded-2xl
     border border-slate-200
-    bg-white
+    bg-slate-50
     px-3 py-6
-    shadow-[0_8px_30px_rgba(15,23,42,0.06)]
+    shadow-[0_10px_35px_rgba(15,23,42,0.07)]
     sm:px-5 sm:py-8
     lg:px-8
     xl:px-10
