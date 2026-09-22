@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export default function JobCard({ job }) {
+  const navigate = useNavigate();
   const [applicantName, setApplicantName] = useState("");
   const [applicantPhone, setApplicantPhone] = useState("");
   const [applicantEmail, setApplicantEmail] = useState("");
@@ -26,6 +28,63 @@ export default function JobCard({ job }) {
       window.removeEventListener("keydown", handleEsc);
     };
   }, []);
+
+  // =========================
+// Check Registered Worker
+// =========================
+
+const handleApplyClick = async () => {
+  try {
+    const workerId = localStorage.getItem("workerId");
+
+    // Worker registered/login information nahi hai
+    if (!workerId) {
+      navigate("/worker-register");
+      return;
+    }
+
+    const res = await axios.get(
+      `https://jbackend-h963.onrender.com/workers/${workerId}`
+    );
+
+    const worker = res.data?.worker || res.data;
+
+    // Worker valid nahi mila
+    if (!worker) {
+      localStorage.removeItem("workerId");
+      navigate("/worker-register");
+      return;
+    }
+
+    // Payment + Admin activation check
+    if (
+      worker.paymentStatus !== "PAID" ||
+      worker.status !== "Active"
+    ) {
+      alert(
+        "Job apply karne ke liye worker registration, payment aur admin verification complete hona zaroori hai."
+      );
+
+      navigate("/worker-register");
+      return;
+    }
+
+    // Registered worker ka data automatically fill
+    setApplicantName(worker.name || "");
+    setApplicantPhone(worker.mobile || "");
+    setApplicantEmail(worker.email || "");
+
+    // Sab OK
+    setShowApply(true);
+
+  } catch (error) {
+    console.error("Worker verification error:", error);
+
+    localStorage.removeItem("workerId");
+
+    navigate("/worker-register");
+  }
+};
 
   // =========================
   // Apply Job
@@ -228,12 +287,13 @@ export default function JobCard({ job }) {
               Apply Button
           ========================= */}
 
-          <button
-            onClick={() => setShowApply(true)}
-            className="w-full h-11 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold transition-all duration-200"
-          >
-            Apply Now
-          </button>
+         <button
+  type="button"
+  onClick={handleApplyClick}
+  className="w-full h-11 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold transition-all duration-200"
+>
+  Apply Now
+</button>
 
         </div>
       </div>
