@@ -1656,14 +1656,16 @@ export default function App() {
 
 </main>
 
-<button
-  type="button"
-  onClick={() => navigate("/working-workers")}
-  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
->
-  <BriefcaseBusiness size={19} />
-  Now Workers
-</button>
+<div className="flex w-full justify-center">
+  <button
+    type="button"
+    onClick={() => navigate("/working-workers")}
+    className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 font-semibold text-black transition hover:bg-red-700"
+  >
+    <BriefcaseBusiness size={19} />
+    Now Workers
+  </button>
+</div>
 
       {/* ==================================================
           HEALTHCARE JOBS
