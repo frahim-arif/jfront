@@ -1660,7 +1660,7 @@ export default function App() {
   <button
     type="button"
     onClick={() => navigate("/working-workers")}
-    className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 font-semibold text-black transition hover:bg-red-700"
+    className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3 font-semibold text-black transition hover:bg-red-700"
   >
     <BriefcaseBusiness size={19} />
     Now Workers
