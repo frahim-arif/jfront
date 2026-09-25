@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import {
   MapContainer,
-   CreditCard,
   Marker,
   Popup,
   TileLayer,
@@ -19,6 +18,7 @@ import {
   BriefcaseBusiness,
   Hammer,
   Paintbrush,
+   CreditCard,
   Zap,
   Wrench,
   Sprout,
