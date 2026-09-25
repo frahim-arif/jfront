@@ -27,6 +27,7 @@ import AdminDashboard from "./App/Admin/dashboard/page.jsx";
 import AdminLogin from "./App/Admin/login/page.jsx";
 import AdminWorkers from "./App/Admin/workers/page.jsx";
 import WorkingWorkers from "./pages/WorkingWorkers.jsx";
+import Payment from "./Payment";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
     path: "/success",
     element: <Success />,
   },
+  {
+  path: "/payment",
+  element: <Payment />,
+},
 
   {
     path: "/failure",

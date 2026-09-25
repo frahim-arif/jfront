@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 import {
   MapContainer,
+   CreditCard,
   Marker,
   Popup,
   TileLayer,
@@ -1680,14 +1682,23 @@ export default function App() {
 
 </main>
 
-<div className="flex w-full justify-center">
+<div className="flex w-full justify-center gap-2 px-2">
   <button
     type="button"
     onClick={() => navigate("/working-workers")}
-    className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3 font-semibold text-black transition hover:bg-red-700"
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-700 px-3 py-3 text-sm font-semibold text-black transition hover:bg-red-700 sm:flex-none sm:px-5"
   >
-    <BriefcaseBusiness size={19} />
-    Now Workers
+    <BriefcaseBusiness size={18} />
+    <span className="whitespace-nowrap">Now Workers</span>
+  </button>
+
+  <button
+    type="button"
+    onClick={() => navigate("/payment")}
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 sm:flex-none sm:px-5"
+  >
+    <CreditCard size={18} />
+    <span className="whitespace-nowrap">Pay JobHir</span>
   </button>
 </div>
 
