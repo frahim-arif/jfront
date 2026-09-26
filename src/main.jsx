@@ -28,6 +28,8 @@ import AdminLogin from "./App/Admin/login/page.jsx";
 import AdminWorkers from "./App/Admin/workers/page.jsx";
 import WorkingWorkers from "./pages/WorkingWorkers.jsx";
 import Payment from "./Payment";
+import DimapurDashboard from "./App/Admin/dimapur/Dashboard.jsx";
+import DimapurWorkers from "./App/Admin/dimapur/Workers.jsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,9 @@ const router = createBrowserRouter([
     path: "/apply/:jobId",
     element: <Apply />,
   },
+
+  { path: "/admin/dimapur", element: <DimapurDashboard />, },
+  { path: "/admin/dimapur/workers", element: <DimapurWorkers />, },
 
   {
     path: "/success",
