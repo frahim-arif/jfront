@@ -42,8 +42,14 @@ const router = createBrowserRouter([
     element: <Apply />,
   },
 
-  { path: "/admin/dimapur", element: <DimapurDashboard />, },
-  { path: "/admin/dimapur/workers", element: <DimapurWorkers />, },
+  {
+  path: "/admin/dimapur",
+  element: <DimapurDashboard />,
+},
+{
+  path: "/admin/dimapur/workers",
+  element: <DimapurWorkers />,
+},
 
   {
     path: "/success",
