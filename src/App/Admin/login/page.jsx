@@ -44,17 +44,21 @@ export default function AdminLogin() {
           data.message || "Invalid username or password"
         );
       }
+// JWT token save
+localStorage.setItem("adminToken", data.token);
 
-      // JWT token save
-      localStorage.setItem("adminToken", data.token);
+// Admin information save
+localStorage.setItem(
+  "adminUser",
+  JSON.stringify(data.admin)
+);
 
-      // Admin information save
-      localStorage.setItem(
-        "adminUser",
-        JSON.stringify(data.admin)
-      );
-
-      navigate("/admin/dashboard");
+// Role ke according dashboard open karo
+if (data.admin?.role === "dimapur_admin") {
+  navigate("/admin/dimapur");
+} else {
+  navigate("/admin/dashboard");
+}
     } catch (error) {
       console.error("ADMIN LOGIN ERROR:", error);
 
