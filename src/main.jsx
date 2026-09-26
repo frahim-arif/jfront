@@ -29,7 +29,7 @@ import AdminWorkers from "./App/Admin/workers/page.jsx";
 import WorkingWorkers from "./pages/WorkingWorkers.jsx";
 import Payment from "./Payment";
 import DimapurDashboard from "./App/Admin/dimapur/Dashboard.jsx";
-import DimapurWorkers from "./App/Admin/dimapur/Worker.jsx";
+import DimapurWorkers from "./App/Admin/dimapur/Workers.jsx";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
   element: <DimapurDashboard />,
 },
 {
-  path: "/admin/dimapur/workers",
+  path: "/admin/dimapur",
   element: <DimapurWorkers />,
 },
 
