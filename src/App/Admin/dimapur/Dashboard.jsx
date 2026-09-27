@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -19,6 +18,12 @@ import {
   TrendingUp,
   CheckCircle,
   AlertCircle,
+  Eye,
+  X,
+  Smartphone,
+  Mail,
+  Receipt,
+  IndianRupee,
 } from "lucide-react";
 
 const API_URL = "https://jbackend-h963.onrender.com";
@@ -32,15 +37,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
   // =====================================================
   // ADMIN USER
   // =====================================================
 
   const getAdminUser = () => {
     try {
-      return JSON.parse(
-        localStorage.getItem("adminUser") || "{}"
-      );
+      return JSON.parse(localStorage.getItem("adminUser") || "{}");
     } catch {
       return {};
     }
@@ -51,8 +56,7 @@ const Dashboard = () => {
   // =====================================================
 
   const checkAuth = () => {
-    const token =
-      localStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
 
     const adminUser = getAdminUser();
 
@@ -61,10 +65,7 @@ const Dashboard = () => {
       return false;
     }
 
-    if (
-      adminUser?.role !==
-      "dimapur_admin"
-    ) {
+    if (adminUser?.role !== "dimapur_admin") {
       navigate("/admin/dashboard");
       return false;
     }
@@ -87,16 +88,11 @@ const Dashboard = () => {
       }
     );
 
-    const data =
-      await response.json();
+    const data = await response.json();
 
-    if (
-      !response.ok ||
-      !data.success
-    ) {
+    if (!response.ok || !data.success) {
       throw new Error(
-        data.message ||
-          "Failed to load Dimapur statistics"
+        data.message || "Failed to load Dimapur statistics"
       );
     }
 
@@ -118,16 +114,11 @@ const Dashboard = () => {
       }
     );
 
-    const data =
-      await response.json();
+    const data = await response.json();
 
-    if (
-      !response.ok ||
-      !data.success
-    ) {
+    if (!response.ok || !data.success) {
       throw new Error(
-        data.message ||
-          "Failed to load Dimapur revenue"
+        data.message || "Failed to load Dimapur revenue"
       );
     }
 
@@ -147,52 +138,31 @@ const Dashboard = () => {
         return;
       }
 
-      const token =
-        localStorage.getItem(
-          "adminToken"
-        );
+      const token = localStorage.getItem("adminToken");
 
       await Promise.all([
         fetchStats(token),
         fetchRevenue(token),
       ]);
     } catch (error) {
-      console.error(
-        "DIMAPUR DASHBOARD ERROR:",
-        error
-      );
+      console.error("DIMAPUR DASHBOARD ERROR:", error);
 
-      const message =
-        error.message || "";
+      const message = error.message || "";
 
       if (
-        message
-          .toLowerCase()
-          .includes("token") ||
-        message
-          .toLowerCase()
-          .includes("admin") ||
-        message
-          .toLowerCase()
-          .includes("authorization")
+        message.toLowerCase().includes("token") ||
+        message.toLowerCase().includes("admin") ||
+        message.toLowerCase().includes("authorization")
       ) {
-        localStorage.removeItem(
-          "adminToken"
-        );
-
-        localStorage.removeItem(
-          "adminUser"
-        );
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminUser");
 
         navigate("/admin/login");
 
         return;
       }
 
-      setError(
-        message ||
-          "Unable to load dashboard"
-      );
+      setError(message || "Unable to load dashboard");
     } finally {
       setLoading(false);
     }
@@ -211,13 +181,8 @@ const Dashboard = () => {
   // =====================================================
 
   const handleLogout = () => {
-    localStorage.removeItem(
-      "adminToken"
-    );
-
-    localStorage.removeItem(
-      "adminUser"
-    );
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
 
     navigate("/admin/login");
   };
@@ -227,12 +192,61 @@ const Dashboard = () => {
   // =====================================================
 
   const formatMoney = (value) => {
-    const amount =
-      Number(value) || 0;
+    const amount = Number(value) || 0;
 
-    return `₹${amount.toLocaleString(
-      "en-IN"
-    )}`;
+    return `₹${amount.toLocaleString("en-IN")}`;
+  };
+
+  // =====================================================
+  // FORMAT DATE
+  // =====================================================
+
+  const formatDate = (value) => {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "—";
+    }
+
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // =====================================================
+  // PAYMENT STATUS
+  // =====================================================
+
+  const getPaymentStatusClass = (status) => {
+    switch (status) {
+      case "VERIFIED":
+        return "border-emerald-200 bg-emerald-100 text-emerald-700";
+
+      case "REJECTED":
+        return "border-red-200 bg-red-100 text-red-700";
+
+      case "PENDING":
+      default:
+        return "border-amber-200 bg-amber-100 text-amber-700";
+    }
+  };
+
+  // =====================================================
+  // PAYOUT STATUS
+  // =====================================================
+
+  const getPayoutStatusClass = (status) => {
+    if (status === "PAID") {
+      return "border-emerald-200 bg-emerald-100 text-emerald-700";
+    }
+
+    return "border-amber-200 bg-amber-100 text-amber-700";
   };
 
   // =====================================================
@@ -242,61 +256,58 @@ const Dashboard = () => {
   const statCards = [
     {
       title: "Total Workers",
-      value:
-        stats?.totalWorkers ?? 0,
+      value: stats?.totalWorkers ?? 0,
       icon: Users,
     },
 
     {
       title: "Active Workers",
-      value:
-        stats?.activeWorkers ?? 0,
+      value: stats?.activeWorkers ?? 0,
       icon: UserCheck,
     },
 
     {
       title: "Pending Workers",
-      value:
-        stats?.pendingWorkers ?? 0,
+      value: stats?.pendingWorkers ?? 0,
       icon: Clock,
     },
 
     {
       title: "Blocked Workers",
-      value:
-        stats?.blockedWorkers ?? 0,
+      value: stats?.blockedWorkers ?? 0,
       icon: UserX,
     },
 
     {
       title: "Paid Workers",
-      value:
-        stats?.paidWorkers ?? 0,
+      value: stats?.paidWorkers ?? 0,
       icon: CreditCard,
     },
 
     {
       title: "Pending Payment",
-      value:
-        stats?.pendingPayment ?? 0,
+      value: stats?.pendingPayment ?? 0,
       icon: CreditCard,
     },
 
     {
       title: "Pending Verification",
-      value:
-        stats?.pendingVerification ??
-        0,
+      value: stats?.pendingVerification ?? 0,
       icon: ShieldCheck,
     },
 
     {
       title: "Verified Workers",
-      value:
-        stats?.verifiedWorkers ?? 0,
+      value: stats?.verifiedWorkers ?? 0,
       icon: ShieldCheck,
     },
   ];
+
+  // =====================================================
+  // RECENT PAYMENTS
+  // =====================================================
+
+  const recentPayments = revenue?.recentPayments || [];
 
   // =====================================================
   // RENDER
@@ -310,73 +321,84 @@ const Dashboard = () => {
       ================================================= */}
 
       <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
 
           <div>
+
             <h1 className="text-xl font-bold">
               JobHIR Admin
             </h1>
 
             <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
+
               <MapPin size={16} />
 
               <span>
                 Dimapur, Nagaland
               </span>
+
             </div>
+
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
 
             <Link
               to="/admin/dimapur/workers"
-              className="flex items-center gap-2 border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              className="flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 sm:px-4"
             >
               <Users size={17} />
-              Workers
+
+              <span className="hidden sm:inline">
+                Workers
+              </span>
+
             </Link>
 
             <button
               type="button"
-              onClick={
-                fetchDashboard
-              }
+              onClick={fetchDashboard}
               disabled={loading}
-              className="flex items-center gap-2 border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
             >
+
               <RefreshCw
                 size={17}
-                className={
-                  loading
-                    ? "animate-spin"
-                    : ""
-                }
+                className={loading ? "animate-spin" : ""}
               />
 
-              Refresh
+              <span className="hidden sm:inline">
+                Refresh
+              </span>
+
             </button>
 
             <button
               type="button"
-              onClick={
-                handleLogout
-              }
-              className="flex items-center gap-2 bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 sm:px-4"
             >
+
               <LogOut size={17} />
 
-              Logout
+              <span className="hidden sm:inline">
+                Logout
+              </span>
+
             </button>
 
           </div>
+
         </div>
+
       </header>
 
       {/* =================================================
           MAIN
       ================================================= */}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 
         {/* =================================================
             LOCATION
@@ -386,7 +408,7 @@ const Dashboard = () => {
 
           <div className="flex items-center gap-3">
 
-            <div className="flex h-10 w-10 items-center justify-center bg-emerald-600 text-white">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-emerald-600 text-white">
               <MapPin size={21} />
             </div>
 
@@ -397,8 +419,8 @@ const Dashboard = () => {
               </h2>
 
               <p className="text-sm text-emerald-700">
-                Managing workers, jobs and
-                revenue from Dimapur, Nagaland.
+                Managing workers, jobs and revenue from
+                Dimapur, Nagaland.
               </p>
 
             </div>
@@ -441,55 +463,49 @@ const Dashboard = () => {
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Dimapur worker registration and
-            verification statistics.
+            Dimapur worker registration and verification
+            statistics.
           </p>
 
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
-          {statCards.map(
-            (card) => {
-              const Icon =
-                card.icon;
+          {statCards.map((card) => {
 
-              return (
-                <div
-                  key={
-                    card.title
-                  }
-                  className="border border-gray-200 bg-white p-5"
-                >
+            const Icon = card.icon;
 
-                  <div className="flex items-start justify-between">
+            return (
+              <div
+                key={card.title}
+                className="border border-gray-200 bg-white p-5"
+              >
 
-                    <div>
+                <div className="flex items-start justify-between">
 
-                      <p className="text-sm text-gray-500">
-                        {card.title}
-                      </p>
+                  <div>
 
-                      <p className="mt-2 text-3xl font-bold">
-                        {loading
-                          ? "—"
-                          : card.value}
-                      </p>
+                    <p className="text-sm text-gray-500">
+                      {card.title}
+                    </p>
 
-                    </div>
+                    <p className="mt-2 text-3xl font-bold">
+                      {loading ? "—" : card.value}
+                    </p>
 
-                    <div className="flex h-10 w-10 items-center justify-center bg-gray-100 text-gray-700">
+                  </div>
 
-                      <Icon size={20} />
+                  <div className="flex h-10 w-10 items-center justify-center bg-gray-100 text-gray-700">
 
-                    </div>
+                    <Icon size={20} />
 
                   </div>
 
                 </div>
-              );
-            }
-          )}
+
+              </div>
+            );
+          })}
 
         </div>
 
@@ -503,9 +519,7 @@ const Dashboard = () => {
 
             <div className="flex items-center gap-3">
 
-              <ShieldCheck
-                size={20}
-              />
+              <ShieldCheck size={20} />
 
               <div>
 
@@ -516,8 +530,7 @@ const Dashboard = () => {
                 <p className="mt-1 text-2xl font-bold">
                   {loading
                     ? "—"
-                    : stats?.kycVerifiedWorkers ??
-                      0}
+                    : stats?.kycVerifiedWorkers ?? 0}
                 </p>
 
               </div>
@@ -530,9 +543,7 @@ const Dashboard = () => {
 
             <div className="flex items-center gap-3">
 
-              <BriefcaseBusiness
-                size={20}
-              />
+              <BriefcaseBusiness size={20} />
 
               <div>
 
@@ -543,8 +554,7 @@ const Dashboard = () => {
                 <p className="mt-1 text-2xl font-bold">
                   {loading
                     ? "—"
-                    : stats?.skillVerifiedWorkers ??
-                      0}
+                    : stats?.skillVerifiedWorkers ?? 0}
                 </p>
 
               </div>
@@ -568,8 +578,7 @@ const Dashboard = () => {
                 <p className="mt-1 text-2xl font-bold">
                   {loading
                     ? "—"
-                    : stats?.underReview ??
-                      0}
+                    : stats?.underReview ?? 0}
                 </p>
 
               </div>
@@ -593,8 +602,7 @@ const Dashboard = () => {
                 <p className="mt-1 text-2xl font-bold">
                   {loading
                     ? "—"
-                    : stats?.expertWorkers ??
-                      0}
+                    : stats?.expertWorkers ?? 0}
                 </p>
 
               </div>
@@ -616,8 +624,7 @@ const Dashboard = () => {
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Jobs registered and assigned in
-            Dimapur.
+            Jobs registered and assigned in Dimapur.
           </p>
 
         </div>
@@ -637,18 +644,14 @@ const Dashboard = () => {
                 <p className="mt-2 text-3xl font-bold">
                   {loading
                     ? "—"
-                    : revenue?.jobs
-                        ?.totalJobs ??
-                      0}
+                    : revenue?.jobs?.totalJobs ?? 0}
                 </p>
 
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center bg-gray-100">
 
-                <BriefcaseBusiness
-                  size={20}
-                />
+                <BriefcaseBusiness size={20} />
 
               </div>
 
@@ -669,18 +672,14 @@ const Dashboard = () => {
                 <p className="mt-2 text-3xl font-bold">
                   {loading
                     ? "—"
-                    : revenue?.jobs
-                        ?.assignedJobs ??
-                      0}
+                    : revenue?.jobs?.assignedJobs ?? 0}
                 </p>
 
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center bg-gray-100">
 
-                <UserCheck
-                  size={20}
-                />
+                <UserCheck size={20} />
 
               </div>
 
@@ -701,9 +700,7 @@ const Dashboard = () => {
                 <p className="mt-2 text-3xl font-bold">
                   {loading
                     ? "—"
-                    : revenue?.jobs
-                        ?.workingJobs ??
-                      0}
+                    : revenue?.jobs?.workingJobs ?? 0}
                 </p>
 
               </div>
@@ -732,9 +729,7 @@ const Dashboard = () => {
                   {loading
                     ? "—"
                     : formatMoney(
-                        revenue
-                          ?.jobs
-                          ?.totalJobValue
+                        revenue?.jobs?.totalJobValue
                       )}
                 </p>
 
@@ -742,9 +737,7 @@ const Dashboard = () => {
 
               <div className="flex h-10 w-10 items-center justify-center bg-gray-100">
 
-                <Banknote
-                  size={20}
-                />
+                <Banknote size={20} />
 
               </div>
 
@@ -765,8 +758,8 @@ const Dashboard = () => {
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Verified client payments received
-            for Dimapur jobs.
+            Verified client payments received for
+            Dimapur jobs.
           </p>
 
         </div>
@@ -782,17 +775,12 @@ const Dashboard = () => {
             <p className="mt-2 text-3xl font-bold">
               {loading
                 ? "—"
-                : formatMoney(
-                    revenue?.payment
-                      ?.total
-                  )}
+                : formatMoney(revenue?.payment?.total)}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <CreditCard
-                size={15}
-              />
+              <CreditCard size={15} />
 
               Verified payments
 
@@ -809,17 +797,12 @@ const Dashboard = () => {
             <p className="mt-2 text-3xl font-bold">
               {loading
                 ? "—"
-                : formatMoney(
-                    revenue?.payment
-                      ?.thisMonth
-                  )}
+                : formatMoney(revenue?.payment?.thisMonth)}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <TrendingUp
-                size={15}
-              />
+              <TrendingUp size={15} />
 
               Current month
 
@@ -836,17 +819,12 @@ const Dashboard = () => {
             <p className="mt-2 text-3xl font-bold">
               {loading
                 ? "—"
-                : formatMoney(
-                    revenue?.payment
-                      ?.thisYear
-                  )}
+                : formatMoney(revenue?.payment?.thisYear)}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <TrendingUp
-                size={15}
-              />
+              <TrendingUp size={15} />
 
               Current year
 
@@ -863,22 +841,14 @@ const Dashboard = () => {
             <p className="mt-2 text-3xl font-bold">
               {loading
                 ? "—"
-                : formatMoney(
-                    revenue?.payment
-                      ?.pending
-                  )}
+                : formatMoney(revenue?.payment?.pending)}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <Clock
-                size={15}
-              />
+              <Clock size={15} />
 
-              {revenue?.payment
-                ?.pendingCount ??
-                0}{" "}
-              pending
+              {revenue?.payment?.pendingCount ?? 0} pending
 
             </div>
 
@@ -897,8 +867,8 @@ const Dashboard = () => {
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            JobHIR commission from verified
-            Dimapur client payments.
+            JobHIR commission from verified Dimapur
+            client payments.
           </p>
 
         </div>
@@ -919,9 +889,7 @@ const Dashboard = () => {
                   {loading
                     ? "—"
                     : formatMoney(
-                        revenue
-                          ?.commission
-                          ?.total
+                        revenue?.commission?.total
                       )}
                 </p>
 
@@ -929,23 +897,20 @@ const Dashboard = () => {
 
               <div className="flex h-11 w-11 items-center justify-center bg-emerald-600 text-white">
 
-                <Wallet
-                  size={21}
-                />
+                <Wallet size={21} />
 
               </div>
 
             </div>
 
             <p className="mt-4 text-xs text-emerald-700">
+
               Commission rate:{" "}
+
               <strong>
-                {revenue
-                  ?.commission
-                  ?.rate ??
-                  10}
-                %
+                {revenue?.commission?.rate ?? 10}%
               </strong>
+
             </p>
 
           </div>
@@ -960,15 +925,12 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.commission
-                      ?.thisMonth
+                    revenue?.commission?.thisMonth
                   )}
             </p>
 
             <p className="mt-4 text-xs text-gray-500">
-              10% of verified monthly
-              client payments
+              10% of verified monthly client payments
             </p>
 
           </div>
@@ -983,15 +945,12 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.commission
-                      ?.thisYear
+                    revenue?.commission?.thisYear
                   )}
             </p>
 
             <p className="mt-4 text-xs text-gray-500">
-              10% of verified yearly
-              client payments
+              10% of verified yearly client payments
             </p>
 
           </div>
@@ -1026,9 +985,7 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.workerShare
-                      ?.total
+                    revenue?.workerShare?.total
                   )}
             </p>
 
@@ -1048,23 +1005,15 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.workerPayout
-                      ?.paid
+                    revenue?.workerPayout?.paid
                   )}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <CheckCircle
-                size={15}
-              />
+              <CheckCircle size={15} />
 
-              {revenue
-                ?.workerPayout
-                ?.paidCount ??
-                0}{" "}
-              payouts
+              {revenue?.workerPayout?.paidCount ?? 0} payouts
 
             </div>
 
@@ -1080,22 +1029,15 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.workerPayout
-                      ?.pending
+                    revenue?.workerPayout?.pending
                   )}
             </p>
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
 
-              <Clock
-                size={15}
-              />
+              <Clock size={15} />
 
-              {revenue
-                ?.workerPayout
-                ?.pendingCount ??
-                0}{" "}
+              {revenue?.workerPayout?.pendingCount ?? 0}{" "}
               pending payouts
 
             </div>
@@ -1112,9 +1054,7 @@ const Dashboard = () => {
               {loading
                 ? "—"
                 : formatMoney(
-                    revenue
-                      ?.workerShare
-                      ?.thisYear
+                    revenue?.workerShare?.thisYear
                   )}
             </p>
 
@@ -1176,6 +1116,7 @@ const Dashboard = () => {
               <tbody>
 
                 {loading ? (
+
                   <tr>
 
                     <td
@@ -1186,43 +1127,35 @@ const Dashboard = () => {
                     </td>
 
                   </tr>
-                ) : revenue
-                    ?.monthlyBreakdown
-                    ?.length ? (
 
-                  revenue.monthlyBreakdown.map(
-                    (item) => (
-                      <tr
-                        key={`${item.year}-${item.month}`}
-                        className="border-b border-gray-100 last:border-0"
-                      >
+                ) : revenue?.monthlyBreakdown?.length ? (
 
-                        <td className="px-6 py-4 text-sm font-medium">
-                          {item.monthName}{" "}
-                          {item.year}
-                        </td>
+                  revenue.monthlyBreakdown.map((item) => (
 
-                        <td className="px-6 py-4 text-sm font-semibold">
-                          {formatMoney(
-                            item.payment
-                          )}
-                        </td>
+                    <tr
+                      key={`${item.year}-${item.month}`}
+                      className="border-b border-gray-100 last:border-0"
+                    >
 
-                        <td className="px-6 py-4 text-sm font-semibold text-emerald-700">
-                          {formatMoney(
-                            item.commission
-                          )}
-                        </td>
+                      <td className="px-6 py-4 text-sm font-medium">
+                        {item.monthName} {item.year}
+                      </td>
 
-                        <td className="px-6 py-4 text-sm font-semibold">
-                          {formatMoney(
-                            item.workerAmount
-                          )}
-                        </td>
+                      <td className="px-6 py-4 text-sm font-semibold">
+                        {formatMoney(item.payment)}
+                      </td>
 
-                      </tr>
-                    )
-                  )
+                      <td className="px-6 py-4 text-sm font-semibold text-emerald-700">
+                        {formatMoney(item.commission)}
+                      </td>
+
+                      <td className="px-6 py-4 text-sm font-semibold">
+                        {formatMoney(item.workerAmount)}
+                      </td>
+
+                    </tr>
+
+                  ))
 
                 ) : (
 
@@ -1232,8 +1165,8 @@ const Dashboard = () => {
                       colSpan="4"
                       className="px-6 py-10 text-center text-sm text-gray-500"
                     >
-                      No verified payment recorded
-                      for this year.
+                      No verified payment recorded for this
+                      year.
                     </td>
 
                   </tr>
@@ -1243,6 +1176,417 @@ const Dashboard = () => {
               </tbody>
 
             </table>
+
+          </div>
+
+        </div>
+
+        {/* =================================================
+            RECENT QR PAYMENTS
+        ================================================= */}
+
+        <div className="mt-10 border border-gray-200 bg-white">
+
+          {/* HEADER */}
+
+          <div className="border-b border-gray-200 px-6 py-5">
+
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+
+              <div>
+
+                <div className="flex items-center gap-2">
+
+                  <div className="flex h-9 w-9 items-center justify-center bg-emerald-100 text-emerald-700">
+                    <CreditCard size={18} />
+                  </div>
+
+                  <h2 className="text-lg font-bold">
+                    Recent QR Payments
+                  </h2>
+
+                </div>
+
+                <p className="mt-2 text-sm text-gray-500">
+                  Recent client payments received for
+                  Dimapur jobs through QR payment.
+                </p>
+
+              </div>
+
+              <div className="flex w-fit items-center gap-2 border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+
+                <CreditCard size={15} />
+
+                QR PAYMENT
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* DESKTOP TABLE */}
+
+          <div className="hidden overflow-x-auto md:block">
+
+            <table className="min-w-full text-left">
+
+              <thead className="border-b border-gray-200 bg-gray-50">
+
+                <tr>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Date
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Client
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Job
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Worker
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Amount
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    UTR
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Status
+                  </th>
+
+                  <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Action
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {loading ? (
+
+                  <tr>
+
+                    <td
+                      colSpan="8"
+                      className="px-6 py-12 text-center text-sm text-gray-500"
+                    >
+                      Loading QR payments...
+                    </td>
+
+                  </tr>
+
+                ) : recentPayments.length > 0 ? (
+
+                  recentPayments.map((payment) => (
+
+                    <tr
+                      key={payment._id}
+                      className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
+                    >
+
+                      {/* DATE */}
+
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+
+                        {formatDate(payment.createdAt)}
+
+                      </td>
+
+                      {/* CLIENT */}
+
+                      <td className="px-6 py-4">
+
+                        <p className="text-sm font-semibold text-gray-900">
+                          {payment.clientName || "Unknown Client"}
+                        </p>
+
+                        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
+
+                          <Smartphone size={12} />
+
+                          {payment.clientPhone || "—"}
+
+                        </div>
+
+                      </td>
+
+                      {/* JOB */}
+
+                      <td className="max-w-[220px] px-6 py-4">
+
+                        <p className="truncate text-sm font-medium text-gray-900">
+                          {payment.jobTitle || "—"}
+                        </p>
+
+                      </td>
+
+                      {/* WORKER */}
+
+                      <td className="px-6 py-4 text-sm text-gray-700">
+
+                        {payment.workerName || "Not assigned"}
+
+                      </td>
+
+                      {/* AMOUNT */}
+
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-900">
+
+                        {formatMoney(payment.amount)}
+
+                      </td>
+
+                      {/* UTR */}
+
+                      <td className="whitespace-nowrap px-6 py-4">
+
+                        <span className="font-mono text-xs text-gray-600">
+
+                          {payment.utrNumber || "—"}
+
+                        </span>
+
+                      </td>
+
+                      {/* STATUS */}
+
+                      <td className="px-6 py-4">
+
+                        <span
+                          className={`inline-flex border px-2.5 py-1 text-xs font-semibold ${getPaymentStatusClass(
+                            payment.paymentStatus
+                          )}`}
+                        >
+                          {payment.paymentStatus || "PENDING"}
+                        </span>
+
+                      </td>
+
+                      {/* ACTION */}
+
+                      <td className="px-6 py-4">
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedPayment(payment)
+                          }
+                          className="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                        >
+
+                          <Eye size={14} />
+
+                          View
+
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                ) : (
+
+                  <tr>
+
+                    <td
+                      colSpan="8"
+                      className="px-6 py-12 text-center"
+                    >
+
+                      <div className="flex flex-col items-center">
+
+                        <div className="flex h-12 w-12 items-center justify-center bg-gray-100 text-gray-400">
+
+                          <CreditCard size={23} />
+
+                        </div>
+
+                        <p className="mt-3 text-sm font-semibold text-gray-700">
+                          No QR payments found
+                        </p>
+
+                        <p className="mt-1 text-xs text-gray-500">
+                          No client QR payment has been
+                          recorded for Dimapur.
+                        </p>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          {/* MOBILE */}
+
+          <div className="space-y-4 p-4 md:hidden">
+
+            {loading ? (
+
+              <div className="py-10 text-center text-sm text-gray-500">
+                Loading QR payments...
+              </div>
+
+            ) : recentPayments.length > 0 ? (
+
+              recentPayments.map((payment) => (
+
+                <div
+                  key={payment._id}
+                  className="border border-gray-200 bg-white p-4"
+                >
+
+                  <div className="flex items-start justify-between gap-3">
+
+                    <div className="min-w-0">
+
+                      <p className="truncate text-sm font-bold text-gray-900">
+                        {payment.clientName ||
+                          "Unknown Client"}
+                      </p>
+
+                      <p className="mt-1 text-xs text-gray-500">
+                        {payment.clientPhone || "—"}
+                      </p>
+
+                    </div>
+
+                    <span
+                      className={`shrink-0 border px-2 py-1 text-[10px] font-bold ${getPaymentStatusClass(
+                        payment.paymentStatus
+                      )}`}
+                    >
+                      {payment.paymentStatus || "PENDING"}
+                    </span>
+
+                  </div>
+
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                      <div>
+
+                        <p className="text-xs text-gray-500">
+                          Amount
+                        </p>
+
+                        <p className="mt-1 text-lg font-bold text-gray-900">
+                          {formatMoney(payment.amount)}
+                        </p>
+
+                      </div>
+
+                      <div>
+
+                        <p className="text-xs text-gray-500">
+                          UTR
+                        </p>
+
+                        <p className="mt-1 truncate font-mono text-xs font-semibold text-gray-700">
+                          {payment.utrNumber || "—"}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <div className="mt-4">
+
+                      <p className="text-xs text-gray-500">
+                        Job
+                      </p>
+
+                      <p className="mt-1 text-sm font-semibold text-gray-900">
+                        {payment.jobTitle || "—"}
+                      </p>
+
+                    </div>
+
+                    <div className="mt-3">
+
+                      <p className="text-xs text-gray-500">
+                        Worker
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium text-gray-700">
+                        {payment.workerName ||
+                          "Not assigned"}
+                      </p>
+
+                    </div>
+
+                    <div className="mt-3">
+
+                      <p className="text-xs text-gray-400">
+                        {formatDate(payment.createdAt)}
+                      </p>
+
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedPayment(payment)
+                      }
+                      className="mt-4 flex w-full items-center justify-center gap-2 border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+
+                      <Eye size={15} />
+
+                      View Payment Details
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            ) : (
+
+              <div className="py-10 text-center">
+
+                <div className="mx-auto flex h-12 w-12 items-center justify-center bg-gray-100 text-gray-400">
+
+                  <CreditCard size={23} />
+
+                </div>
+
+                <p className="mt-3 text-sm font-semibold text-gray-700">
+                  No QR payments found
+                </p>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  No client QR payment has been recorded
+                  for Dimapur.
+                </p>
+
+              </div>
+
+            )}
 
           </div>
 
@@ -1263,8 +1607,8 @@ const Dashboard = () => {
               </h2>
 
               <p className="mt-1 text-sm text-gray-500">
-                View and manage workers from
-                Dimapur, Nagaland.
+                View and manage workers from Dimapur,
+                Nagaland.
               </p>
 
             </div>
@@ -1273,10 +1617,14 @@ const Dashboard = () => {
               to="/admin/dimapur/workers"
               className="flex items-center justify-center gap-2 bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
             >
-              Manage Workers
+
+              <span className="text-white">
+                Manage Workers
+              </span>
 
               <ArrowRight
                 size={18}
+                className="text-white"
               />
 
             </Link>
@@ -1286,9 +1634,467 @@ const Dashboard = () => {
         </div>
 
       </main>
+
+      {/* =================================================
+          PAYMENT DETAILS MODAL
+      ================================================= */}
+
+      {selectedPayment && (
+
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setSelectedPayment(null)}
+        >
+
+          <div
+            className="max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-gray-200 bg-white shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+
+            {/* MODAL HEADER */}
+
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4 sm:px-6">
+
+              <div className="flex items-center gap-3">
+
+                <div className="flex h-10 w-10 items-center justify-center bg-emerald-100 text-emerald-700">
+
+                  <Receipt size={20} />
+
+                </div>
+
+                <div>
+
+                  <h2 className="text-lg font-bold text-gray-900">
+                    QR Payment Details
+                  </h2>
+
+                  <p className="text-xs text-gray-500">
+                    Complete client payment information
+                  </p>
+
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedPayment(null)
+                }
+                className="flex h-9 w-9 items-center justify-center border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+              >
+
+                <X size={18} />
+
+              </button>
+
+            </div>
+
+            <div className="p-5 sm:p-6">
+
+              {/* PAYMENT SUMMARY */}
+
+              <div className="mb-6 border border-emerald-200 bg-emerald-50 p-5">
+
+                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+
+                  <div>
+
+                    <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">
+                      Payment Status
+                    </p>
+
+                    <span
+                      className={`mt-2 inline-flex border px-3 py-1.5 text-xs font-bold ${getPaymentStatusClass(
+                        selectedPayment.paymentStatus
+                      )}`}
+                    >
+                      {selectedPayment.paymentStatus ||
+                        "PENDING"}
+                    </span>
+
+                  </div>
+
+                  <div className="sm:text-right">
+
+                    <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">
+                      Total Amount
+                    </p>
+
+                    <div className="mt-1 flex items-center gap-1 sm:justify-end">
+
+                      <IndianRupee size={19} />
+
+                      <p className="text-2xl font-bold text-emerald-900">
+
+                        {Number(
+                          selectedPayment.amount
+                        ).toLocaleString("en-IN")}
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* CLIENT INFORMATION */}
+
+              <div className="mb-6">
+
+                <div className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
+
+                  <Users size={17} />
+
+                  <h3 className="text-sm font-bold">
+                    Client Information
+                  </h3>
+
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                  <div className="border border-gray-200 p-4">
+
+                    <div className="flex items-center gap-2 text-gray-500">
+
+                      <Users size={15} />
+
+                      <p className="text-xs">
+                        Client Name
+                      </p>
+
+                    </div>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {selectedPayment.clientName ||
+                        "—"}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4">
+
+                    <div className="flex items-center gap-2 text-gray-500">
+
+                      <Smartphone size={15} />
+
+                      <p className="text-xs">
+                        Client Phone
+                      </p>
+
+                    </div>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {selectedPayment.clientPhone ||
+                        "—"}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4 sm:col-span-2">
+
+                    <div className="flex items-center gap-2 text-gray-500">
+
+                      <Mail size={15} />
+
+                      <p className="text-xs">
+                        Client Email
+                      </p>
+
+                    </div>
+
+                    <p className="mt-2 break-all text-sm font-semibold text-gray-900">
+                      {selectedPayment.clientEmail ||
+                        "—"}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* JOB INFORMATION */}
+
+              <div className="mb-6">
+
+                <div className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
+
+                  <BriefcaseBusiness size={17} />
+
+                  <h3 className="text-sm font-bold">
+                    Job & Worker
+                  </h3>
+
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      Job Title
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {selectedPayment.jobTitle ||
+                        "—"}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      Worker
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {selectedPayment.workerName ||
+                        "Not assigned"}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* PAYMENT INFORMATION */}
+
+              <div className="mb-6">
+
+                <div className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
+
+                  <CreditCard size={17} />
+
+                  <h3 className="text-sm font-bold">
+                    Payment Information
+                  </h3>
+
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      Payment Method
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {selectedPayment.paymentMethod ||
+                        "QR"}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      UTR Number
+                    </p>
+
+                    <p className="mt-2 break-all font-mono text-sm font-bold text-gray-900">
+                      {selectedPayment.utrNumber ||
+                        "—"}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      Payment Created
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {formatDate(
+                        selectedPayment.createdAt
+                      )}
+                    </p>
+
+                  </div>
+
+                  <div className="border border-gray-200 p-4">
+
+                    <p className="text-xs text-gray-500">
+                      Verified At
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-gray-900">
+                      {formatDate(
+                        selectedPayment.verifiedAt
+                      )}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* PAYMENT DISTRIBUTION */}
+
+              <div className="mb-6">
+
+                <div className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2">
+
+                  <Wallet size={17} />
+
+                  <h3 className="text-sm font-bold">
+                    Payment Distribution
+                  </h3>
+
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+                  {/* COMMISSION */}
+
+                  <div className="border border-emerald-200 bg-emerald-50 p-4">
+
+                    <p className="text-xs font-medium text-emerald-700">
+                      JobHIR Commission
+                    </p>
+
+                    <p className="mt-2 text-xl font-bold text-emerald-900">
+                      {formatMoney(
+                        selectedPayment.commissionAmount
+                      )}
+                    </p>
+
+                    <p className="mt-1 text-xs text-emerald-700">
+
+                      {selectedPayment.commissionRate ??
+                        10}
+                      %
+
+                    </p>
+
+                  </div>
+
+                  {/* WORKER */}
+
+                  <div className="border border-gray-200 bg-gray-50 p-4">
+
+                    <p className="text-xs font-medium text-gray-600">
+                      Worker Share
+                    </p>
+
+                    <p className="mt-2 text-xl font-bold text-gray-900">
+                      {formatMoney(
+                        selectedPayment.workerAmount
+                      )}
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-500">
+                      90%
+                    </p>
+
+                  </div>
+
+                  {/* PAYOUT */}
+
+                  <div className="border border-gray-200 bg-gray-50 p-4">
+
+                    <p className="text-xs font-medium text-gray-600">
+                      Worker Payout
+                    </p>
+
+                    <span
+                      className={`mt-2 inline-flex border px-2.5 py-1 text-xs font-semibold ${getPayoutStatusClass(
+                        selectedPayment.workerPayoutStatus
+                      )}`}
+                    >
+                      {selectedPayment.workerPayoutStatus ||
+                        "PENDING"}
+                    </span>
+
+                    {selectedPayment.workerPaidAt && (
+
+                      <p className="mt-2 text-[11px] text-gray-500">
+                        Paid:{" "}
+                        {formatDate(
+                          selectedPayment.workerPaidAt
+                        )}
+                      </p>
+
+                    )}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* PAYMENT ID */}
+
+              <div className="mb-6 border border-gray-200 bg-gray-50 p-4">
+
+                <p className="text-xs text-gray-500">
+                  Payment ID
+                </p>
+
+                <p className="mt-1 break-all font-mono text-xs text-gray-700">
+                  {selectedPayment._id || "—"}
+                </p>
+
+                {selectedPayment.jobId && (
+
+                  <>
+
+                    <p className="mt-4 text-xs text-gray-500">
+                      Job ID
+                    </p>
+
+                    <p className="mt-1 break-all font-mono text-xs text-gray-700">
+                      {selectedPayment.jobId}
+                    </p>
+
+                  </>
+
+                )}
+
+              </div>
+
+              {/* CLOSE */}
+
+              <div className="flex justify-end border-t border-gray-200 pt-5">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedPayment(null)
+                  }
+                  className="flex items-center gap-2 bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-gray-800"
+                >
+
+                  <X size={16} />
+
+                  Close
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
   );
 };
 
 export default Dashboard;
-
