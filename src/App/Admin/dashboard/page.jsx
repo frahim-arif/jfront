@@ -1,7 +1,71 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  RefreshCw,
+  LogOut,
+  Users,
+  BriefcaseBusiness,
+  CreditCard,
+  Wallet,
+  BadgeCheck,
+  Clock3,
+  Ban,
+  UserCheck,
+  UserPlus,
+  ShieldCheck,
+  IndianRupee,
+  TrendingUp,
+  Banknote,
+  ClipboardList,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 
 const API_URL = "https://jbackend-h963.onrender.com";
+
+const formatMoney = (value) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0));
+
+const StatCard = ({ icon: Icon, title, value, subtitle, iconClass = "" }) => (
+  <div className="border border-slate-200 bg-white p-5 shadow-sm rounded-none">
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <p className="mt-2 text-2xl font-bold text-slate-900">{value}</p>
+        {subtitle && (
+          <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
+        )}
+      </div>
+
+      <div
+        className={`flex h-11 w-11 shrink-0 items-center justify-center border border-slate-200 bg-slate-50 ${iconClass}`}
+      >
+        <Icon size={21} />
+      </div>
+    </div>
+  </div>
+);
+
+const SectionTitle = ({ icon: Icon, title, subtitle }) => (
+  <div className="mb-5 flex items-center justify-between gap-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center border border-slate-200 bg-white">
+        <Icon size={19} className="text-slate-700" />
+      </div>
+
+      <div>
+        <h2 className="text-lg font-bold text-slate-900">{title}</h2>
+        {subtitle && (
+          <p className="text-xs text-slate-500">{subtitle}</p>
+        )}
+      </div>
+    </div>
+  </div>
+);
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -10,75 +74,46 @@ export default function AdminDashboard() {
   const [revenue, setRevenue] = useState(null);
 
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
 
-  // =====================================================
-  // ADMIN USER
-  // =====================================================
-
-  let adminUser = {};
-
-  try {
-    adminUser = JSON.parse(
-      localStorage.getItem("adminUser") || "{}"
+  const fetchDashboard = async (isRefresh = false) => {
+    const token = localStorage.getItem("adminToken");
+    const adminUser = JSON.parse(
+      localStorage.getItem("adminUser") || "null"
     );
-  } catch {
-    adminUser = {};
-  }
 
-  // =====================================================
-  // FORMAT MONEY
-  // =====================================================
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
 
-  const formatMoney = (value) => {
-    const amount = Number(value) || 0;
+    if (adminUser?.role === "dimapur_admin") {
+      navigate("/admin/dimapur");
+      return;
+    }
 
-    return `₹${amount.toLocaleString("en-IN")}`;
-  };
-
-  // =====================================================
-  // FETCH DASHBOARD
-  // =====================================================
-
-  const fetchDashboard = async () => {
     try {
-      setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("adminToken");
-
-      if (!token) {
-        navigate("/admin/login");
-        return;
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
       }
 
       const headers = {
         Authorization: `Bearer ${token}`,
       };
 
-      // -----------------------------------------------
-      // FETCH WORKER STATS + REVENUE
-      // -----------------------------------------------
-
-      const [statsResponse, revenueResponse] =
-        await Promise.all([
-          fetch(`${API_URL}/admin/stats`, {
-            method: "GET",
-            headers,
-          }),
-
-          fetch(`${API_URL}/admin/revenue`, {
-            method: "GET",
-            headers,
-          }),
-        ]);
-
-      const statsData = await statsResponse.json();
-      const revenueData = await revenueResponse.json();
-
-      // -----------------------------------------------
-      // AUTH ERROR
-      // -----------------------------------------------
+      const [statsResponse, revenueResponse] = await Promise.all([
+        fetch(`${API_URL}/admin/stats`, {
+          headers,
+        }),
+        fetch(`${API_URL}/admin/revenue`, {
+          headers,
+        }),
+      ]);
 
       if (
         statsResponse.status === 401 ||
@@ -88,966 +123,683 @@ export default function AdminDashboard() {
       ) {
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminUser");
-
         navigate("/admin/login");
         return;
       }
 
-      // -----------------------------------------------
-      // STATS ERROR
-      // -----------------------------------------------
+      const statsData = await statsResponse.json();
+      const revenueData = await revenueResponse.json();
 
-      if (!statsResponse.ok || !statsData.success) {
+      if (!statsResponse.ok) {
         throw new Error(
-          statsData.message ||
-            "Failed to load worker statistics"
+          statsData?.message || "Failed to load worker statistics"
         );
       }
 
-      // -----------------------------------------------
-      // REVENUE ERROR
-      // -----------------------------------------------
-
-      if (!revenueResponse.ok || !revenueData.success) {
+      if (!revenueResponse.ok) {
         throw new Error(
-          revenueData.message ||
-            "Failed to load revenue statistics"
+          revenueData?.message || "Failed to load revenue statistics"
         );
       }
 
-      setStats(statsData.stats);
-      setRevenue(revenueData);
-    } catch (err) {
-      console.error(
-        "GLOBAL ADMIN DASHBOARD ERROR:",
-        err
+      setStats(statsData?.stats || statsData?.data || statsData);
+      setRevenue(
+        revenueData?.revenue ||
+          revenueData?.data ||
+          revenueData
       );
+    } catch (err) {
+      console.error("ADMIN DASHBOARD ERROR:", err);
 
       setError(
-        err.message ||
-          "Dashboard load nahi ho saka."
+        err?.message ||
+          "Dashboard data load nahi ho saka. Please try again."
       );
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  // =====================================================
-  // INITIAL LOAD
-  // =====================================================
-
   useEffect(() => {
-    fetchDashboard();
-  }, []);
+    const token = localStorage.getItem("adminToken");
+    const adminUser = JSON.parse(
+      localStorage.getItem("adminUser") || "null"
+    );
 
-  // =====================================================
-  // LOGOUT
-  // =====================================================
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+
+    if (adminUser?.role === "dimapur_admin") {
+      navigate("/admin/dimapur");
+      return;
+    }
+
+    fetchDashboard();
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminUser");
-
     navigate("/admin/login");
   };
 
-  // =====================================================
-  // LOADING
-  // =====================================================
+  const adminUser = JSON.parse(
+    localStorage.getItem("adminUser") || "null"
+  );
+
+  const workerStats = stats || {};
+  const revenueData = revenue || {};
+
+  const jobs = revenueData.jobs || {};
+  const payment = revenueData.payment || {};
+  const commission = revenueData.commission || {};
+  const workerShare = revenueData.workerShare || {};
+  const workerPayout = revenueData.workerPayout || {};
+
+  const monthlyBreakdown = Array.isArray(
+    revenueData.monthlyBreakdown
+  )
+    ? revenueData.monthlyBreakdown
+    : [];
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
-        <div className="bg-white border border-slate-200 shadow-sm p-8 text-center">
-          <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <div className="min-h-screen bg-slate-50">
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">
+                JobHIR Admin
+              </h1>
+              <p className="text-sm text-slate-500">
+                Global Worker Management Dashboard
+              </p>
+            </div>
+          </div>
+        </header>
 
-          <p className="text-slate-600 font-medium">
-            Loading Global Admin Dashboard...
-          </p>
-        </div>
+        <main className="mx-auto flex max-w-7xl items-center justify-center px-4 py-20">
+          <div className="flex items-center gap-3 text-slate-600">
+            <RefreshCw className="animate-spin" size={20} />
+            <span>Dashboard loading...</span>
+          </div>
+        </main>
       </div>
     );
   }
 
-  // =====================================================
-  // RETURN
-  // =====================================================
-
   return (
-    <div className="min-h-screen bg-slate-100">
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <header className="bg-slate-900 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
-            <div>
-              <h1 className="text-2xl font-bold">
-                JobHIR Admin
-              </h1>
-
-              <p className="text-sm text-slate-400 mt-1">
-                Global Worker, Jobs & Revenue Dashboard
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-
-              <div className="hidden sm:block text-right">
-                <p className="text-sm text-slate-400">
-                  Logged in as
-                </p>
-
-                <p className="font-semibold">
-                  {adminUser?.username || "Admin"}
-                </p>
-              </div>
-
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-semibold transition"
-              >
-                Logout
-              </button>
-
-            </div>
+    <div className="min-h-screen bg-slate-50">
+      {/* HEADER */}
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-xl font-bold text-slate-900">
+              JobHIR Admin
+            </h1>
+            <p className="text-sm text-slate-500">
+              Global Worker Management Dashboard
+            </p>
           </div>
 
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden border border-slate-200 bg-slate-50 px-3 py-2 text-sm sm:block">
+              <span className="text-slate-500">Admin: </span>
+              <span className="font-semibold text-slate-800">
+                {adminUser?.username || "Admin"}
+              </span>
+            </div>
+
+            <button
+              onClick={() => fetchDashboard(true)}
+              disabled={refreshing}
+              className="flex items-center gap-2 border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <RefreshCw
+                size={16}
+                className={refreshing ? "animate-spin" : ""}
+              />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+            >
+              <LogOut size={16} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* =================================================
-          CONTENT
-      ================================================= */}
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-
-        {/* =================================================
-            ERROR
-        ================================================= */}
-
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        {/* ERROR */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 p-4">
-
-            <p className="font-semibold">
-              Dashboard Error
-            </p>
-
-            <p className="text-sm mt-1">
-              {error}
-            </p>
-
-            <button
-              onClick={fetchDashboard}
-              className="mt-3 bg-red-600 text-white px-4 py-2 text-sm font-semibold hover:bg-red-700"
-            >
-              Try Again
-            </button>
-
+          <div className="mb-6 flex items-start gap-3 border border-red-200 bg-red-50 p-4 text-red-700 rounded-none">
+            <AlertCircle className="mt-0.5 shrink-0" size={19} />
+            <div>
+              <p className="font-semibold">Dashboard Error</p>
+              <p className="mt-1 text-sm">{error}</p>
+            </div>
           </div>
         )}
 
-        {/* =================================================
-            PAGE TITLE
-        ================================================= */}
-
-        <div className="mb-6">
-
-          <h2 className="text-2xl font-bold text-slate-900">
-            Global Dashboard
-          </h2>
-
-          <p className="text-slate-500 mt-1">
-            JobHIR ke workers, jobs, client payments,
-            commission aur worker payouts ka complete
-            global overview.
-          </p>
-
-        </div>
-
-        {/* =================================================
+        {/* =========================================================
             WORKER OVERVIEW
-        ================================================= */}
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={Users}
+            title="Worker Overview"
+            subtitle="Global worker registration and account status"
+          />
 
-        <section>
-
-          <div className="mb-4">
-            <h3 className="text-xl font-bold text-slate-900">
-              Worker Overview
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              All states aur districts ke registered workers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-            {/* TOTAL WORKERS */}
-
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <StatCard
+              icon={Users}
               title="Total Workers"
-              value={stats?.totalWorkers ?? 0}
-              description="All registered workers"
+              value={workerStats.totalWorkers || 0}
             />
 
-            {/* PAID WORKERS */}
-
             <StatCard
+              icon={CreditCard}
               title="Paid Workers"
-              value={stats?.paidWorkers ?? 0}
-              valueClass="text-green-600"
-              description="Registration payment completed"
+              value={workerStats.paidWorkers || 0}
             />
 
-            {/* PENDING PAYMENT */}
-
             <StatCard
+              icon={Clock3}
               title="Pending Payment"
-              value={stats?.pendingPayment ?? 0}
-              valueClass="text-orange-500"
-              description="Registration payment pending"
+              value={workerStats.pendingPayment || 0}
             />
 
-            {/* ACTIVE */}
-
             <StatCard
+              icon={UserCheck}
               title="Active Workers"
-              value={stats?.activeWorkers ?? 0}
-              valueClass="text-blue-600"
-              description="Currently active accounts"
+              value={workerStats.activeWorkers || 0}
             />
 
-            {/* PENDING */}
-
             <StatCard
+              icon={UserPlus}
               title="Pending Accounts"
-              value={stats?.pendingWorkers ?? 0}
-              valueClass="text-yellow-600"
-              description="Waiting for approval"
+              value={workerStats.pendingWorkers || 0}
             />
 
-            {/* BLOCKED */}
-
             <StatCard
+              icon={Ban}
               title="Blocked Workers"
-              value={stats?.blockedWorkers ?? 0}
-              valueClass="text-red-600"
-              description="Blocked accounts"
+              value={workerStats.blockedWorkers || 0}
             />
-
           </div>
-
         </section>
 
-        {/* =================================================
+        {/* =========================================================
             VERIFICATION
-        ================================================= */}
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={ShieldCheck}
+            title="Worker Verification"
+            subtitle="KYC and skill verification overview"
+          />
 
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Worker Verification
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              KYC, skill aur experience verification overview.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard
+              icon={Clock3}
               title="Pending Verification"
-              value={stats?.pendingVerification ?? 0}
-              valueClass="text-orange-500"
-              description="Workers waiting for review"
+              value={workerStats.pendingVerification || 0}
             />
 
             <StatCard
+              icon={TrendingUp}
               title="Under Review"
-              value={stats?.underReview ?? 0}
-              valueClass="text-blue-600"
-              description="Verification in progress"
+              value={workerStats.underReview || 0}
             />
 
             <StatCard
+              icon={BadgeCheck}
               title="Verified Workers"
-              value={stats?.verifiedWorkers ?? 0}
-              valueClass="text-green-600"
-              description="Successfully verified"
+              value={workerStats.verifiedWorkers || 0}
             />
 
             <StatCard
+              icon={AlertCircle}
               title="Need More Information"
-              value={stats?.needMoreInformation ?? 0}
-              valueClass="text-yellow-600"
-              description="Additional information required"
+              value={workerStats.needMoreInformation || 0}
             />
 
-          </div>
-
-        </section>
-
-        {/* =================================================
-            SKILL OVERVIEW
-        ================================================= */}
-
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Worker Skill Overview
-            </h3>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <StatCard
+              icon={Ban}
+              title="Rejected"
+              value={workerStats.rejectedWorkers || 0}
+            />
 
             <StatCard
+              icon={BadgeCheck}
               title="Expert"
-              value={stats?.expertWorkers ?? 0}
-              valueClass="text-purple-600"
-              description="Expert level workers"
+              value={workerStats.expertWorkers || 0}
             />
 
             <StatCard
+              icon={UserCheck}
               title="Skilled"
-              value={stats?.skilledWorkers ?? 0}
-              valueClass="text-indigo-600"
-              description="Skilled workers"
+              value={workerStats.skilledWorkers || 0}
             />
 
             <StatCard
-              title="Semi-Skilled"
-              value={stats?.semiSkilledWorkers ?? 0}
-              valueClass="text-blue-600"
-              description="Semi-skilled workers"
+              icon={ShieldCheck}
+              title="KYC Verified"
+              value={workerStats.kycVerifiedWorkers || 0}
             />
-
-            <StatCard
-              title="Helpers"
-              value={stats?.helperWorkers ?? 0}
-              valueClass="text-slate-600"
-              description="Helper level workers"
-            />
-
           </div>
-
         </section>
 
-        {/* =================================================
-            JOB OVERVIEW
-        ================================================= */}
+        {/* =========================================================
+            GLOBAL WORK OVERVIEW
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={BriefcaseBusiness}
+            title="Global Work Overview"
+            subtitle="All jobs across JobHIR"
+          />
 
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Global Work Overview
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              JobHIR par posted aur assigned jobs ka overview.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <StatCard
+              icon={BriefcaseBusiness}
               title="Total Jobs"
-              value={
-                revenue?.jobs?.totalJobs ?? 0
-              }
-              valueClass="text-blue-600"
-              description="All posted jobs"
+              value={jobs.totalJobs || 0}
             />
 
             <StatCard
+              icon={UserCheck}
               title="Assigned Jobs"
-              value={
-                revenue?.jobs?.assignedJobs ?? 0
-              }
-              valueClass="text-indigo-600"
-              description="Worker assigned"
+              value={jobs.assignedJobs || 0}
             />
 
             <StatCard
+              icon={Clock3}
               title="Working Jobs"
-              value={
-                revenue?.jobs?.workingJobs ?? 0
-              }
-              valueClass="text-orange-500"
-              description="Currently working"
+              value={jobs.workingJobs || 0}
             />
 
             <StatCard
+              icon={CheckCircle2}
               title="Completed Jobs"
-              value={
-                revenue?.jobs?.completedJobs ?? 0
-              }
-              valueClass="text-green-600"
-              description="Completed work"
+              value={jobs.completedJobs || 0}
             />
 
-            <MoneyCard
+            <StatCard
+              icon={IndianRupee}
               title="Total Job Value"
-              value={
-                revenue?.jobs?.totalJobValue ?? 0
-              }
-              description="Total posted job value"
+              value={formatMoney(jobs.totalJobValue)}
             />
-
           </div>
-
         </section>
 
-        {/* =================================================
+        {/* =========================================================
             CLIENT PAYMENT
-        ================================================= */}
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={CreditCard}
+            title="Client Payment"
+            subtitle="Verified client payments received through JobHIR"
+          />
 
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Client Payment
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              Client se receive hui actual job payments.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-            <MoneyCard
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={CreditCard}
               title="Total Client Payment"
-              value={
-                revenue?.payment?.total ?? 0
-              }
-              description="All verified client payments"
+              value={formatMoney(payment.total)}
+              subtitle="All verified payments"
             />
 
-            <MoneyCard
+            <StatCard
+              icon={TrendingUp}
               title="This Month"
-              value={
-                revenue?.payment?.thisMonth ?? 0
-              }
-              valueClass="text-blue-600"
-              description="Verified payment this month"
+              value={formatMoney(payment.thisMonth)}
             />
 
-            <MoneyCard
+            <StatCard
+              icon={Banknote}
               title="This Year"
-              value={
-                revenue?.payment?.thisYear ?? 0
-              }
-              valueClass="text-indigo-600"
-              description="Verified payment this year"
+              value={formatMoney(payment.thisYear)}
             />
 
-            <MoneyCard
+            <StatCard
+              icon={Clock3}
               title="Pending Payment"
-              value={
-                revenue?.payment?.pending ?? 0
-              }
-              valueClass="text-orange-500"
-              description={
-                `${revenue?.payment?.pendingCount ?? 0} pending payment(s)`
-              }
+              value={formatMoney(payment.pending)}
+              subtitle={`${payment.pendingCount || 0} pending payment(s)`}
             />
-
           </div>
-
         </section>
 
-        {/* =================================================
+        {/* =========================================================
             JOBHIR COMMISSION
-        ================================================= */}
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={TrendingUp}
+            title="JobHIR Commission"
+            subtitle="Platform commission from verified client payments"
+          />
 
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              JobHIR Commission
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              Verified client payment par JobHIR commission.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-            <MoneyCard
-              title="Commission Rate"
-              value={`${revenue?.commission?.rate ?? 10}%`}
-              description="Current JobHIR commission"
-              showRupee={false}
-            />
-
-            <MoneyCard
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={IndianRupee}
               title="Total Commission"
-              value={
-                revenue?.commission?.total ?? 0
-              }
-              valueClass="text-green-600"
-              description="Total JobHIR earnings"
+              value={formatMoney(commission.total)}
+              subtitle="JobHIR total revenue"
             />
 
-            <MoneyCard
+            <StatCard
+              icon={TrendingUp}
               title="This Month"
-              value={
-                revenue?.commission?.thisMonth ?? 0
-              }
-              valueClass="text-blue-600"
-              description="Commission this month"
+              value={formatMoney(commission.thisMonth)}
             />
 
-            <MoneyCard
+            <StatCard
+              icon={Banknote}
               title="This Year"
-              value={
-                revenue?.commission?.thisYear ?? 0
-              }
-              valueClass="text-indigo-600"
-              description="Commission this year"
+              value={formatMoney(commission.thisYear)}
             />
 
+            <StatCard
+              icon={BadgeCheck}
+              title="Commission Rate"
+              value={`${commission.rate ?? 10}%`}
+              subtitle="Current platform commission"
+            />
           </div>
-
         </section>
 
-        {/* =================================================
-            WORKER SHARE
-        ================================================= */}
+        {/* =========================================================
+            WORKER SHARE / PAYOUT
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={Wallet}
+            title="Worker Share & Payout"
+            subtitle="90% worker share and payout tracking"
+          />
 
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Worker Share
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              Verified client payment me worker ka 90% share.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-            <MoneyCard
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <StatCard
+              icon={Wallet}
               title="Total Worker Share"
-              value={
-                revenue?.workerShare?.total ?? 0
-              }
-              valueClass="text-green-600"
-              description="Total amount allocated to workers"
+              value={formatMoney(workerShare.total)}
+              subtitle="Total worker earnings"
             />
 
-            <MoneyCard
-              title="Worker Share This Month"
-              value={
-                revenue?.workerShare?.thisMonth ?? 0
-              }
-              valueClass="text-blue-600"
-              description="Worker share this month"
+            <StatCard
+              icon={TrendingUp}
+              title="This Month"
+              value={formatMoney(workerShare.thisMonth)}
             />
 
-            <MoneyCard
-              title="Worker Share This Year"
-              value={
-                revenue?.workerShare?.thisYear ?? 0
-              }
-              valueClass="text-indigo-600"
-              description="Worker share this year"
+            <StatCard
+              icon={Banknote}
+              title="This Year"
+              value={formatMoney(workerShare.thisYear)}
             />
 
-          </div>
-
-        </section>
-
-        {/* =================================================
-            WORKER PAYOUT
-        ================================================= */}
-
-        <section className="mt-8">
-
-          <div className="mb-4">
-
-            <h3 className="text-xl font-bold text-slate-900">
-              Worker Payout
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              Workers ko actual payout ka overview.
-            </p>
-
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-            <MoneyCard
+            <StatCard
+              icon={CheckCircle2}
               title="Worker Paid"
-              value={
-                revenue?.workerPayout?.paid ?? 0
-              }
-              valueClass="text-green-600"
-              description={
-                `${revenue?.workerPayout?.paidCount ?? 0} payout(s) completed`
-              }
+              value={formatMoney(workerPayout.paid)}
+              subtitle={`${workerPayout.paidCount || 0} payout(s)`}
             />
 
-            <MoneyCard
-              title="Worker Pending"
-              value={
-                revenue?.workerPayout?.pending ?? 0
-              }
-              valueClass="text-orange-500"
-              description={
-                `${revenue?.workerPayout?.pendingCount ?? 0} payout(s) pending`
-              }
+            <StatCard
+              icon={Clock3}
+              title="Worker Payout Pending"
+              value={formatMoney(workerPayout.pending)}
+              subtitle={`${workerPayout.pendingCount || 0} payout(s)`}
             />
-
-            <MoneyCard
-              title="Worker Share"
-              value={
-                revenue?.workerShare?.total ?? 0
-              }
-              valueClass="text-blue-600"
-              description="Total worker allocation"
-            />
-
-            <MoneyCard
-              title="JobHIR Earnings"
-              value={
-                revenue?.commission?.total ?? 0
-              }
-              valueClass="text-green-600"
-              description="Total commission"
-            />
-
           </div>
-
         </section>
 
-        {/* =================================================
-            MONTHLY REPORT
-        ================================================= */}
+        {/* =========================================================
+            MONTHLY REVENUE REPORT
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={ClipboardList}
+            title="Monthly Revenue Report"
+            subtitle="Client payment, JobHIR commission and worker share"
+          />
 
-        <section className="mt-8">
+          <div className="overflow-hidden border border-slate-200 bg-white rounded-none shadow-sm">
+            {monthlyBreakdown.length === 0 ? (
+              <div className="px-6 py-12 text-center">
+                <ClipboardList
+                  size={34}
+                  className="mx-auto text-slate-300"
+                />
 
-          <div className="mb-4">
+                <p className="mt-3 font-semibold text-slate-700">
+                  No monthly revenue data
+                </p>
 
-            <h3 className="text-xl font-bold text-slate-900">
-              Monthly Revenue Report
-            </h3>
-
-            <p className="text-sm text-slate-500 mt-1">
-              Current year ka client payment, commission aur worker share.
-            </p>
-
-          </div>
-
-          <div className="bg-white border border-slate-200 shadow-sm overflow-hidden">
-
-            {revenue?.monthlyBreakdown?.length ? (
-
-              <div className="overflow-x-auto">
-
-                <table className="w-full text-sm">
-
-                  <thead className="bg-slate-900 text-white">
-
-                    <tr>
-
-                      <th className="text-left px-4 py-4">
-                        Month
-                      </th>
-
-                      <th className="text-right px-4 py-4">
-                        Client Payment
-                      </th>
-
-                      <th className="text-right px-4 py-4">
-                        JobHIR Commission
-                      </th>
-
-                      <th className="text-right px-4 py-4">
-                        Worker Share
-                      </th>
-
-                    </tr>
-
-                  </thead>
-
-                  <tbody>
-
-                    {revenue.monthlyBreakdown.map(
-                      (item, index) => (
-                        <tr
-                          key={`${item.month}-${index}`}
-                          className="border-t border-slate-200 hover:bg-slate-50"
-                        >
-
-                          <td className="px-4 py-4 font-semibold text-slate-900">
-                            {item.month || "-"}
-                          </td>
-
-                          <td className="px-4 py-4 text-right font-semibold">
-                            {formatMoney(
-                              item.payment
-                            )}
-                          </td>
-
-                          <td className="px-4 py-4 text-right font-semibold text-green-600">
-                            {formatMoney(
-                              item.commission
-                            )}
-                          </td>
-
-                          <td className="px-4 py-4 text-right font-semibold text-blue-600">
-                            {formatMoney(
-                              item.workerAmount
-                            )}
-                          </td>
-
-                        </tr>
-                      )
-                    )}
-
-                  </tbody>
-
-                </table>
-
+                <p className="mt-1 text-sm text-slate-500">
+                  Verified client payments ke baad monthly report yahan
+                  show hoga.
+                </p>
               </div>
-
             ) : (
+              <>
+                {/* Desktop Table */}
+                <div className="hidden overflow-x-auto md:block">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-200 bg-slate-50">
+                        <th className="px-5 py-4 text-left font-semibold text-slate-700">
+                          Month
+                        </th>
 
-              <div className="p-8 text-center">
+                        <th className="px-5 py-4 text-right font-semibold text-slate-700">
+                          Client Payment
+                        </th>
 
-                <p className="font-semibold text-slate-700">
-                  No revenue data available
-                </p>
+                        <th className="px-5 py-4 text-right font-semibold text-slate-700">
+                          JobHIR Commission
+                        </th>
 
-                <p className="text-sm text-slate-500 mt-1">
-                  Client payments add hone ke baad monthly
-                  report yahan show hogi.
-                </p>
+                        <th className="px-5 py-4 text-right font-semibold text-slate-700">
+                          Worker Share
+                        </th>
+                      </tr>
+                    </thead>
 
-              </div>
+                    <tbody>
+                      {monthlyBreakdown.map((item, index) => (
+                        <tr
+                          key={`${item.year}-${item.month}-${index}`}
+                          className="border-b border-slate-100 last:border-b-0"
+                        >
+                          <td className="px-5 py-4 font-medium text-slate-800">
+                            {item.monthName} {item.year}
+                          </td>
 
+                          <td className="px-5 py-4 text-right font-semibold text-slate-800">
+                            {formatMoney(item.payment)}
+                          </td>
+
+                          <td className="px-5 py-4 text-right font-semibold text-emerald-700">
+                            {formatMoney(item.commission)}
+                          </td>
+
+                          <td className="px-5 py-4 text-right font-semibold text-blue-700">
+                            {formatMoney(item.workerAmount)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="divide-y divide-slate-100 md:hidden">
+                  {monthlyBreakdown.map((item, index) => (
+                    <div
+                      key={`${item.year}-${item.month}-${index}`}
+                      className="p-5"
+                    >
+                      <div className="mb-4 flex items-center justify-between">
+                        <p className="font-bold text-slate-900">
+                          {item.monthName} {item.year}
+                        </p>
+
+                        <span className="border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-500">
+                          Monthly
+                        </span>
+                      </div>
+
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">
+                            Client Payment
+                          </span>
+
+                          <span className="font-semibold text-slate-800">
+                            {formatMoney(item.payment)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">
+                            JobHIR Commission
+                          </span>
+
+                          <span className="font-semibold text-emerald-700">
+                            {formatMoney(item.commission)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-500">
+                            Worker Share
+                          </span>
+
+                          <span className="font-semibold text-blue-700">
+                            {formatMoney(item.workerAmount)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
-
           </div>
-
         </section>
 
-        {/* =================================================
-            GLOBAL WORKER DIRECTORY
-        ================================================= */}
+        {/* =========================================================
+            WORKER MANAGEMENT
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={Users}
+            title="Worker Management"
+            subtitle="Manage registered workers and verification"
+          />
 
-        <section className="mt-8">
-
-          <div className="bg-white border border-slate-200 shadow-sm p-6">
-
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
+          <div className="border border-slate-200 bg-white p-5 shadow-sm rounded-none">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="font-bold text-slate-900">
                   Global Worker Directory
                 </h3>
 
-                <p className="text-sm text-slate-500 mt-1">
-                  State, district, work type, payment,
-                  verification aur skill ke according workers manage karein.
+                <p className="mt-1 text-sm text-slate-500">
+                  Workers ko view, verify, activate, block aur manage
+                  karein.
                 </p>
-
               </div>
 
               <Link
                 to="/admin/workers"
-                className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 font-semibold transition"
+                className="inline-flex items-center justify-center gap-2 border border-slate-900 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                View All Workers →
+                <Users size={17} />
+                Manage Workers
               </Link>
-
             </div>
-
           </div>
-
         </section>
 
-        {/* =================================================
+        {/* =========================================================
             QUICK ACTIONS
-        ================================================= */}
+        ========================================================= */}
+        <section className="mb-8">
+          <SectionTitle
+            icon={ClipboardList}
+            title="Quick Actions"
+            subtitle="Frequently used admin sections"
+          />
 
-        <section className="mt-8">
-
-          <h3 className="text-xl font-bold text-slate-900 mb-4">
-            Quick Actions
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            {/* WORKERS */}
-
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Link
               to="/admin/workers"
-              className="bg-blue-600 hover:bg-blue-700 text-white p-5 transition"
+              className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-400 rounded-none"
             >
+              <Users size={22} className="text-slate-700" />
 
-              <h4 className="font-bold text-lg">
+              <h3 className="mt-3 font-bold text-slate-900">
                 Manage Workers
-              </h4>
+              </h3>
 
-              <p className="text-sm text-blue-100 mt-1">
-                Sabhi states aur districts ke workers
-                dekhein aur manage karein.
+              <p className="mt-1 text-sm text-slate-500">
+                Worker accounts aur profiles manage karein.
               </p>
-
             </Link>
-
-            {/* VERIFICATION */}
 
             <Link
               to="/admin/workers?verificationStatus=Pending"
-              className="bg-purple-600 hover:bg-purple-700 text-white p-5 transition"
+              className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-400 rounded-none"
             >
+              <ShieldCheck size={22} className="text-slate-700" />
 
-              <h4 className="font-bold text-lg">
+              <h3 className="mt-3 font-bold text-slate-900">
                 Worker Verification
-              </h4>
+              </h3>
 
-              <p className="text-sm text-purple-100 mt-1">
-                Pending workers ki KYC aur skill
-                verification karein.
+              <p className="mt-1 text-sm text-slate-500">
+                Pending KYC aur skill verification check karein.
               </p>
-
             </Link>
-
-            {/* JOBS */}
 
             <Link
               to="/admin/delete"
-              className="bg-red-600 hover:bg-red-700 text-white p-5 transition"
+              className="border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-400 rounded-none"
             >
+              <BriefcaseBusiness
+                size={22}
+                className="text-slate-700"
+              />
 
-              <h4 className="font-bold text-lg">
+              <h3 className="mt-3 font-bold text-slate-900">
                 Manage Jobs
-              </h4>
+              </h3>
 
-              <p className="text-sm text-red-100 mt-1">
-                Posted jobs dekhein aur manage karein.
+              <p className="mt-1 text-sm text-slate-500">
+                Existing job management section open karein.
               </p>
-
             </Link>
-
           </div>
-
         </section>
 
-        {/* =================================================
-            REFRESH
-        ================================================= */}
-
-        <div className="mt-8 flex justify-end">
-
-          <button
-            onClick={fetchDashboard}
-            className="bg-white border border-slate-300 text-slate-700 px-5 py-2.5 font-semibold hover:bg-slate-50 transition"
-          >
-            Refresh Dashboard
-          </button>
-
+        {/* FOOTER INFO */}
+        <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-400">
+          JobHIR Global Admin Dashboard
         </div>
-
       </main>
-
-    </div>
-  );
-}
-
-// =====================================================
-// STAT CARD
-// =====================================================
-
-function StatCard({
-  title,
-  value,
-  description,
-  valueClass = "text-slate-900",
-}) {
-  return (
-    <div className="bg-white border border-slate-200 shadow-sm p-5">
-
-      <p className="text-sm font-medium text-slate-500">
-        {title}
-      </p>
-
-      <h3
-        className={`text-3xl font-bold mt-2 ${valueClass}`}
-      >
-        {value}
-      </h3>
-
-      <p className="text-xs text-slate-400 mt-2">
-        {description}
-      </p>
-
-    </div>
-  );
-}
-
-// =====================================================
-// MONEY CARD
-// =====================================================
-
-function MoneyCard({
-  title,
-  value,
-  description,
-  valueClass = "text-slate-900",
-  showRupee = true,
-}) {
-  const displayValue =
-    showRupee && typeof value === "number"
-      ? `₹${Number(value || 0).toLocaleString("en-IN")}`
-      : value;
-
-  return (
-    <div className="bg-white border border-slate-200 shadow-sm p-5">
-
-      <p className="text-sm font-medium text-slate-500">
-        {title}
-      </p>
-
-      <h3
-        className={`text-2xl sm:text-3xl font-bold mt-2 ${valueClass}`}
-      >
-        {displayValue}
-      </h3>
-
-      <p className="text-xs text-slate-400 mt-2">
-        {description}
-      </p>
-
     </div>
   );
 }
