@@ -724,12 +724,12 @@ export default function AdminDashboard() {
               </div>
 
               <Link
-                to="/admin/workers"
-                className="inline-flex items-center justify-center gap-2 border border-slate-900 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-              >
-                <Users size={17} />
-                Manage Workers
-              </Link>
+  to="/admin/workers"
+  className="inline-flex items-center justify-center gap-2 border border-slate-900 bg-slate-900 px-5 py-3 text-sm font-semibold !text-white transition hover:bg-slate-800"
+>
+  <Users size={17} className="!text-white" />
+  <span className="!text-white">Manage Workers</span>
+</Link>
             </div>
           </div>
         </section>
