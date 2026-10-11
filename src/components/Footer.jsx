@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -10,6 +11,7 @@ import {
   MessageCircle,
   Building2,
   ChevronDown,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 export default function Footer() {
@@ -44,356 +46,272 @@ export default function Footer() {
   };
 
   return (
-    <footer className="mt-12 w-full border-t border-slate-800 bg-slate-950 text-white">
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <footer className="relative mt-12 w-full overflow-hidden border-t border-emerald-900 bg-[#071c19] text-white">
+      {/* Decorative background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-28 top-0 h-64 w-64 bg-emerald-500/[0.07] blur-3xl" />
+        <div className="absolute -right-28 bottom-0 h-64 w-64 bg-amber-400/[0.05] blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c8ae6a]/70 to-transparent" />
+      </div>
 
-        {/* ==================================================
-            MAIN FOOTER
-        ================================================== */}
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-
-          {/* ==================================================
-              BRAND
-          ================================================== */}
-
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        {/* Main Footer */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+          {/* Brand */}
           <div>
             <Link
               to="/"
-              className="inline-flex items-center gap-3"
+              className="group inline-flex items-center gap-3"
+              aria-label="JobHIR home"
             >
-              <img
-                src="/images/job.png"
-                alt="JobHIR"
-                className="h-11 w-11 rounded-lg object-cover"
-              />
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-[#c8ae6a]/50 bg-white p-1.5 transition duration-300 group-hover:border-[#c8ae6a] group-hover:-translate-y-0.5">
+                <img
+                  src="/images/job.png"
+                  alt="JobHIR"
+                  className="h-full w-full object-contain"
+                />
+              </span>
 
-              <div>
-                <h2 className="text-xl font-black text-white">
-                  JobHIR
-                </h2>
+              <span>
+                <span className="block text-xl font-black tracking-tight text-white">
+                  Job<span className="text-[#c8ae6a]">HIR</span>
+                </span>
 
-                <p className="text-[10px] text-slate-500">
+                <span className="mt-0.5 block text-[10px] font-medium tracking-wide text-emerald-100/60">
                   Find Work. Build Your Future.
-                </p>
-              </div>
+                </span>
+              </span>
             </Link>
 
-            <p className="mt-4 max-w-sm text-xs leading-5 text-slate-400">
-              JobHIR connects skilled workers with genuine job
-              opportunities and helps workers find suitable jobs.
+            <p className="mt-5 max-w-sm text-xs leading-6 text-emerald-50/65">
+              JobHIR connects skilled workers with job opportunities
+              and helps employers find suitable workers across India.
             </p>
 
-            <div className="mt-4 inline-flex items-center gap-2 border border-emerald-500/20 bg-emerald-500/5 px-3 py-1.5">
-              <ShieldCheck
-                size={14}
-                className="text-emerald-400"
-              />
+            <div className="mt-5 inline-flex items-center gap-2 border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-2">
+              <ShieldCheck size={15} className="shrink-0 text-[#c8ae6a]" />
 
-              <span className="text-[10px] font-semibold text-emerald-300">
+              <span className="text-[10px] font-semibold text-emerald-50/85">
                 Secure & Trusted Job Platform
               </span>
             </div>
           </div>
 
-
-          {/* ==================================================
-              CONTACT + HEALTHCARE
-          ================================================== */}
-
+          {/* Contact & Healthcare */}
           <div className="md:col-span-2">
-
-            {/* ==================================================
-                TWO BUTTONS
-            ================================================== */}
-
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
-              {/* ==================================================
-                  CONTACT BUTTON
-              ================================================== */}
-
+              {/* Contact Toggle */}
               <button
                 type="button"
                 onClick={() => setShowContact((prev) => !prev)}
                 aria-expanded={showContact}
-                className="group flex w-full items-center justify-between border border-white/10 bg-white/[0.03] px-4 py-3 text-left transition-all duration-200 hover:border-emerald-500/40 hover:bg-emerald-500/[0.04]"
+                className="group flex w-full items-center justify-between gap-3 border border-white/10 bg-white/[0.025] p-3.5 text-left transition duration-200 hover:border-emerald-400/35 hover:bg-emerald-400/[0.045]"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-emerald-400/20 bg-emerald-400/[0.08]">
+                    <Phone size={17} className="text-emerald-300" />
+                  </span>
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-emerald-500/20 bg-emerald-500/10">
-                    <Phone
-                      size={17}
-                      className="text-emerald-400"
-                    />
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-wider text-white">
+                  <span className="min-w-0">
+                    <span className="block text-xs font-bold uppercase tracking-wider text-white">
                       Contact Us
-                    </p>
+                    </span>
 
-                    <p className="mt-0.5 text-[10px] text-slate-500">
+                    <span className="mt-1 block text-[10px] text-emerald-50/45">
                       Get in touch with JobHIR
-                    </p>
-                  </div>
-                </div>
+                    </span>
+                  </span>
+                </span>
 
                 <ChevronDown
                   size={18}
-                  className={`shrink-0 text-slate-500 transition-transform duration-200 ${
-                    showContact ? "rotate-180 text-emerald-400" : ""
+                  className={`shrink-0 text-emerald-50/45 transition-transform duration-200 ${
+                    showContact ? "rotate-180 text-[#c8ae6a]" : ""
                   }`}
                 />
               </button>
 
-
-              {/* ==================================================
-                  HEALTHCARE BUTTON
-              ================================================== */}
-
+              {/* Healthcare Toggle */}
               <button
                 type="button"
                 onClick={() => setShowHealthcare((prev) => !prev)}
                 aria-expanded={showHealthcare}
-                className="group flex w-full items-center justify-between border border-white/10 bg-white/[0.03] px-4 py-3 text-left transition-all duration-200 hover:border-cyan-500/40 hover:bg-cyan-500/[0.04]"
+                className="group flex w-full items-center justify-between gap-3 border border-white/10 bg-white/[0.025] p-3.5 text-left transition duration-200 hover:border-[#c8ae6a]/40 hover:bg-[#c8ae6a]/[0.04]"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#c8ae6a]/25 bg-[#c8ae6a]/[0.08]">
+                    <Building2 size={17} className="text-[#c8ae6a]" />
+                  </span>
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-cyan-500/20 bg-cyan-500/10">
-                    <Building2
-                      size={17}
-                      className="text-cyan-400"
-                    />
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-wider text-white">
+                  <span className="min-w-0">
+                    <span className="block text-xs font-bold uppercase tracking-wider text-white">
                       Healthcare Recruitment
-                    </p>
+                    </span>
 
-                    <p className="mt-0.5 text-[10px] text-slate-500">
+                    <span className="mt-1 block text-[10px] text-emerald-50/45">
                       Recruitment & job enquiries
-                    </p>
-                  </div>
-                </div>
+                    </span>
+                  </span>
+                </span>
 
                 <ChevronDown
                   size={18}
-                  className={`shrink-0 text-slate-500 transition-transform duration-200 ${
-                    showHealthcare
-                      ? "rotate-180 text-cyan-400"
-                      : ""
+                  className={`shrink-0 text-emerald-50/45 transition-transform duration-200 ${
+                    showHealthcare ? "rotate-180 text-[#c8ae6a]" : ""
                   }`}
                 />
               </button>
-
             </div>
 
-
-            {/* ==================================================
-                CONTACT DETAILS
-            ================================================== */}
-
+            {/* Contact Details */}
             {showContact && (
-              <div className="mt-3 border border-white/10 bg-white/[0.02] p-4">
-
+              <div className="mt-3 border border-white/10 bg-white/[0.025] p-3 sm:p-4">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-
-                  {/* PHONE */}
-
                   <a
                     href="tel:+917002298053"
-                    className="flex items-center gap-3 border border-white/10 bg-white/[0.02] px-3 py-2.5 transition hover:border-emerald-500/30 hover:bg-white/[0.04]"
+                    className="flex min-w-0 items-center gap-3 border border-white/[0.08] p-3 transition hover:border-emerald-400/30 hover:bg-white/[0.035]"
                   >
-                    <Phone
-                      size={15}
-                      className="shrink-0 text-emerald-400"
-                    />
+                    <Phone size={16} className="shrink-0 text-emerald-300" />
 
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-wide text-slate-600">
+                    <span className="min-w-0">
+                      <span className="block text-[9px] uppercase tracking-wider text-emerald-50/40">
                         Phone
-                      </p>
+                      </span>
 
-                      <p className="text-xs font-semibold text-slate-300">
+                      <span className="mt-1 block text-xs font-semibold text-white/85">
                         +91 70022 98053
-                      </p>
-                    </div>
+                      </span>
+                    </span>
                   </a>
-
-
-                  {/* EMAIL */}
 
                   <a
                     href="mailto:support@jobhir.com"
-                    className="flex items-center gap-3 border border-white/10 bg-white/[0.02] px-3 py-2.5 transition hover:border-cyan-500/30 hover:bg-white/[0.04]"
+                    className="flex min-w-0 items-center gap-3 border border-white/[0.08] p-3 transition hover:border-[#c8ae6a]/30 hover:bg-white/[0.035]"
                   >
-                    <Mail
-                      size={15}
-                      className="shrink-0 text-cyan-400"
-                    />
+                    <Mail size={16} className="shrink-0 text-[#c8ae6a]" />
 
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-wide text-slate-600">
+                    <span className="min-w-0">
+                      <span className="block text-[9px] uppercase tracking-wider text-emerald-50/40">
                         Email
-                      </p>
+                      </span>
 
-                      <p className="truncate text-xs font-semibold text-slate-300">
+                      <span className="mt-1 block truncate text-xs font-semibold text-white/85">
                         support@jobhir.com
-                      </p>
-                    </div>
+                      </span>
+                    </span>
                   </a>
 
+                  <div className="flex items-center gap-3 border border-white/[0.08] p-3 sm:col-span-2">
+                    <MapPin size={16} className="shrink-0 text-emerald-300" />
 
-                  {/* LOCATION */}
-
-                  <div className="flex items-center gap-3 border border-white/10 bg-white/[0.02] px-3 py-2.5 sm:col-span-2">
-                    <MapPin
-                      size={15}
-                      className="shrink-0 text-emerald-400"
-                    />
-
-                    <div>
-                      <p className="text-[9px] uppercase tracking-wide text-slate-600">
+                    <span>
+                      <span className="block text-[9px] uppercase tracking-wider text-emerald-50/40">
                         Location
-                      </p>
+                      </span>
 
-                      <p className="text-xs font-semibold text-slate-300">
+                      <span className="mt-1 block text-xs font-semibold text-white/85">
                         Assam, India
-                      </p>
-                    </div>
+                      </span>
+                    </span>
                   </div>
-
                 </div>
               </div>
             )}
 
-
-            {/* ==================================================
-                HEALTHCARE DETAILS
-            ================================================== */}
-
+            {/* Healthcare Details */}
             {showHealthcare && (
-              <div className="mt-3 border border-white/10 bg-white/[0.02] p-4">
-
-                <p className="mb-4 text-[11px] leading-5 text-slate-500">
+              <div className="mt-3 border border-white/10 bg-white/[0.025] p-3 sm:p-4">
+                <p className="mb-4 text-[11px] leading-5 text-emerald-50/55">
                   For healthcare job availability and recruitment
                   enquiries, contact our recruitment team.
                 </p>
 
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-
                   {recruitmentContacts.map((contact) => (
                     <div
                       key={contact.phone}
-                      className="flex items-center justify-between gap-2 border border-white/10 bg-white/[0.02] px-3 py-2.5"
+                      className="flex min-w-0 items-center justify-between gap-2 border border-white/[0.08] p-3"
                     >
-
-                      {/* CONTACT INFO */}
-
                       <div className="min-w-0">
-                        <p className="truncate text-[11px] font-semibold text-slate-300">
+                        <p className="truncate text-[11px] font-semibold text-white/90">
                           {contact.name}
                         </p>
 
-                        <p className="text-[10px] text-slate-600">
+                        <p className="mt-1 text-[10px] text-emerald-50/45">
                           {contact.phone}
                         </p>
                       </div>
 
-
-                      {/* ACTION BUTTONS */}
-
-                      <div className="flex shrink-0 gap-1">
-
-                        {/* CALL */}
-
+                      <div className="flex shrink-0 gap-1.5">
                         <a
                           href={`tel:${contact.phone}`}
-                          className="flex h-7 w-7 items-center justify-center bg-white/10 text-slate-300 transition hover:bg-white hover:text-slate-900"
+                          className="flex h-8 w-8 items-center justify-center border border-white/10 bg-white/[0.05] text-emerald-100/75 transition hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-white"
                           title={`Call ${contact.name}`}
+                          aria-label={`Call ${contact.name}`}
                         >
-                          <Phone size={12} />
+                          <Phone size={13} />
                         </a>
-
-
-                        {/* WHATSAPP */}
 
                         <button
                           type="button"
                           onClick={() =>
-                            handleWhatsApp(
-                              contact.name,
-                              contact.phone
-                            )
+                            handleWhatsApp(contact.name, contact.phone)
                           }
-                          className="flex h-7 w-7 items-center justify-center bg-emerald-600 text-white transition hover:bg-emerald-500"
+                          className="flex h-8 w-8 items-center justify-center bg-emerald-700 text-white transition hover:bg-emerald-600"
                           title={`WhatsApp ${contact.name}`}
+                          aria-label={`WhatsApp ${contact.name}`}
                         >
-                          <MessageCircle size={12} />
+                          <MessageCircle size={14} />
                         </button>
-
                       </div>
-
                     </div>
                   ))}
-
                 </div>
               </div>
             )}
-
           </div>
         </div>
 
+        {/* Worker Registration CTA */}
+        <div className="mt-8 flex flex-col gap-4 border-y border-white/10 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#c8ae6a]/25 bg-[#c8ae6a]/[0.07]">
+              <BriefcaseBusiness size={18} className="text-[#c8ae6a]" />
+            </div>
 
-        {/* ==================================================
-            REGISTER BAR
-        ================================================== */}
+            <div>
+              <h3 className="text-sm font-bold text-white">
+                Looking for work?
+              </h3>
 
-        <div className="mt-8 flex flex-col gap-3 border-y border-white/10 py-4 sm:flex-row sm:items-center sm:justify-between">
-
-          <div>
-            <h3 className="text-sm font-bold text-white">
-              Looking for work?
-            </h3>
-
-            <p className="mt-0.5 text-[11px] text-slate-500">
-              Register with JobHIR and find suitable opportunities.
-            </p>
+              <p className="mt-1 max-w-md text-[11px] leading-5 text-emerald-50/50">
+                Register with JobHIR and explore opportunities suited to your skills.
+              </p>
+            </div>
           </div>
 
           <Link
             to="/worker-register"
-            className="inline-flex items-center justify-center gap-2 bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white transition hover:bg-emerald-500"
+            className="inline-flex w-full items-center justify-center gap-2 border border-[#e1cc8b] bg-gradient-to-r from-[#c8ae6a] to-[#e5d29a] px-5 py-3 text-xs font-extrabold text-[#172b20] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_7px_20px_rgba(200,174,106,0.15)] active:translate-y-0 sm:w-auto"
           >
             Register Now
-
-            <ArrowUpRight size={14} />
+            <ArrowUpRight size={15} />
           </Link>
         </div>
 
-
-        {/* ==================================================
-            BOTTOM
-        ================================================== */}
-
+        {/* Bottom Footer */}
         <div className="flex flex-col gap-2 pt-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
-
-          <p className="text-[10px] text-slate-600">
+          <p className="text-[10px] leading-5 text-emerald-50/40">
             © {currentYear} JobHIR. All Rights Reserved.
           </p>
 
-          <p className="text-[10px] text-slate-600">
+          <p className="text-[10px] leading-5 text-emerald-50/40">
             Powered & Developed by{" "}
-
-            <span className="font-semibold text-slate-400">
+            <span className="font-semibold text-[#c8ae6a]/85">
               Web Core Cube Tech - 9058596626
             </span>
           </p>
-
         </div>
-
       </div>
     </footer>
   );

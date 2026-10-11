@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -87,11 +88,11 @@ export default function Header() {
       }
 
       if (result?.success) {
-        const list = Array.isArray(result.notifications)
-          ? result.notifications
-          : [];
-
-        setNotifications(list);
+        setNotifications(
+          Array.isArray(result.notifications)
+            ? result.notifications
+            : []
+        );
       } else {
         setNotifications([]);
       }
@@ -157,7 +158,7 @@ export default function Header() {
   }, []);
 
   // =========================================================
-  // AUTO REFRESH EVERY 10 SEC
+  // AUTO REFRESH EVERY 10 SECONDS
   // =========================================================
 
   useEffect(() => {
@@ -186,7 +187,7 @@ export default function Header() {
   }, [workerId]);
 
   // =========================================================
-  // CLOSE NOTIFICATION WHEN CLICKING OUTSIDE
+  // CLOSE NOTIFICATIONS ON OUTSIDE CLICK
   // =========================================================
 
   useEffect(() => {
@@ -200,17 +201,13 @@ export default function Header() {
     };
 
     if (showNotifications) {
-      document.addEventListener(
-        "mousedown",
-        handleOutsideClick
-      );
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick);
     }
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleOutsideClick
-      );
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
     };
   }, [showNotifications]);
 
@@ -242,7 +239,7 @@ export default function Header() {
   };
 
   // =========================================================
-  // MARK ONE AS READ
+  // MARK ONE NOTIFICATION AS READ
   // =========================================================
 
   const markAsRead = async (notification) => {
@@ -276,10 +273,7 @@ export default function Header() {
       setNotifications((previous) =>
         previous.map((item) =>
           item._id === notification._id
-            ? {
-                ...item,
-                isRead: true,
-              }
+            ? { ...item, isRead: true }
             : item
         )
       );
@@ -289,15 +283,13 @@ export default function Header() {
   };
 
   // =========================================================
-  // MARK ALL AS READ
+  // MARK ALL NOTIFICATIONS AS READ
   // =========================================================
 
   const markAllAsRead = async () => {
     const id = getWorkerId();
 
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     try {
       const response = await fetch(
@@ -334,6 +326,15 @@ export default function Header() {
   };
 
   // =========================================================
+  // MOBILE MENU
+  // =========================================================
+
+  const handleMobileLinkClick = () => {
+    setIsOpen(false);
+    setShowNotifications(false);
+  };
+
+  // =========================================================
   // NOTIFICATION BUTTON
   // =========================================================
 
@@ -344,11 +345,13 @@ export default function Header() {
       aria-label="Notifications"
       aria-expanded={showNotifications}
       className="
-        group relative flex h-10 w-10 items-center justify-center
-        border border-white/15 bg-white/[0.06] text-white
+        group relative flex h-10 w-10 shrink-0
+        items-center justify-center
+        border border-white/15
+        bg-white/[0.07] text-white
         transition-all duration-200
-        hover:border-cyan-300/30
-        hover:bg-white/[0.12]
+        hover:border-emerald-300/50
+        hover:bg-white/[0.13]
         active:scale-95
         sm:h-11 sm:w-11
       "
@@ -357,12 +360,12 @@ export default function Header() {
         size={20}
         strokeWidth={2}
         className={`
-          transition-all duration-200
+          transition-transform duration-200
           group-hover:scale-110
           ${
             unreadCount > 0
-              ? "fill-yellow-300 text-yellow-300"
-              : "text-white/90"
+              ? "fill-amber-300 text-amber-300"
+              : "text-white"
           }
         `}
       />
@@ -371,18 +374,20 @@ export default function Header() {
         <>
           <span
             className="
-              absolute -right-1 -top-1 h-2.5 w-2.5
-              animate-ping bg-yellow-300 opacity-70
+              absolute -right-1 -top-1
+              h-2.5 w-2.5 animate-ping
+              bg-amber-300 opacity-70
             "
           />
 
           <span
             className="
-              absolute -right-2 -top-2 flex min-h-[19px]
-              min-w-[19px] items-center justify-center
-              border-2 border-[#101d43]
-              bg-red-500 px-1 text-[9px] font-black
-              leading-none text-white shadow-lg
+              absolute -right-2 -top-2
+              flex min-h-[19px] min-w-[19px]
+              items-center justify-center
+              border-2 border-[#0b302a]
+              bg-red-500 px-1
+              text-[9px] font-black leading-none text-white
             "
           >
             {unreadCount > 99 ? "99+" : unreadCount}
@@ -397,50 +402,48 @@ export default function Header() {
   // =========================================================
 
   const NotificationList = () => (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white text-slate-800">
       {/* Notification Header */}
       <div
         className="
           relative overflow-hidden
-          border-b border-slate-200
+          border-b border-emerald-900/10
           bg-gradient-to-r
-          from-[#0f2b63]
-          via-[#193d87]
-          to-[#402080]
-          px-4 py-3.5
+          from-[#071c19] via-[#0b302a] to-[#145044]
+          px-4 py-4
         "
       >
         <div
           className="
             pointer-events-none absolute
             -right-10 -top-10 h-24 w-24
-            bg-cyan-400/10 blur-2xl
+            bg-amber-300/10 blur-2xl
           "
         />
 
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <div
               className="
-                flex h-8 w-8 items-center justify-center
-                border border-white/15 bg-white/10
+                flex h-9 w-9 shrink-0 items-center justify-center
+                border border-amber-300/25 bg-white/10
               "
             >
-              <Bell size={16} className="text-cyan-200" />
+              <Bell size={17} className="text-amber-300" />
             </div>
 
-            <div>
+            <div className="min-w-0">
               <h3 className="text-sm font-black text-white">
                 Job Notifications
               </h3>
 
               {unreadCount > 0 ? (
-                <p className="mt-0.5 text-[11px] font-medium text-blue-100">
+                <p className="mt-0.5 text-[11px] font-medium text-emerald-100">
                   {unreadCount} unread notification
                   {unreadCount > 1 ? "s" : ""}
                 </p>
               ) : (
-                <p className="mt-0.5 text-[11px] text-blue-100/70">
+                <p className="mt-0.5 text-[11px] text-emerald-100/75">
                   You're all caught up
                 </p>
               )}
@@ -452,9 +455,9 @@ export default function Header() {
               type="button"
               onClick={markAllAsRead}
               className="
-                inline-flex items-center gap-1.5
-                border border-white/15
-                bg-white/10 px-2.5 py-1.5
+                inline-flex shrink-0 items-center gap-1.5
+                border border-white/20
+                bg-white/10 px-2.5 py-2
                 text-[10px] font-bold text-white
                 transition hover:bg-white/20
               "
@@ -467,19 +470,18 @@ export default function Header() {
       </div>
 
       {/* Notification Body */}
-      <div className="max-h-[420px] overflow-y-auto">
+      <div className="max-h-[min(420px,65vh)] overflow-y-auto">
         {loadingNotifications && notifications.length === 0 ? (
           <div className="px-5 py-12 text-center">
             <div
               className="
-                mx-auto mb-4 flex h-12 w-12
-                items-center justify-center
-                border border-blue-100 bg-blue-50
+                mx-auto mb-4 flex h-12 w-12 items-center justify-center
+                border border-emerald-100 bg-emerald-50
               "
             >
               <Bell
                 size={22}
-                className="animate-pulse text-blue-600"
+                className="animate-pulse text-emerald-700"
               />
             </div>
 
@@ -491,16 +493,11 @@ export default function Header() {
           <div className="px-5 py-12 text-center">
             <div
               className="
-                mx-auto mb-4 flex h-12 w-12
-                items-center justify-center
-                border border-slate-200
-                bg-slate-50
+                mx-auto mb-4 flex h-12 w-12 items-center justify-center
+                border border-slate-200 bg-slate-50
               "
             >
-              <Sparkles
-                size={21}
-                className="text-slate-400"
-              />
+              <Sparkles size={21} className="text-emerald-600" />
             </div>
 
             <p className="text-sm font-bold text-slate-700">
@@ -508,8 +505,7 @@ export default function Header() {
             </p>
 
             <p className="mx-auto mt-1 max-w-[260px] text-xs leading-5 text-slate-400">
-              New jobs matching your work type and district
-              will appear here.
+              New jobs matching your work type and district will appear here.
             </p>
           </div>
         ) : (
@@ -520,10 +516,10 @@ export default function Header() {
               onClick={() => markAsRead(notification)}
               className={`
                 group w-full border-b border-slate-100
-                p-4 text-left transition-all duration-200
+                p-4 text-left transition-colors duration-200
                 ${
                   !notification.isRead
-                    ? "bg-blue-50/80 hover:bg-blue-100"
+                    ? "bg-emerald-50/80 hover:bg-emerald-100/70"
                     : "bg-white hover:bg-slate-50"
                 }
               `}
@@ -531,11 +527,10 @@ export default function Header() {
               <div className="flex gap-3">
                 <div
                   className={`
-                    flex h-10 w-10 flex-shrink-0
-                    items-center justify-center border
+                    flex h-10 w-10 shrink-0 items-center justify-center border
                     ${
                       !notification.isRead
-                        ? "border-blue-200 bg-blue-100"
+                        ? "border-emerald-200 bg-emerald-100"
                         : "border-slate-200 bg-slate-100"
                     }
                   `}
@@ -544,7 +539,7 @@ export default function Header() {
                     size={18}
                     className={
                       !notification.isRead
-                        ? "text-blue-600"
+                        ? "text-emerald-700"
                         : "text-slate-400"
                     }
                   />
@@ -553,15 +548,14 @@ export default function Header() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <h4 className="text-sm font-bold text-slate-800">
-                      {notification.title ||
-                        "New Job Available"}
+                      {notification.title || "New Job Available"}
                     </h4>
 
                     {!notification.isRead && (
                       <span
                         className="
-                          mt-1 h-2.5 w-2.5 flex-shrink-0
-                          animate-pulse bg-blue-600
+                          mt-1 h-2.5 w-2.5 shrink-0
+                          bg-emerald-600
                         "
                       />
                     )}
@@ -584,9 +578,9 @@ export default function Header() {
                 <ChevronRight
                   size={15}
                   className="
-                    mt-1 flex-shrink-0 text-slate-300
+                    mt-1 shrink-0 text-slate-300
                     transition group-hover:translate-x-0.5
-                    group-hover:text-blue-500
+                    group-hover:text-emerald-700
                   "
                 />
               </div>
@@ -598,15 +592,6 @@ export default function Header() {
   );
 
   // =========================================================
-  // MOBILE LINK
-  // =========================================================
-
-  const handleMobileLinkClick = () => {
-    setIsOpen(false);
-    setShowNotifications(false);
-  };
-
-  // =========================================================
   // HEADER
   // =========================================================
 
@@ -614,29 +599,25 @@ export default function Header() {
     <header
       className="
         relative z-50 w-full
-        border-b border-white/10
+        border-b border-emerald-900/20
         bg-gradient-to-r
-        from-[#071631]
-        via-[#101f4a]
-        to-[#25104f]
-        shadow-[0_10px_35px_rgba(2,6,23,0.28)]
+        from-[#071c19] via-[#0b302a] to-[#104438]
+        shadow-[0_8px_28px_rgba(7,28,25,0.22)]
       "
     >
-      {/* Ambient Glow */}
+      {/* Decorative Background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="
             absolute -left-24 -top-24
-            h-48 w-48 bg-cyan-400/10
-            blur-3xl
+            h-48 w-48 bg-emerald-300/[0.08] blur-3xl
           "
         />
 
         <div
           className="
             absolute -bottom-28 right-10
-            h-52 w-52 bg-purple-500/10
-            blur-3xl
+            h-52 w-52 bg-amber-300/[0.07] blur-3xl
           "
         />
 
@@ -644,197 +625,84 @@ export default function Header() {
           className="
             absolute inset-x-0 bottom-0 h-px
             bg-gradient-to-r
-            from-transparent via-cyan-300/30 to-transparent
+            from-transparent via-amber-300/50 to-transparent
           "
         />
       </div>
 
-      {/* =====================================================
-          MAIN HEADER
-      ===================================================== */}
+      {/* Main Header */}
+      <div className="relative mx-auto w-full max-w-[1600px] px-3 sm:px-5 lg:px-8">
+        <div className="flex min-h-[68px] items-center justify-between gap-3 sm:min-h-[78px]">
+          {/* Logo */}
+          <Link
+            to="/"
+            onClick={() => setIsOpen(false)}
+            aria-label="JobHir home"
+            className="group relative flex shrink-0 items-center"
+          >
+            <span
+              className="
+                pointer-events-none absolute -inset-3
+                bg-emerald-300/10 opacity-0 blur-xl
+                transition-opacity duration-300
+                group-hover:opacity-100
+              "
+            />
 
-      <div className="relative w-full px-3 sm:px-5 lg:px-8">
-        <div
-          className="
-            flex min-h-[70px] items-center
-            justify-between gap-3
-            sm:min-h-[76px]
-          "
-        >
-  {/* =================================================
-    LOGO
-================================================= */}
+            <span
+              className="
+                relative flex items-center justify-center
+                border border-white/80
+                bg-white px-2.5 py-1.5
+                shadow-[0_4px_16px_rgba(0,0,0,0.12)]
+                transition-all duration-300
+                group-hover:-translate-y-0.5
+                group-hover:border-amber-300
+                sm:px-3 sm:py-2
+              "
+            >
+              <img
+                src="/images/logo.png"
+                alt="JobHir"
+                className="
+                  h-9 w-auto max-w-[145px] object-contain
+                  transition-transform duration-300
+                  group-hover:scale-[1.03]
+                  sm:h-11 sm:max-w-[170px]
+                "
+              />
+            </span>
 
-<Link
-  to="/"
-  onClick={() => setIsOpen(false)}
-  className="
-    group relative flex flex-shrink-0
-    items-center
-  "
->
-  {/* Soft Glow */}
+            <span
+              className="
+                absolute -bottom-2 left-1/2 z-10
+                flex -translate-x-1/2 items-center gap-1
+                whitespace-nowrap border border-emerald-200
+                bg-white px-2 py-0.5
+                text-[7px] font-extrabold uppercase
+                tracking-[0.12em] text-emerald-800
+                shadow-sm sm:text-[8px]
+              "
+            >
+              <ShieldCheck size={9} strokeWidth={2.5} />
+              Secure
+            </span>
+          </Link>
 
-  <span
-    className="
-      pointer-events-none
-      absolute
-      -inset-4
-      rounded-[22px]
-      bg-gradient-to-r
-      from-cyan-400/15
-      via-blue-500/10
-      to-indigo-500/15
-      opacity-0
-      blur-xl
-      transition-all duration-500
-      group-hover:opacity-100
-    "
-  />
-
-  {/* Premium Logo Frame */}
-
-  <div
-    className="
-      relative z-10
-      flex items-center
-      rounded-[18px]
-      border
-      border-slate-200
-      bg-gradient-to-br
-      from-white
-      via-white
-      to-slate-50
-      px-2.5
-      py-1.5
-
-      shadow-[0_5px_18px_rgba(15,23,42,0.10)]
-
-      transition-all duration-300
-
-      group-hover:-translate-y-0.5
-      group-hover:border-blue-200
-      group-hover:shadow-[0_10px_28px_rgba(37,99,235,0.16)]
-
-      sm:px-3
-      sm:py-2
-    "
-  >
-    {/* Gradient Border Highlight */}
-
-    <span
-      className="
-        pointer-events-none
-        absolute
-        inset-0
-        rounded-[18px]
-        bg-gradient-to-r
-        from-cyan-400/0
-        via-blue-400/0
-        to-indigo-400/0
-        opacity-0
-        transition-all duration-300
-        group-hover:from-cyan-400/10
-        group-hover:via-blue-400/10
-        group-hover:to-indigo-400/10
-        group-hover:opacity-100
-      "
-    />
-
-    {/* Logo */}
-
-    <img
-      src="/images/logo.png"
-      alt="JobHir"
-      className="
-        relative z-10
-        h-9
-        w-auto
-        object-contain
-
-        drop-shadow-[0_4px_8px_rgba(15,23,42,0.16)]
-
-        transition-all duration-300
-
-        group-hover:scale-[1.045]
-        group-hover:drop-shadow-[0_6px_14px_rgba(37,99,235,0.22)]
-
-        sm:h-11
-      "
-    />
-  </div>
-
-  {/* Secure Badge */}
-
-  <span
-    className="
-      absolute
-      -bottom-2
-      left-1/2
-      z-30
-      flex
-      -translate-x-1/2
-      items-center
-      gap-1
-
-      whitespace-nowrap
-
-      rounded-full
-
-      border
-      border-emerald-200
-      bg-white
-
-      px-2.5
-      py-0.5
-
-      text-[7px]
-      font-extrabold
-      uppercase
-      tracking-[0.1em]
-      text-emerald-600
-
-      shadow-[0_3px_10px_rgba(15,23,42,0.12)]
-
-      transition-all duration-300
-
-      group-hover:border-emerald-300
-      group-hover:bg-emerald-50
-      group-hover:text-emerald-700
-
-      sm:text-[8px]
-    "
-  >
-    <ShieldCheck
-      size={9}
-      strokeWidth={2.5}
-    />
-
-    Secure
-  </span>
-</Link>
-          {/* =================================================
-              DESKTOP
-          ================================================= */}
-
+          {/* Desktop Navigation */}
           <div className="hidden items-center gap-3 md:flex lg:gap-5">
             {/* Notifications */}
             {workerId && (
-              <div
-                ref={notificationRef}
-                className="relative"
-              >
+              <div ref={notificationRef} className="relative">
                 <NotificationButton />
 
                 {showNotifications && (
                   <div
                     className="
-                      absolute right-0 top-[56px]
-                      z-[100] w-[370px]
-                      overflow-hidden
-                      border border-slate-200
-                      bg-white
-                      shadow-[0_24px_60px_rgba(15,23,42,0.28)]
+                      absolute right-0 top-[calc(100%+12px)]
+                      z-[100] w-[min(370px,calc(100vw-32px))]
+                      overflow-hidden border border-slate-200
+                      bg-white shadow-[0_20px_55px_rgba(7,28,25,0.25)]
                     "
                   >
                     <NotificationList />
@@ -843,12 +711,13 @@ export default function Header() {
               </div>
             )}
 
-            {/* Navigation */}
+            {/* Navigation Links */}
             <nav
+              aria-label="Main navigation"
               className="
-                flex items-center
-                border-l border-white/10
-                pl-3 lg:pl-4
+                flex items-center gap-0.5
+                border-l border-white/15 pl-2
+                lg:pl-4
               "
             >
               {NAV_ITEMS.map((item) => (
@@ -856,11 +725,10 @@ export default function Header() {
                   key={item.path}
                   to={item.path}
                   className="
-                    relative px-2.5 py-2
-                    text-xs font-semibold
-                    text-white/75
-                    transition-all duration-200
-                    hover:text-white
+                    group relative px-2 py-2.5
+                    text-xs font-semibold text-white/80
+                    transition-colors duration-200
+                    hover:text-amber-200
                     lg:px-3 lg:text-sm
                   "
                 >
@@ -868,9 +736,8 @@ export default function Header() {
 
                   <span
                     className="
-                      absolute bottom-0 left-1/2
-                      h-px w-0 -translate-x-1/2
-                      bg-cyan-300
+                      absolute bottom-1 left-1/2 h-px w-0
+                      -translate-x-1/2 bg-amber-300
                       transition-all duration-300
                       group-hover:w-1/2
                     "
@@ -879,76 +746,51 @@ export default function Header() {
               ))}
             </nav>
 
-            {/* Job Post */}
+            {/* Post a Job */}
             <Link
               to="/offer-job"
               className="
-                group relative overflow-hidden
-                border border-cyan-200/25
-                bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
-                px-4 py-2.5
-                text-xs font-black
-                text-white
-                shadow-[0_8px_22px_rgba(37,99,235,0.28)]
-                transition-all duration-300
+                group relative flex shrink-0 items-center gap-2
+                overflow-hidden border border-amber-200/70
+                bg-gradient-to-r from-[#d8b96c] to-[#f1d995]
+                px-3.5 py-2.5
+                text-xs font-black text-[#172b20]
+                shadow-[0_5px_16px_rgba(0,0,0,0.12)]
+                transition-all duration-200
                 hover:-translate-y-0.5
-                hover:shadow-[0_12px_30px_rgba(34,211,238,0.28)]
+                hover:shadow-[0_8px_22px_rgba(216,185,108,0.22)]
+                active:translate-y-0
                 lg:px-5 lg:text-sm
               "
             >
               <span
                 className="
-                  absolute inset-y-0
-                  -left-full w-1/2
-                  skew-x-[-20deg]
-                  bg-white/25
+                  absolute inset-y-0 -left-full w-1/2
+                  skew-x-[-20deg] bg-white/35
                   transition-all duration-700
-                  group-hover:left-[125%]
+                  group-hover:left-[130%]
                 "
               />
 
-              <span
-                className="
-                  relative z-10
-                  flex items-center gap-1.5
-                "
-              >
-                <Plus size={16} strokeWidth={3} />
-                Job Post
-              </span>
+              <Plus size={16} strokeWidth={3} className="relative z-10" />
+              <span className="relative z-10">Post a Job</span>
             </Link>
           </div>
 
-          {/* =================================================
-              MOBILE ACTIONS
-          ================================================= */}
-
-          <div
-            className="
-              flex items-center gap-1.5
-              md:hidden
-            "
-          >
+          {/* Mobile Actions */}
+          <div className="flex shrink-0 items-center gap-1.5 md:hidden">
             {/* Mobile Notifications */}
             {workerId && (
-              <div
-                ref={notificationRef}
-                className="relative"
-              >
+              <div ref={notificationRef} className="relative">
                 <NotificationButton />
 
                 {showNotifications && (
                   <div
                     className="
-                      fixed left-3 right-3 top-[78px]
-                      z-[100]
-                      overflow-hidden
-                      border border-slate-200
-                      bg-white
-                      shadow-[0_24px_60px_rgba(15,23,42,0.3)]
+                      fixed left-3 right-3 top-[76px] z-[100]
+                      mx-auto max-w-[440px] overflow-hidden
+                      border border-slate-200 bg-white
+                      shadow-[0_20px_55px_rgba(7,28,25,0.25)]
                     "
                   >
                     <NotificationList />
@@ -957,100 +799,77 @@ export default function Header() {
               </div>
             )}
 
-            {/* Mobile Job Post */}
+            {/* Mobile Post a Job */}
             <Link
               to="/offer-job"
-              onClick={() => setIsOpen(false)}
+              onClick={handleMobileLinkClick}
               className="
-                flex items-center gap-1
-                border border-cyan-200/25
-                bg-gradient-to-r
-                from-cyan-400 to-blue-500
-                px-3 py-2
-                text-[11px] font-black
-                text-white
-                shadow-md
-                transition-all
-                active:scale-95
+                flex shrink-0 items-center gap-1.5
+                border border-amber-200/70
+                bg-gradient-to-r from-[#d8b96c] to-[#f1d995]
+                px-2.5 py-2.5
+                text-[11px] font-black text-[#172b20]
+                transition active:scale-95
+                min-[380px]:px-3
               "
             >
-              <Plus size={14} strokeWidth={3} />
-              Job Post
+              <Plus size={15} strokeWidth={3} />
+              <span>Post Job</span>
             </Link>
 
-            {/* Menu */}
+            {/* Menu Button */}
             <button
               type="button"
-              onClick={() =>
-                setIsOpen((previous) => !previous)
-              }
+              onClick={() => setIsOpen((previous) => !previous)}
               className="
-                flex h-10 w-10
-                items-center justify-center
-                border border-white/15
-                bg-white/[0.06]
-                text-white
-                transition-all duration-200
-                hover:border-white/25
-                hover:bg-white/[0.12]
+                flex h-10 w-10 shrink-0 items-center justify-center
+                border border-white/20 bg-white/[0.07]
+                text-white transition-all duration-200
+                hover:border-amber-300/50 hover:bg-white/[0.12]
                 active:scale-95
               "
-              aria-label={
-                isOpen ? "Close menu" : "Open menu"
-              }
+              aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
             >
-              {isOpen ? (
-                <X size={22} />
-              ) : (
-                <Menu size={22} />
-              )}
+              {isOpen ? <X size={21} /> : <Menu size={21} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* =====================================================
-          MOBILE MENU
-      ===================================================== */}
-
+      {/* Mobile Menu */}
       {isOpen && (
         <div
           className="
             relative border-t border-white/10
-            bg-[#0d1d42]/98
-            px-4 py-4
+            bg-[#09251f] px-4 py-4
             shadow-[inset_0_8px_20px_rgba(0,0,0,0.12)]
             md:hidden
           "
         >
-          <nav className="space-y-0.5">
+          <nav aria-label="Mobile navigation" className="space-y-0.5">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={handleMobileLinkClick}
                 className="
-                  group flex items-center
-                  justify-between
-                  border-b border-white/[0.06]
-                  px-2 py-3
-                  text-sm font-semibold
-                  text-white/80
-                  transition-all duration-200
-                  hover:bg-white/[0.05]
-                  hover:text-white
+                  group flex items-center justify-between
+                  border-b border-white/[0.08]
+                  px-2 py-3.5
+                  text-sm font-semibold text-white/80
+                  transition-colors duration-200
+                  hover:bg-white/[0.04] hover:text-amber-200
                 "
               >
                 <span>{item.label}</span>
 
                 <ChevronRight
-                  size={16}
+                  size={17}
                   className="
-                    text-white/25
-                    transition-all
+                    text-white/35 transition-all
                     group-hover:translate-x-1
-                    group-hover:text-cyan-300
+                    group-hover:text-amber-300
                   "
                 />
               </Link>
@@ -1061,29 +880,21 @@ export default function Header() {
               to="/offer-job"
               onClick={handleMobileLinkClick}
               className="
-                group relative mt-4
-                flex items-center
-                justify-center gap-2
-                overflow-hidden
-                border border-cyan-200/25
-                bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
-                px-4 py-3
-                text-sm font-black
-                text-white
-                shadow-[0_10px_25px_rgba(37,99,235,0.25)]
+                group relative mt-4 flex items-center
+                justify-center gap-2 overflow-hidden
+                border border-amber-200/70
+                bg-gradient-to-r from-[#d8b96c] to-[#f1d995]
+                px-4 py-3.5
+                text-sm font-black text-[#172b20]
+                shadow-[0_8px_20px_rgba(0,0,0,0.12)]
               "
             >
               <span
                 className="
-                  absolute inset-y-0
-                  -left-full w-1/2
-                  skew-x-[-20deg]
-                  bg-white/20
+                  absolute inset-y-0 -left-full w-1/2
+                  skew-x-[-20deg] bg-white/35
                   transition-all duration-700
-                  group-hover:left-[125%]
+                  group-hover:left-[130%]
                 "
               />
 
@@ -1092,15 +903,17 @@ export default function Header() {
                 className="relative z-10"
               />
 
-              <span className="relative z-10">
-                Offer a Job
-              </span>
+              <span className="relative z-10">Offer a Job</span>
 
               <ChevronRight
                 size={16}
                 className="relative z-10"
               />
             </Link>
+
+            <p className="px-2 pt-4 text-center text-[10px] font-medium tracking-wide text-emerald-100/50">
+              JobHir · Connecting Workers with Opportunities
+            </p>
           </nav>
         </div>
       )}

@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -38,11 +39,9 @@ import {
   Layers3,
   Sofa,
   Palette,
-  Plus,
-  UserPlus,
-  X,
   ShieldCheck,
-  Users,
+  Clock3,
+  X,
 } from "lucide-react";
 
 import Header from "./components/Header.jsx";
@@ -54,6 +53,18 @@ import HealthcareJobs from "./HealthcareJobs";
 // ======================================================
 
 const API_BASE = "https://jbackend-h963.onrender.com";
+
+// ======================================================
+// BRAND COLORS
+// ======================================================
+
+const BRAND = {
+  dark: "#071c19",
+  green: "#0b302a",
+  greenLight: "#12483d",
+  gold: "#c8ae6a",
+  cream: "#faf8ef",
+};
 
 // ======================================================
 // INDIA STATES + UNION TERRITORIES
@@ -128,9 +139,7 @@ const WORK_TYPES = [
 // ======================================================
 
 const normalizeWorkType = (value) =>
-  String(value || "")
-    .trim()
-    .toLowerCase();
+  String(value || "").trim().toLowerCase();
 
 const getJobState = (job) =>
   job?.state || job?.location?.state || "";
@@ -144,41 +153,65 @@ const getJobAddress = (job) =>
   "Location provided by employer";
 
 // ======================================================
-// WORK TYPE ICONS / COLORS
-// (full class names rakhe hain taaki Tailwind detect kare)
+// CATEGORY STYLES
 // ======================================================
 
-const style = (icon, color, bg, border, accent) => ({
-  icon,
-  color,
-  bg,
-  border,
-  accent,
-});
+const getWorkTypeIconData = (workType) => {
+  const type = normalizeWorkType(workType);
 
-const WORK_STYLES = {
-  mason: style(Hammer, "text-orange-700", "bg-orange-50", "border-orange-200", "bg-orange-600"),
-  carpenter: style(Hammer, "text-amber-700", "bg-amber-50", "border-amber-200", "bg-amber-600"),
-  painter: style(Paintbrush, "text-pink-700", "bg-pink-50", "border-pink-200", "bg-pink-600"),
-  electrician: style(Zap, "text-yellow-700", "bg-yellow-50", "border-yellow-200", "bg-yellow-600"),
-  plumber: style(Wrench, "text-blue-700", "bg-blue-50", "border-blue-200", "bg-blue-600"),
-  gardener: style(Sprout, "text-green-700", "bg-green-50", "border-green-200", "bg-green-600"),
-  cleaner: style(Sparkles, "text-cyan-700", "bg-cyan-50", "border-cyan-200", "bg-cyan-600"),
-  welder: style(Construction, "text-red-700", "bg-red-50", "border-red-200", "bg-red-600"),
-  driver: style(Car, "text-violet-700", "bg-violet-50", "border-violet-200", "bg-violet-600"),
-  "construction worker": style(HardHat, "text-orange-700", "bg-orange-50", "border-orange-200", "bg-orange-600"),
-  helper: style(HandHelping, "text-teal-700", "bg-teal-50", "border-teal-200", "bg-teal-600"),
-  "ac technician": style(Snowflake, "text-sky-700", "bg-sky-50", "border-sky-200", "bg-sky-600"),
-  mechanic: style(Settings, "text-slate-700", "bg-slate-100", "border-slate-300", "bg-slate-700"),
-  "tiles worker": style(Layers3, "text-indigo-700", "bg-indigo-50", "border-indigo-200", "bg-indigo-600"),
-  "furniture worker": style(Sofa, "text-rose-700", "bg-rose-50", "border-rose-200", "bg-rose-600"),
-  "home care": style(HeartHandshake, "text-rose-700", "bg-rose-50", "border-rose-200", "bg-rose-600"),
-  "graphic designer": style(Palette, "text-fuchsia-700", "bg-fuchsia-50", "border-fuchsia-200", "bg-fuchsia-600"),
-  other: style(BriefcaseBusiness, "text-indigo-700", "bg-indigo-50", "border-indigo-200", "bg-indigo-600"),
+  const icons = {
+    mason: Hammer,
+    carpenter: Hammer,
+    painter: Paintbrush,
+    electrician: Zap,
+    plumber: Wrench,
+    gardener: Sprout,
+    cleaner: Sparkles,
+    welder: Construction,
+    driver: Car,
+    "construction worker": HardHat,
+    helper: HandHelping,
+    "ac technician": Snowflake,
+    mechanic: Settings,
+    "tiles worker": Layers3,
+    "furniture worker": Sofa,
+    "home care": HeartHandshake,
+    "graphic designer": Palette,
+    other: BriefcaseBusiness,
+  };
+
+  const colors = {
+    mason: ["#fff7ed", "#c2410c"],
+    carpenter: ["#fffbeb", "#b45309"],
+    painter: ["#fdf2f8", "#be185d"],
+    electrician: ["#fefce8", "#a16207"],
+    plumber: ["#eff6ff", "#1d4ed8"],
+    gardener: ["#f0fdf4", "#15803d"],
+    cleaner: ["#ecfeff", "#0e7490"],
+    welder: ["#fef2f2", "#b91c1c"],
+    driver: ["#f5f3ff", "#6d28d9"],
+    "construction worker": ["#fff7ed", "#c2410c"],
+    helper: ["#f0fdfa", "#0f766e"],
+    "ac technician": ["#f0f9ff", "#0369a1"],
+    mechanic: ["#f8fafc", "#475569"],
+    "tiles worker": ["#eef2ff", "#4338ca"],
+    "furniture worker": ["#fff7ed", "#c2410c"],
+    "home care": ["#fff1f2", "#be123c"],
+    "graphic designer": ["#fdf4ff", "#a21caf"],
+    other: ["#faf8ef", BRAND.green],
+  };
+
+  const [bg, color] = colors[type] || [
+    BRAND.cream,
+    BRAND.green,
+  ];
+
+  return {
+    icon: icons[type] || BriefcaseBusiness,
+    bg,
+    color,
+  };
 };
-
-const getWorkTypeIconData = (workType) =>
-  WORK_STYLES[normalizeWorkType(workType)] || WORK_STYLES.other;
 
 // ======================================================
 // LEAFLET ICON
@@ -186,16 +219,15 @@ const getWorkTypeIconData = (workType) =>
 
 const locationIcon = new L.DivIcon({
   className: "jobhir-location-marker",
-
   html: `
     <div style="
       width:34px;
       height:34px;
-      background:linear-gradient(135deg,#1d4ed8,#6d28d9);
+      background:linear-gradient(135deg,#0b302a,#c8ae6a);
       border:3px solid #ffffff;
       border-radius:50% 50% 50% 0;
       transform:rotate(-45deg);
-      box-shadow:0 4px 14px rgba(29,78,216,.45);
+      box-shadow:0 4px 14px rgba(7,28,25,.35);
       position:relative;
     ">
       <div style="
@@ -209,7 +241,6 @@ const locationIcon = new L.DivIcon({
       "></div>
     </div>
   `,
-
   iconSize: [34, 34],
   iconAnchor: [17, 34],
   popupAnchor: [0, -34],
@@ -223,54 +254,26 @@ function MapCenter({ position }) {
   const map = useMap();
 
   useEffect(() => {
-    if (!position || !map) return;
-
-    map.setView(position, 16);
+    if (position && map) {
+      map.setView(position, 16);
+    }
   }, [map, position]);
 
   return null;
 }
 
 // ======================================================
-// SMALL UI PIECES
+// REUSABLE STYLES
 // ======================================================
 
-function InfoRow({ icon: Icon, label, children }) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-        <Icon className="h-4 w-4" />
-      </div>
-
-      <div className="min-w-0">
-        <p className="text-[11px] font-semibold text-slate-400">{label}</p>
-        <p className="line-clamp-2 text-[13px] font-semibold leading-5 text-slate-700">
-          {children}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="animate-pulse rounded-2xl border border-slate-200 bg-white p-4">
-      <div className="mb-5 flex items-center gap-3">
-        <div className="h-11 w-11 rounded-xl bg-slate-200" />
-        <div className="flex-1 space-y-2">
-          <div className="h-3 w-2/3 rounded bg-slate-200" />
-          <div className="h-3 w-1/3 rounded bg-slate-100" />
-        </div>
-      </div>
-      <div className="h-3 w-full rounded bg-slate-100" />
-      <div className="mt-2 h-3 w-4/5 rounded bg-slate-100" />
-      <div className="mt-5 h-12 rounded-xl bg-slate-100" />
-    </div>
-  );
-}
-
 const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100";
+  "w-full border border-[#d9dfd8] bg-[#fafbf8] p-3 text-sm text-[#071c19] outline-none transition focus:border-[#0b6652] focus:bg-white focus:ring-4 focus:ring-[#0b302a]/10";
+
+const labelClass =
+  "mb-1.5 block text-xs font-bold text-[#334740]";
+
+const smallLabelClass =
+  "text-[10px] font-bold uppercase tracking-wider text-[#78877f]";
 
 // ======================================================
 // APP
@@ -279,82 +282,38 @@ const inputClass =
 export default function App() {
   const navigate = useNavigate();
 
-  // ====================================================
-  // JOB DATA
-  // ====================================================
-
   const [jobs, setJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
-
-  // ====================================================
-  // FILTERS
-  // ====================================================
 
   const [stateList, setStateList] = useState(INDIA_STATES);
   const [selectedState, setSelectedState] = useState("All");
   const [selectedWorkType, setSelectedWorkType] = useState(null);
 
-  // ====================================================
-  // SELECTED JOB
-  // ====================================================
-
   const [selectedJob, setSelectedJob] = useState(null);
-
-  // ====================================================
-  // PAYMENT / APPLICATION
-  // ====================================================
 
   const [customerName, setCustomerName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
-
   const [amountInRupees, setAmountInRupees] = useState(10);
-
   const [note, setNote] = useState("Order for job");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // ====================================================
-  // CURRENT TIME
-  // ====================================================
-
   const [currentTime, setCurrentTime] = useState("");
 
   // ====================================================
-  // CUSTOM CSS (fonts, animations, scrollbar)
+  // CUSTOM CSS
   // ====================================================
 
   useEffect(() => {
-    const el = document.createElement("style");
+    const style = document.createElement("style");
+    style.setAttribute("data-jobhir-style", "true");
 
-    el.setAttribute("data-jobhir-style", "true");
-
-    el.innerHTML = `
-      @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-      .jh-body {
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      }
-
-      .jh-display {
-        font-family: 'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
-        letter-spacing: -0.02em;
-      }
-
+    style.innerHTML = `
       @keyframes jobhirMarquee {
         0% { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
-      }
-
-      @keyframes shimmer {
-        100% { transform: translateX(100%); }
-      }
-
-      @keyframes jobhirSheetUp {
-        from { transform: translateY(24px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
       }
 
       .jobhir-marquee {
@@ -363,8 +322,8 @@ export default function App() {
         animation: jobhirMarquee 22s linear infinite;
       }
 
-      .jobhir-sheet {
-        animation: jobhirSheetUp .22s ease-out;
+      .jobhir-marquee:hover {
+        animation-play-state: paused;
       }
 
       .jobhir-location-marker {
@@ -372,28 +331,48 @@ export default function App() {
         border: none !important;
       }
 
-      .jobhir-scrollbar::-webkit-scrollbar { width: 6px; }
-      .jobhir-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+      .jobhir-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .jobhir-scrollbar::-webkit-scrollbar-track {
+        background: #faf8ef;
+      }
+
       .jobhir-scrollbar::-webkit-scrollbar-thumb {
-        background: #94a3b8;
+        background: linear-gradient(#0b302a, #c8ae6a);
         border-radius: 10px;
       }
+
       .jobhir-scrollbar {
         scrollbar-width: thin;
-        scrollbar-color: #94a3b8 #f1f5f9;
+        scrollbar-color: #0b302a #faf8ef;
+      }
+
+      .jobhir-card {
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      }
+
+      .jobhir-card:hover {
+        transform: translateY(-3px);
+        border-color: #c8ae6a;
+        box-shadow: 0 12px 28px rgba(7,28,25,.09);
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .jobhir-marquee { animation: none; transform: none; }
-        .jobhir-sheet { animation: none; }
+        .jobhir-marquee {
+          animation: none;
+        }
+
+        .jobhir-card {
+          transition: none;
+        }
       }
     `;
 
-    document.head.appendChild(el);
+    document.head.appendChild(style);
 
-    return () => {
-      el.remove();
-    };
+    return () => style.remove();
   }, []);
 
   // ====================================================
@@ -402,10 +381,8 @@ export default function App() {
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date();
-
       setCurrentTime(
-        now.toLocaleString("en-IN", {
+        new Date().toLocaleString("en-IN", {
           weekday: "short",
           day: "2-digit",
           month: "short",
@@ -418,7 +395,6 @@ export default function App() {
     };
 
     updateTime();
-
     const timer = setInterval(updateTime, 1000);
 
     return () => clearInterval(timer);
@@ -446,7 +422,7 @@ export default function App() {
         setJobs(fetchedJobs);
 
         const apiStates = fetchedJobs
-          .map((job) => getJobState(job))
+          .map(getJobState)
           .filter(Boolean);
 
         const mergedStates = Array.from(
@@ -480,7 +456,6 @@ export default function App() {
 
   useEffect(() => {
     const mobile = localStorage.getItem("mobileNumber");
-
     if (!mobile) return;
 
     let mounted = true;
@@ -511,61 +486,53 @@ export default function App() {
   }, []);
 
   // ====================================================
-  // FILTER JOBS BY STATE
+  // FILTER JOBS
   // ====================================================
 
   const filteredJobs = useMemo(() => {
-    if (selectedState === "All") {
-      return jobs;
-    }
+    if (selectedState === "All") return jobs;
 
     const selected = String(selectedState).trim().toLowerCase();
 
-    return jobs.filter((job) => {
-      return String(getJobState(job)).trim().toLowerCase() === selected;
-    });
+    return jobs.filter(
+      (job) =>
+        String(getJobState(job)).trim().toLowerCase() === selected
+    );
   }, [jobs, selectedState]);
 
-  // ====================================================
-  // AVAILABLE JOBS
-  // ====================================================
+  const availableJobs = useMemo(
+    () =>
+      filteredJobs.filter(
+        (job) => !appliedJobs.includes(job?._id)
+      ),
+    [filteredJobs, appliedJobs]
+  );
 
-  const availableJobs = useMemo(() => {
-    return filteredJobs.filter((job) => !appliedJobs.includes(job?._id));
-  }, [filteredJobs, appliedJobs]);
+  const availableWorkTypes = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...WORK_TYPES,
+          ...jobs.map((job) => job?.workType).filter(Boolean),
+        ])
+      ),
+    [jobs]
+  );
 
-  // ====================================================
-  // AVAILABLE WORK TYPES
-  // ====================================================
-
-  const availableWorkTypes = useMemo(() => {
-    return Array.from(
-      new Set([
-        ...WORK_TYPES,
-        ...jobs.map((job) => job?.workType).filter(Boolean),
-      ])
-    );
-  }, [jobs]);
-
-  // ====================================================
-  // CATEGORY COUNTS
-  // ====================================================
-
-  const workTypeCategories = useMemo(() => {
-    return availableWorkTypes
-      .map((workType) => ({
-        workType,
-        count: availableJobs.filter(
-          (job) =>
-            normalizeWorkType(job?.workType) === normalizeWorkType(workType)
-        ).length,
-      }))
-      .filter((item) => item.count > 0);
-  }, [availableWorkTypes, availableJobs]);
-
-  // ====================================================
-  // CATEGORY JOBS
-  // ====================================================
+  const workTypeCategories = useMemo(
+    () =>
+      availableWorkTypes
+        .map((workType) => ({
+          workType,
+          count: availableJobs.filter(
+            (job) =>
+              normalizeWorkType(job?.workType) ===
+              normalizeWorkType(workType)
+          ).length,
+        }))
+        .filter((item) => item.count > 0),
+    [availableWorkTypes, availableJobs]
+  );
 
   const categoryJobs = useMemo(() => {
     if (!selectedWorkType) return [];
@@ -578,7 +545,7 @@ export default function App() {
   }, [availableJobs, selectedWorkType]);
 
   // ====================================================
-  // CLOSE MODAL
+  // APPLICATION MODAL
   // ====================================================
 
   const handleCloseModal = () => {
@@ -592,10 +559,6 @@ export default function App() {
     setNote("Order for job");
     setError("");
   };
-
-  // ====================================================
-  // OPEN APPLICATION
-  // ====================================================
 
   const handleApply = (job) => {
     setSelectedJob(job);
@@ -655,7 +618,6 @@ export default function App() {
       }
 
       window.open(checkoutUrl, "_blank");
-
       handleCloseModal();
     } catch (err) {
       console.error("Error creating order:", err);
@@ -680,119 +642,86 @@ export default function App() {
     });
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const scrollToHealthcare = () => {
-    document.getElementById("healthcare-jobs")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
   // ====================================================
   // RENDER
   // ====================================================
 
   return (
-    <div className="jh-body min-h-screen w-full overflow-x-hidden bg-slate-100 text-slate-900">
-      {/* ==================================================
-          HEADER
-      ================================================== */}
-
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#faf8ef] text-[#071c19]">
       <Header onOfferJobClick={() => navigate("/offer-job")} />
 
-      {/* ==================================================
-          TOP MARQUEE
-      ================================================== */}
-
-      <div className="w-full overflow-hidden bg-slate-950 py-2 text-white">
-        <div className="jobhir-marquee text-[11px] font-semibold sm:text-xs">
-          <span className="text-slate-400">{currentTime}</span>
-          <span className="mx-5 text-amber-400">•</span>
+      {/* TOP MARQUEE */}
+      <div className="w-full overflow-hidden border-b border-[#c8ae6a]/50 bg-[#071c19] py-2.5 text-white shadow-sm">
+        <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
+          <span className="text-[#d9dfd8]">{currentTime}</span>
+          <span className="mx-5 text-[#c8ae6a]">•</span>
           <span>Find genuine job opportunities near you</span>
-          <span className="mx-5 text-amber-400">•</span>
-          <span>100% Secure &amp; Safe</span>
-          <span className="mx-5 text-amber-400">•</span>
+          <span className="mx-5 text-[#c8ae6a]">•</span>
+          <span className="inline-flex items-center gap-1">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#c8ae6a]" />
+            100% Secure &amp; Safe
+          </span>
+          <span className="mx-5 text-[#c8ae6a]">•</span>
           <span>JobHir — Jobs for Everyone</span>
         </div>
       </div>
 
-      {/* ==================================================
-          HERO / TOP ACTION AREA
-      ================================================== */}
-
+      {/* TOP ACTION AREA */}
       <section className="w-full px-3 pt-4 sm:px-5 lg:px-8 xl:px-10">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-950 via-indigo-900 to-blue-800 p-5 shadow-lg shadow-blue-950/20 sm:p-7">
-          {/* soft decorative circles */}
-          <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-amber-400/10" />
-          <div className="pointer-events-none absolute -bottom-20 left-1/3 h-48 w-48 rounded-full bg-white/5" />
-
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            {/* LEFT */}
-            <div className="min-w-0">
-              <h1 className="jh-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-                Find your next job
-              </h1>
-
-              <p className="mt-2 max-w-md text-sm leading-6 text-blue-100">
-                Genuine work from verified employers across India. Pick your
-                state and start applying.
+        <div className="w-full border border-[#c8ae6a]/45 bg-white p-4 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0 text-center lg:text-left">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0b6652] sm:text-xs">
+                Job Search
               </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-blue-100">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5">
-                  <BriefcaseBusiness className="h-3.5 w-3.5 text-amber-300" />
-                  {loadingJobs ? "Loading jobs…" : `${availableJobs.length} jobs open`}
-                </span>
+              <h1 className="mt-1 text-2xl font-black tracking-tight text-[#071c19] sm:text-3xl">
+                Find Your Next Job
+              </h1>
 
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
-                  Secure payments
-                </span>
-              </div>
+              <p className="mt-2 text-xs text-[#64736b] sm:text-sm">
+                Search genuine job opportunities across India.
+              </p>
             </div>
 
-            {/* RIGHT */}
-            <div className="flex w-full flex-col gap-2.5 sm:flex-row lg:w-auto">
-              <div className="grid w-full grid-cols-2 gap-2.5 sm:contents">
+            <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+              <div className="grid w-full grid-cols-2 gap-2 sm:contents">
                 <button
                   type="button"
                   onClick={() => navigate("/offer-job")}
-                  className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-amber-400 px-4 py-3 text-sm font-extrabold text-slate-900 shadow-md shadow-amber-900/20 transition hover:bg-amber-300 active:scale-[0.98] sm:w-auto sm:px-5"
+                  className="group relative flex w-full items-center justify-center gap-2 overflow-hidden border border-[#c8ae6a] bg-[#0b302a] px-3 py-3 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#12483d] hover:shadow-lg sm:w-auto sm:px-5"
                 >
-                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_2.6s_infinite]" />
-                  <Plus className="relative h-4 w-4" strokeWidth={3} />
-                  <span className="relative whitespace-nowrap">Post a Job</span>
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                  <span className="relative flex items-center gap-1.5">
+                    <span className="text-lg leading-none">+</span>
+                    <span className="whitespace-nowrap">Post a Job</span>
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => navigate("/worker-register")}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/20 active:scale-[0.98] sm:w-auto sm:px-5"
+                  className="w-full border border-[#c8ae6a]/70 bg-[#faf8ef] px-3 py-3 text-sm font-bold text-[#0b302a] transition hover:bg-[#f3ecd8] sm:w-auto sm:px-5"
                 >
-                  <UserPlus className="h-4 w-4" />
                   Register
                 </button>
               </div>
 
-              {/* State Selector */}
-              <div className="relative w-full sm:w-56">
-                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                  <span className="text-lg leading-none">🇮🇳</span>
+              <div className="relative w-full sm:w-52">
+                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-lg">
+                  🇮🇳
                 </div>
 
                 <select
-                  aria-label="Select state"
                   value={selectedState}
                   onChange={(event) => {
                     setSelectedState(event.target.value);
                     setSelectedWorkType(null);
-
                     setTimeout(scrollToJobs, 50);
                   }}
-                  className="h-12 w-full cursor-pointer appearance-none rounded-xl border border-white/20 bg-white pl-10 pr-9 text-sm font-bold text-slate-800 shadow-sm outline-none transition focus:ring-4 focus:ring-amber-300/60"
+                  className="h-11 w-full cursor-pointer appearance-none border border-[#c8ae6a]/60 bg-gradient-to-r from-[#faf8ef] via-white to-[#edf5ef] pl-10 pr-9 text-sm font-bold text-[#0b302a] outline-none transition hover:border-[#c8ae6a] focus:border-[#0b6652] focus:ring-4 focus:ring-[#0b302a]/10"
                 >
                   <option value="All">All India</option>
-
                   {stateList.map((state) => (
                     <option key={state} value={state}>
                       {state}
@@ -800,9 +729,9 @@ export default function App() {
                   ))}
                 </select>
 
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#0b302a]">
                   <svg
-                    className="h-4 w-4 text-slate-500"
+                    className="h-4 w-4"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -819,89 +748,84 @@ export default function App() {
         </div>
       </section>
 
-      {/* ==================================================
-          MAIN JOB AREA
-      ================================================== */}
-
+      {/* MAIN JOB AREA */}
       <main
         id="jobs"
-        className="w-full scroll-mt-4 px-3 py-6 sm:px-5 sm:py-8 lg:px-8 xl:px-10"
+        className="w-full scroll-mt-24 px-3 py-6 sm:px-5 sm:py-8 lg:px-8 xl:px-10"
       >
-        {/* LOADING (skeleton) */}
-        {loadingJobs && (
+        {/* SECTION INTRO */}
+        <div className="mb-5 flex flex-col gap-2 border-l-4 border-[#c8ae6a] bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div>
-            <p className="mb-4 text-sm font-semibold text-slate-500">
-              Loading jobs… pehli baar server start hone me thoda time lag sakta hai.
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0b6652]">
+              Explore Opportunities
             </p>
+            <h2 className="mt-1 text-lg font-black text-[#071c19] sm:text-xl">
+              Jobs by Category
+            </h2>
+            <p className="mt-1 text-xs text-[#64736b]">
+              {selectedState === "All" ? "Across India" : selectedState}
+              {" · "}
+              {availableJobs.length}{" "}
+              {availableJobs.length === 1 ? "job available" : "jobs available"}
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[0, 1, 2, 3].map((n) => (
-                <SkeletonCard key={n} />
-              ))}
+          <div className="flex items-center gap-2 self-start border border-[#dce5dc] bg-[#faf8ef] px-3 py-2 sm:self-center">
+            <ShieldCheck className="h-4 w-4 text-[#0b6652]" />
+            <span className="text-xs font-bold text-[#0b302a]">
+              JobHir Opportunities
+            </span>
+          </div>
+        </div>
+
+        {/* LOADING */}
+        {loadingJobs && (
+          <div className="flex min-h-[300px] flex-col items-center justify-center border border-[#e0e5dd] bg-white">
+            <div className="relative h-14 w-14">
+              <div className="absolute inset-0 rounded-full border-4 border-[#e5eee6]" />
+              <div className="absolute inset-0 animate-spin rounded-full border-4 border-[#0b302a] border-r-[#c8ae6a] border-t-transparent" />
             </div>
+            <p className="mt-4 text-sm font-semibold text-[#52645a]">
+              Loading available jobs...
+            </p>
           </div>
         )}
 
         {/* NO JOBS */}
         {!loadingJobs && availableJobs.length === 0 && (
-          <div className="flex min-h-[320px] items-center justify-center">
-            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
-                <Search className="h-7 w-7 text-blue-700" />
+          <div className="flex min-h-[300px] items-center justify-center border border-[#e0e5dd] bg-white px-5 py-12 text-center">
+            <div className="max-w-md">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center border border-[#dce5dc] bg-[#faf8ef] text-[#0b302a]">
+                <Search className="h-7 w-7" />
               </div>
-
-              <p className="jh-display text-xl font-extrabold text-slate-900">
+              <h3 className="text-lg font-extrabold text-[#071c19]">
                 No jobs found
+              </h3>
+              <p className="mt-2 text-sm text-[#64736b]">
+                Try selecting another state to explore available jobs.
               </p>
-
-              <p className="mt-1.5 text-sm text-slate-500">
-                Try another state, or post a job yourself.
-              </p>
-
-              <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+              {selectedState !== "All" && (
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedState("All");
                     setSelectedWorkType(null);
                   }}
-                  className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                  className="mt-5 border border-[#c8ae6a] bg-[#0b302a] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#12483d]"
                 >
-                  Show all India
+                  Show All India Jobs
                 </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate("/offer-job")}
-                  className="rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-800"
-                >
-                  Post a Job
-                </button>
-              </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* CATEGORY VIEW */}
+        {/* CATEGORY GRID */}
         {!loadingJobs && availableJobs.length > 0 && !selectedWorkType && (
           <section>
-            <div className="mb-4 flex items-end justify-between gap-3">
-              <div>
-                <h2 className="jh-display text-xl font-extrabold text-slate-900 sm:text-2xl">
-                  Browse by work type
-                </h2>
-
-                <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
-                  {selectedState === "All" ? "All India" : selectedState} ·{" "}
-                  {availableJobs.length}{" "}
-                  {availableJobs.length === 1 ? "job" : "jobs"}
-                </p>
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {workTypeCategories.map(({ workType, count }) => {
-                const { icon: Icon, color, bg, border } =
+                const { icon: Icon, bg, color } =
                   getWorkTypeIconData(workType);
 
                 return (
@@ -909,27 +833,41 @@ export default function App() {
                     key={workType}
                     type="button"
                     onClick={() => setSelectedWorkType(workType)}
-                    className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-slate-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.98]"
+                    className="jobhir-card group relative flex min-h-[174px] flex-col border border-[#e0e5dd] bg-white p-3.5 text-left sm:p-4"
                   >
-                    <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-xl border ${border} ${bg} ${color}`}
-                    >
-                      <Icon className="h-6 w-6" strokeWidth={2.1} />
+                    <div className="mb-4 flex items-start justify-between gap-2">
+                      <div
+                        className="flex h-11 w-11 shrink-0 items-center justify-center border border-[#e0e5dd]"
+                        style={{ backgroundColor: bg, color }}
+                      >
+                        <Icon className="h-5 w-5" strokeWidth={2.1} />
+                      </div>
+
+                      <span className="flex h-8 w-8 items-center justify-center border border-[#e6e9e1] bg-[#faf8ef] text-[#0b302a] transition group-hover:border-[#c8ae6a]">
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </span>
                     </div>
 
-                    <h3 className="mt-4 min-h-[40px] text-sm font-extrabold leading-5 text-slate-900">
+                    <h3 className="min-h-[38px] text-sm font-extrabold leading-5 text-[#071c19]">
                       {workType}
                     </h3>
 
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-500">
-                        <span className={`text-base font-extrabold ${color}`}>
-                          {count}
-                        </span>{" "}
-                        {count === 1 ? "job" : "jobs"}
+                    <div className="mt-2 flex items-baseline gap-1.5">
+                      <span className="text-xl font-black text-[#0b302a]">
+                        {count}
                       </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#78877f]">
+                        {count === 1 ? "Job" : "Jobs"}
+                      </span>
+                    </div>
 
-                      <ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-600" />
+                    <div className="mt-auto flex items-center justify-between border-t border-[#edf0e9] pt-3">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#78877f]">
+                        Explore
+                      </span>
+                      <span className="text-[10px] font-extrabold text-[#0b6652]">
+                        View Jobs
+                      </span>
                     </div>
                   </button>
                 );
@@ -941,29 +879,31 @@ export default function App() {
         {/* SELECTED CATEGORY */}
         {!loadingJobs && selectedWorkType && (
           <section>
-            <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-5 border border-[#e0e5dd] bg-white">
+              <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                 {(() => {
-                  const { icon: Icon, color, bg, border } =
+                  const { icon: Icon, bg, color } =
                     getWorkTypeIconData(selectedWorkType);
 
                   return (
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <div
-                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${border} ${bg} ${color}`}
+                        className="flex h-12 w-12 shrink-0 items-center justify-center border border-[#e0e5dd] sm:h-14 sm:w-14"
+                        style={{ backgroundColor: bg, color }}
                       >
-                        <Icon className="h-7 w-7" strokeWidth={2} />
+                        <Icon className="h-6 w-6" />
                       </div>
 
                       <div>
-                        <h2 className="jh-display text-2xl font-extrabold text-slate-900">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0b6652]">
+                          Job Category
+                        </span>
+                        <h2 className="text-xl font-extrabold text-[#071c19] sm:text-2xl">
                           {selectedWorkType}
                         </h2>
-
-                        <p className="mt-0.5 text-sm text-slate-500">
+                        <p className="mt-0.5 text-xs text-[#64736b]">
                           {categoryJobs.length}{" "}
                           {categoryJobs.length === 1 ? "job" : "jobs"} available
-                          {selectedState !== "All" ? ` in ${selectedState}` : ""}
                         </p>
                       </div>
                     </div>
@@ -973,45 +913,40 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setSelectedWorkType(null)}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 border border-[#c8ae6a]/70 bg-[#faf8ef] px-4 py-2.5 text-sm font-bold text-[#0b302a] transition hover:bg-[#f3ecd8] sm:w-auto"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  All categories
+                  All Categories
                 </button>
               </div>
             </div>
 
             {/* NO CATEGORY JOBS */}
             {categoryJobs.length === 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
-                  <Search className="h-6 w-6 text-slate-400" />
-                </div>
-
-                <h3 className="text-base font-extrabold text-slate-800">
+              <div className="border border-[#e0e5dd] bg-white px-6 py-12 text-center">
+                <Search className="mx-auto h-8 w-8 text-[#78877f]" />
+                <h3 className="mt-3 text-base font-extrabold text-[#071c19]">
                   No jobs found
                 </h3>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  There are currently no jobs available in this category.
+                <p className="mt-1 text-sm text-[#64736b]">
+                  There are currently no jobs in this category.
                 </p>
-
                 <button
                   type="button"
                   onClick={() => setSelectedWorkType(null)}
-                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-800"
+                  className="mt-5 inline-flex items-center gap-2 border border-[#c8ae6a] bg-[#0b302a] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#12483d]"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Browse categories
+                  Browse Categories
                 </button>
               </div>
             )}
 
-            {/* JOB GRID */}
+            {/* JOB CARDS */}
             {categoryJobs.length > 0 && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {categoryJobs.map((job) => {
-                  const { icon: Icon, color, bg, border, accent } =
+                  const { icon: Icon, bg, color } =
                     getWorkTypeIconData(job?.workType || selectedWorkType);
 
                   const state = getJobState(job);
@@ -1021,65 +956,99 @@ export default function App() {
                   return (
                     <article
                       key={job?._id || job?.id}
-                      className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md"
+                      className="jobhir-card flex h-full flex-col overflow-hidden border border-[#e0e5dd] bg-white"
                     >
+                      <div className="h-1 w-full bg-gradient-to-r from-[#0b302a] via-[#0b6652] to-[#c8ae6a]" />
+
                       <div className="flex flex-1 flex-col p-4">
                         {/* TITLE */}
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="mb-4 flex items-start justify-between gap-2">
                           <div className="flex min-w-0 items-center gap-3">
                             <div
-                              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${border} ${bg} ${color}`}
+                              className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#e0e5dd]"
+                              style={{ backgroundColor: bg, color }}
                             >
-                              <Icon className="h-5 w-5" strokeWidth={2} />
+                              <Icon className="h-5 w-5" />
                             </div>
 
                             <div className="min-w-0">
-                              <h3 className="line-clamp-2 text-[15px] font-extrabold leading-5 text-slate-900">
+                              <h3 className="line-clamp-2 text-sm font-extrabold leading-5 text-[#071c19]">
                                 {job?.title || job?.workType || "Job Opportunity"}
                               </h3>
-
-                              <p className={`mt-0.5 text-xs font-bold ${color}`}>
+                              <p className="mt-0.5 text-[11px] font-bold text-[#0b6652]">
                                 {job?.workType || selectedWorkType}
                               </p>
                             </div>
                           </div>
 
-                          <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
-                            Open
+                          <span className="shrink-0 border border-[#d8e8d9] bg-[#f0f8f0] px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#23663b]">
+                            Available
                           </span>
                         </div>
 
                         {/* DESCRIPTION */}
                         {job?.description && (
-                          <p className="mt-3 line-clamp-3 text-[13px] leading-5 text-slate-500">
+                          <p className="mb-4 line-clamp-3 text-xs leading-5 text-[#64736b]">
                             {job.description}
                           </p>
                         )}
 
                         {/* PAYMENT */}
-                        <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
-                          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                        <div className="mb-4 border border-[#e0e5dd] bg-gradient-to-br from-[#faf8ef] to-white p-3.5">
+                          <div className="mb-1 flex items-center gap-1.5 text-[#0b6652]">
                             <IndianRupee className="h-3.5 w-3.5" />
-                            Job payment
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              Job Payment
+                            </span>
                           </div>
 
-                          <div className="text-xl font-extrabold text-slate-900">
+                          <div className="text-xl font-black text-[#071c19]">
                             ₹{Number(job?.amount || 0).toLocaleString("en-IN")}
                           </div>
                         </div>
 
                         {/* DETAILS */}
-                        <div className="mt-4 space-y-3">
+                        <div className="space-y-3">
+                          {job?.workType && (
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#f4f6f0] text-[#0b302a]">
+                                <BriefcaseBusiness className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className={smallLabelClass}>Work</p>
+                                <p className="truncate text-xs font-semibold text-[#334740]">
+                                  {job.workType}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
                           {(state || district) && (
-                            <InfoRow icon={MapPinned} label="Location">
-                              {[district, state].filter(Boolean).join(", ")}
-                            </InfoRow>
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#f4f6f0] text-[#0b302a]">
+                                <MapPinned className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className={smallLabelClass}>Location</p>
+                                <p className="truncate text-xs font-semibold text-[#334740]">
+                                  {[district, state].filter(Boolean).join(", ")}
+                                </p>
+                              </div>
+                            </div>
                           )}
 
                           {address && (
-                            <InfoRow icon={MapPin} label="Address">
-                              {address}
-                            </InfoRow>
+                            <div className="flex items-start gap-2.5">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#f4f6f0] text-[#0b302a]">
+                                <MapPin className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className={smallLabelClass}>Address</p>
+                                <p className="line-clamp-2 text-xs font-medium leading-4 text-[#52645a]">
+                                  {address}
+                                </p>
+                              </div>
+                            </div>
                           )}
                         </div>
 
@@ -1088,10 +1057,10 @@ export default function App() {
                           <button
                             type="button"
                             onClick={() => handleApply(job)}
-                            className={`flex w-full items-center justify-center gap-2 rounded-xl ${accent} px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:brightness-95 active:scale-[0.98]`}
+                            className="group flex w-full items-center justify-center gap-2 border border-[#c8ae6a] bg-[#0b302a] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#12483d] hover:shadow-md active:scale-[0.98]"
                           >
-                            Apply now
-                            <ArrowRight className="h-4 w-4" />
+                            Apply Now
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                           </button>
                         </div>
                       </div>
@@ -1104,103 +1073,87 @@ export default function App() {
         )}
       </main>
 
-      {/* ==================================================
-          QUICK LINKS
-      ================================================== */}
-
-      <div className="flex w-full justify-center gap-3 px-3 pb-6 sm:px-5">
+      {/* QUICK ACTION BUTTONS */}
+      <div className="flex w-full flex-wrap justify-center gap-2 px-3 pb-6 sm:px-5">
         <button
           type="button"
           onClick={() => navigate("/working-workers")}
-          className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-800 active:scale-[0.98] sm:max-w-[220px] sm:flex-none sm:px-6"
+          className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 border border-[#c8ae6a] bg-[#0b302a] px-3 py-3 text-sm font-semibold text-white transition hover:bg-[#12483d] sm:flex-none sm:px-5"
         >
-          <Users size={18} />
+          <BriefcaseBusiness size={18} />
           <span className="whitespace-nowrap">Now Workers</span>
         </button>
 
         <button
           type="button"
           onClick={() => navigate("/payment")}
-          className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700 active:scale-[0.98] sm:max-w-[220px] sm:flex-none sm:px-6"
+          className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 border border-[#c8ae6a] bg-[#faf8ef] px-3 py-3 text-sm font-semibold text-[#0b302a] transition hover:bg-[#f3ecd8] sm:flex-none sm:px-5"
         >
           <CreditCard size={18} />
           <span className="whitespace-nowrap">Pay JobHir</span>
         </button>
       </div>
 
-      {/* ==================================================
-          HEALTHCARE JOBS
-      ================================================== */}
-
+      {/* HEALTHCARE JOBS */}
       <section id="healthcare-jobs" className="scroll-mt-24">
         <HealthcareJobs />
       </section>
 
-      {/* ==================================================
-          APPLICATION MODAL (bottom sheet on mobile)
-      ================================================== */}
-
+      {/* APPLICATION MODAL */}
       {selectedJob && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 backdrop-blur-sm sm:items-center sm:px-5 sm:py-5"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#071c19]/75 px-3 py-5 backdrop-blur-sm sm:px-5"
           onClick={handleCloseModal}
         >
           <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Job application"
-            className="jobhir-sheet relative flex max-h-[94vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl"
+            className="jobhir-scrollbar relative max-h-[94vh] w-full max-w-2xl overflow-y-auto border border-[#c8ae6a]/60 bg-white shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
-            {/* HEADER */}
-            <div className="relative shrink-0 bg-gradient-to-br from-blue-900 to-indigo-800 px-5 py-5 text-white sm:px-6">
+            {/* MODAL HEADER */}
+            <div className="sticky top-0 z-10 border-b border-[#c8ae6a]/60 bg-gradient-to-r from-[#071c19] via-[#0b302a] to-[#12483d] px-5 py-5 text-white shadow-md sm:px-6">
               <button
                 type="button"
                 onClick={handleCloseModal}
                 disabled={loading}
-                aria-label="Close"
-                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 disabled:opacity-50"
+                aria-label="Close application form"
+                className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center border border-white/20 bg-white/10 text-white transition hover:bg-white/20 disabled:opacity-50"
               >
                 <X className="h-4 w-4" />
               </button>
 
-              <p className="text-xs font-semibold text-blue-200">
-                Job application
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#e6d7a8]">
+                Job Application
               </p>
 
-              <h2 className="jh-display mt-1 pr-12 text-xl font-extrabold leading-snug sm:text-2xl">
+              <h2 className="mt-1 pr-10 text-xl font-extrabold sm:text-2xl">
                 Apply for {selectedJob?.title || "Job"}
               </h2>
 
-              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold">
-                Application fee: ₹{amountInRupees || 0}
+              <div className="mt-3 inline-flex items-center gap-2 border border-[#c8ae6a]/50 bg-white/10 px-3 py-1.5 text-xs font-semibold">
+                <IndianRupee className="h-3.5 w-3.5 text-[#e6d7a8]" />
+                Application Fee: ₹{amountInRupees || 0}
               </div>
             </div>
 
-            {/* BODY */}
-            <div className="jobhir-scrollbar flex-1 overflow-y-auto p-5 sm:p-6">
+            {/* MODAL BODY */}
+            <div className="p-4 sm:p-6">
               <div className="grid gap-4">
                 {/* NAME */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
-                    Your name
-                  </label>
-
+                  <label className={labelClass}>Your Name</label>
                   <input
                     type="text"
                     value={customerName}
                     onChange={(event) => setCustomerName(event.target.value)}
                     placeholder="Enter your name"
+                    autoComplete="name"
                     className={inputClass}
                   />
                 </div>
 
                 {/* MOBILE */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
-                    Mobile number
-                  </label>
-
+                  <label className={labelClass}>Mobile Number</label>
                   <input
                     type="tel"
                     value={mobileNumber}
@@ -1212,108 +1165,94 @@ export default function App() {
                     placeholder="10 digit mobile number"
                     maxLength={10}
                     inputMode="numeric"
+                    autoComplete="tel-national"
                     className={inputClass}
                   />
                 </div>
 
                 {/* EMAIL */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
-                    Email
-                    <span className="ml-1 font-normal text-slate-400">
-                      (optional)
+                  <label className={labelClass}>
+                    Email{" "}
+                    <span className="ml-1 font-normal text-[#78877f]">
+                      (Optional)
                     </span>
                   </label>
-
                   <input
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder="Enter your email"
+                    autoComplete="email"
                     className={inputClass}
                   />
                 </div>
 
-                {/* LOCATION */}
-                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                  <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                {/* JOB LOCATION */}
+                <div className="overflow-hidden border border-[#dce5dc] bg-[#fafbf8]">
+                  <div className="flex items-start gap-3 border-b border-[#e0e5dd] bg-[#f3f6ef] px-4 py-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#0b302a] text-[#e6d7a8]">
                       <MapPin className="h-5 w-5" />
                     </div>
-
                     <div>
-                      <p className="text-sm font-extrabold text-slate-800">
-                        Job location
+                      <p className="text-sm font-extrabold text-[#071c19]">
+                        Job Location
                       </p>
-
-                      <p className="text-xs text-slate-500">
-                        Added by the job poster
+                      <p className="mt-0.5 text-xs text-[#64736b]">
+                        Location provided by the job poster
                       </p>
                     </div>
                   </div>
 
                   <div className="p-3">
-                    <div className="rounded-xl border border-slate-200 bg-white p-3">
-                      <p className="text-[11px] font-semibold text-slate-400">
-                        Address
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold leading-5 text-slate-700">
+                    <div className="border border-[#e0e5dd] bg-white p-3">
+                      <p className={smallLabelClass}>Address</p>
+                      <p className="mt-1 text-sm font-semibold leading-5 text-[#334740]">
                         {getJobAddress(selectedJob)}
                       </p>
                     </div>
 
-                    <div className="mt-2.5 grid grid-cols-2 gap-2">
+                    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {selectedJob?.location?.village && (
-                        <div className="rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-semibold text-slate-400">
-                            Village
-                          </p>
-                          <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
+                        <div className="border border-[#e0e5dd] bg-white p-3">
+                          <p className={smallLabelClass}>Village</p>
+                          <p className="mt-1 truncate text-xs font-semibold text-[#334740]">
                             {selectedJob.location.village}
                           </p>
                         </div>
                       )}
 
                       {selectedJob?.location?.locality && (
-                        <div className="rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-semibold text-slate-400">
-                            Locality / Mohalla
-                          </p>
-                          <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
+                        <div className="border border-[#e0e5dd] bg-white p-3">
+                          <p className={smallLabelClass}>Locality / Mohalla</p>
+                          <p className="mt-1 truncate text-xs font-semibold text-[#334740]">
                             {selectedJob.location.locality}
                           </p>
                         </div>
                       )}
 
                       {getJobState(selectedJob) && (
-                        <div className="rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-semibold text-slate-400">
-                            State
-                          </p>
-                          <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
+                        <div className="border border-[#e0e5dd] bg-white p-3">
+                          <p className={smallLabelClass}>State</p>
+                          <p className="mt-1 truncate text-xs font-semibold text-[#334740]">
                             {getJobState(selectedJob)}
                           </p>
                         </div>
                       )}
 
                       {getJobDistrict(selectedJob) && (
-                        <div className="rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-semibold text-slate-400">
-                            District
-                          </p>
-                          <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
+                        <div className="border border-[#e0e5dd] bg-white p-3">
+                          <p className={smallLabelClass}>District</p>
+                          <p className="mt-1 truncate text-xs font-semibold text-[#334740]">
                             {getJobDistrict(selectedJob)}
                           </p>
                         </div>
                       )}
 
                       {selectedJob?.location?.postcode && (
-                        <div className="rounded-xl border border-slate-200 bg-white p-3">
-                          <p className="text-[11px] font-semibold text-slate-400">
-                            PIN
-                          </p>
-                          <p className="mt-0.5 text-xs font-bold text-slate-700">
+                        <div className="border border-[#e0e5dd] bg-white p-3">
+                          <p className={smallLabelClass}>PIN</p>
+                          <p className="mt-1 text-xs font-semibold text-[#334740]">
                             {selectedJob.location.postcode}
                           </p>
                         </div>
@@ -1322,8 +1261,10 @@ export default function App() {
 
                     {/* MAP */}
                     {selectedJob?.location?.latitude != null &&
-                      selectedJob?.location?.longitude != null && (
-                        <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white">
+                      selectedJob?.location?.longitude != null &&
+                      Number.isFinite(Number(selectedJob.location.latitude)) &&
+                      Number.isFinite(Number(selectedJob.location.longitude)) && (
+                        <div className="mt-3 overflow-hidden border border-[#dce5dc] bg-white p-1">
                           <div className="h-56 w-full overflow-hidden sm:h-64">
                             <MapContainer
                               center={[
@@ -1368,31 +1309,26 @@ export default function App() {
 
                 {/* APPLICATION FEE */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
-                    Application fee
-                  </label>
-
+                  <label className={labelClass}>Application Fee</label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-slate-500">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-[#52645a]">
                       ₹
                     </span>
-
                     <input
                       type="number"
                       value={amountInRupees}
-                      onChange={(event) => setAmountInRupees(event.target.value)}
+                      onChange={(event) =>
+                        setAmountInRupees(event.target.value)
+                      }
                       min="1"
-                      className={`${inputClass} pl-8 font-bold`}
+                      className={`${inputClass} pl-8`}
                     />
                   </div>
                 </div>
 
                 {/* NOTE */}
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold text-slate-600">
-                    Note
-                  </label>
-
+                  <label className={labelClass}>Note</label>
                   <input
                     type="text"
                     value={note}
@@ -1407,52 +1343,62 @@ export default function App() {
               {error && (
                 <div
                   role="alert"
-                  className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
+                  className="mt-4 border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
                 >
                   {error}
                 </div>
               )}
 
               {/* PAYMENT INFO */}
-              <div className="mt-4 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3.5">
-                <ShieldCheck className="h-5 w-5 shrink-0 text-amber-700" />
+              <div className="mt-5 border border-[#c8ae6a]/60 bg-[#faf8ef] p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0b6652]" />
+                    <div>
+                      <p className="text-xs font-bold text-[#0b302a]">
+                        Secure Application
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-4 text-[#64736b]">
+                        You will be redirected to the secure payment page.
+                      </p>
+                    </div>
+                  </div>
 
-                <p className="text-xs leading-5 text-amber-800">
-                  <span className="font-bold">Secure application.</span> You
-                  will be taken to the secure payment page to pay ₹
-                  {amountInRupees || 0}.
-                </p>
+                  <span className="shrink-0 border border-[#e0e5dd] bg-white px-2.5 py-1.5 text-sm font-extrabold text-[#0b302a]">
+                    ₹{amountInRupees || 0}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* STICKY FOOTER */}
-            <div className="shrink-0 border-t border-slate-200 bg-white p-4 sm:px-6">
+              {/* PAY */}
               <button
                 type="button"
                 onClick={createOrder}
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 py-3.5 text-sm font-extrabold text-white shadow-md shadow-blue-900/20 transition hover:bg-blue-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-2 border border-[#c8ae6a] bg-gradient-to-r from-[#071c19] via-[#0b302a] to-[#12483d] py-3.5 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                    Processing…
+                    Processing...
                   </>
                 ) : (
-                  <>Pay ₹{amountInRupees || 0} &amp; apply</>
+                  <>
+                    <CreditCard className="h-4 w-4" />
+                    Pay ₹{amountInRupees || 0} &amp; Apply
+                  </>
                 )}
               </button>
 
-              <p className="mt-2.5 text-center text-[11px] text-slate-400">
+              <p className="mt-3 text-center text-[10px] leading-4 text-[#78877f]">
                 By continuing, you agree to proceed with this job application.
               </p>
             </div>
           </div>
         </div>
       )}
-      {/* ==================================================
-          FOOTER
-      ================================================== */}
+
+      {/* FOOTER */}
       <Footer />
     </div>
   );
