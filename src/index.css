@@ -182,7 +182,7 @@ a:focus-visible {
 /* =========================================
    BLINK ANIMATION
    ========================================= */
-
+/* 
 @keyframes blink {
   0%,
   100% {
@@ -196,7 +196,7 @@ a:focus-visible {
 
 .blink {
   animation: blink 1.5s ease-in-out infinite;
-}
+} */
 
 /* =========================================
    SCROLLING TEXT
