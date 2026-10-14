@@ -1401,19 +1401,21 @@ useEffect(() => {
               key={workType}
               type="button"
               onClick={() => setSelectedWorkType(workType)}
-              className="
-                group relative overflow-hidden
-                border border-slate-200
-                bg-white text-left
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:border-slate-300
-                hover:shadow-xl
-                focus:outline-none
-                focus:ring-2
-                focus:ring-indigo-500
-                focus:ring-offset-2
-              "
+              
+className="
+  group relative flex min-h-[145px] flex-col
+  items-center justify-center overflow-hidden
+  border border-[#e6e0cd] bg-white text-center
+  shadow-[0_4px_14px_rgba(7,28,25,0.05)]
+  transition-all duration-300
+  hover:-translate-y-1
+  hover:border-[#c8ae6a]
+  hover:shadow-[0_12px_25px_rgba(7,28,25,0.12)]
+  focus:outline-none
+  focus:ring-2 focus:ring-[#c8ae6a]
+  focus:ring-offset-2
+"
+
             >
               <div className={`h-1 w-full ${accent}`} />
 
