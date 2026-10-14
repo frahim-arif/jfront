@@ -510,10 +510,10 @@ useEffect(() => {
 
     /* Main application */
     .jobhir-app {
-      min-height: 100vh;
-      background: #f5f7fb !important;
-      color: #172033;
-    }
+  min-height: 100vh;
+  background: #faf8ef !important;
+  color: #172d27;
+}
 
     .jobhir-app * {
       box-sizing: border-box;
@@ -530,16 +530,16 @@ useEffect(() => {
 
     /* Main content */
     .jobhir-app main {
-      border-color: #e6eaf2 !important;
-    }
+  border-color: #e6e0cd !important;
+}
 
     /* Search and filter panel */
-    .jobhir-app .jobhir-top-panel {
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      border-radius: 20px !important;
-      box-shadow: 0 8px 28px rgba(15, 23, 42, .05);
-    }
+   .jobhir-app .jobhir-top-panel {
+  background: linear-gradient(135deg, #071c19, #0b302a, #123d32) !important;
+  border: 1px solid rgba(200, 174, 106, .4) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 18px 45px rgba(7, 28, 25, .16);
+}
 
     /* Job cards and content cards */
     .jobhir-app main article {
@@ -1027,7 +1027,7 @@ useEffect(() => {
   // ====================================================
 
   return (
-    <div className="jobhir-app min-h-screen w-full overflow-x-hidden bg-slate-50 text-slate-900">
+    <div className="jobhir-app min-h-screen w-full overflow-x-hidden bg-[#faf8ef] text-[#172d27]">
 
       {/* ==================================================
           HEADER
@@ -1043,8 +1043,8 @@ useEffect(() => {
           TOP MARQUEE
       ================================================== */}
 
-      <div className="w-full overflow-hidden border-b border-amber-400/20 bg-slate-950 py-2.5 text-white shadow-sm">
-        <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
+      <div className="w-full overflow-hidden border-b border-[#c8ae6a]/40 bg-[#071c19] py-2.5 text-white shadow-sm">
+  <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
 
           <span className="text-slate-300">
             {currentTime}
@@ -1081,8 +1081,8 @@ useEffect(() => {
           TOP ACTION AREA
       ================================================== */}
 
-      <section className="w-full px-3 pt-4 sm:px-5 lg:px-8 xl:px-10">
-        <div className="jobhir-top-panel w-full border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+      <section className="w-full px-3 pt-5 sm:px-5 sm:pt-7 lg:px-8 xl:px-10">
+        <div className="jobhir-top-panel w-full p-5 sm:p-7 lg:p-8">
 
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
@@ -1090,15 +1090,15 @@ useEffect(() => {
 
             <div className="min-w-0 text-center lg:text-left">
 
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600 sm:text-xs">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#e2c77e] sm:text-xs">
                 Job Search
               </p>
 
-              <h1 className="mt-1 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
                 Find Your Next Job
               </h1>
 
-              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+              <p className="mt-2 text-sm leading-6 text-white/75 sm:text-base">
                 Search genuine job opportunities across India.
               </p>
 
@@ -1115,13 +1115,13 @@ useEffect(() => {
       onClick={() => navigate("/offer-job")}
       className="
         group relative w-full overflow-hidden
-        bg-blue-900 
+       bg-[#c8ae6a] text-[#071c19]
         px-3 py-3
-        text-sm font-extrabold text-white
-        shadow-lg shadow-indigo-500/30
+        text-sm font-extrabold text-[#071c19]
+        shadow-lg shadow-black/15
         transition-all duration-300
         hover:-translate-y-1
-        hover:shadow-xl hover:shadow-purple-500/40
+        hover:bg-[#d9c17f] hover:shadow-xl hover:shadow-black/20
         active:translate-y-0
         sm:w-auto sm:px-5
       "
@@ -1336,7 +1336,7 @@ useEffect(() => {
     w-full
     rounded-2xl
     border border-slate-200
-    bg-slate-50
+    bg-[#faf8ef]
     px-3 py-6
     shadow-[0_10px_35px_rgba(15,23,42,0.07)]
     sm:px-5 sm:py-8

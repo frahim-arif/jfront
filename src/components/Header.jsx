@@ -616,9 +616,9 @@ export default function Header() {
         relative z-50 w-full
         border-b border-white/10
         bg-gradient-to-r
-        from-[#071631]
-        via-[#101f4a]
-        to-[#25104f]
+        from-[#071c19]
+        via-[#0b302a]
+        to-[#071c19]
         shadow-[0_10px_35px_rgba(2,6,23,0.28)]
       "
     >
@@ -682,9 +682,9 @@ export default function Header() {
       -inset-4
       rounded-[22px]
       bg-gradient-to-r
-      from-cyan-400/15
-      via-blue-500/10
-      to-indigo-500/15
+      from-[#c8ae6a]bg-[#c8ae6a]/15
+      via-[#b99a4e]/10
+      to-[#8d7438]/15
       opacity-0
       blur-xl
       transition-all duration-500
@@ -728,13 +728,13 @@ export default function Header() {
         absolute
         inset-0
         rounded-[18px]
-        bg-gradient-to-r
-        from-cyan-400/0
+        from-[#c8ae6a]bg-gradient-to-r
+        /0
         via-blue-400/0
         to-indigo-400/0
         opacity-0
         transition-all duration-300
-        group-hover:from-cyan-400/10
+        group-hover:from-[#c8ae6a]/10
         group-hover:via-blue-400/10
         group-hover:to-indigo-400/10
         group-hover:opacity-100
@@ -870,7 +870,7 @@ export default function Header() {
                     className="
                       absolute bottom-0 left-1/2
                       h-px w-0 -translate-x-1/2
-                      bg-cyan-300
+                      bg-[#c8ae6a]
                       transition-all duration-300
                       group-hover:w-1/2
                     "
@@ -886,9 +886,9 @@ export default function Header() {
                 group relative overflow-hidden
                 border border-cyan-200/25
                 bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
+                from-[#c8ae6a]
+                via-[#b99a4e]
+                to-[#8d7438]
                 px-4 py-2.5
                 text-xs font-black
                 text-white
@@ -965,7 +965,7 @@ export default function Header() {
                 flex items-center gap-1
                 border border-cyan-200/25
                 bg-gradient-to-r
-                from-cyan-400 to-blue-500
+                from-[#c8ae6a] to-blue-500
                 px-3 py-2
                 text-[11px] font-black
                 text-white
@@ -1067,9 +1067,9 @@ export default function Header() {
                 overflow-hidden
                 border border-cyan-200/25
                 bg-gradient-to-r
-                from-cyan-400
-                via-blue-500
-                to-indigo-500
+                from-[#c8ae6a]
+                via-[#b99a4e]
+                to-[#8d7438]
                 px-4 py-3
                 text-sm font-black
                 text-white
