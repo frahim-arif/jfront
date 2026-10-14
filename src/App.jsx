@@ -646,6 +646,26 @@ export default function App() {
         .jobhir-app .jobhir-scrollbar {
           border-radius: 18px !important;
         }
+          /* Center job category icons and labels */
+.jobhir-app main section button {
+  text-align: center !important;
+}
+
+.jobhir-app main section button > div {
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.jobhir-app main section button svg {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center category names */
+.jobhir-app main section button span {
+  text-align: center !important;
+}
       }
 
       /* Respect reduced-motion preferences */
