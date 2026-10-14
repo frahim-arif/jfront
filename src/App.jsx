@@ -510,6 +510,26 @@ export default function App() {
         scrollbar-width: thin;
         scrollbar-color: #6366f1 #f1f5f9;
       }
+              /* JobHir rounded app design */
+      .jobhir-scrollbar,
+      .jobhir-scrollbar > div {
+        border-radius: 16px;
+      }
+
+      .jobhir-scrollbar button,
+      .jobhir-scrollbar a {
+        border-radius: 12px;
+      }
+
+      .jobhir-scrollbar input,
+      .jobhir-scrollbar select,
+      .jobhir-scrollbar textarea {
+        border-radius: 12px;
+      }
+
+      .jobhir-scrollbar img {
+        border-radius: 14px;
+      }
     `;
 
     document.head.appendChild(style);
