@@ -646,7 +646,17 @@ export default function App() {
         .jobhir-app .jobhir-scrollbar {
           border-radius: 18px !important;
         }
-          /* Center job category icons and labels */
+      }
+
+      /* Respect reduced-motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        .jobhir-app *,
+        .jobhir-marquee {
+          animation-duration: .01ms !important;
+          transition-duration: .01ms !important;
+        }
+      }
+        /* Center job category icons and labels */
 .jobhir-app main section button {
   text-align: center !important;
 }
@@ -666,16 +676,6 @@ export default function App() {
 .jobhir-app main section button span {
   text-align: center !important;
 }
-      }
-
-      /* Respect reduced-motion preferences */
-      @media (prefers-reduced-motion: reduce) {
-        .jobhir-app *,
-        .jobhir-marquee {
-          animation-duration: .01ms !important;
-          transition-duration: .01ms !important;
-        }
-      }
     `;
 
     document.head.appendChild(style);
