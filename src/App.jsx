@@ -471,15 +471,10 @@ export default function App() {
 
     style.setAttribute("data-jobhir-style", "true");
 
-    style.innerHTML = `
+       style.innerHTML = `
       @keyframes jobhirMarquee {
-        0% {
-          transform: translateX(100%);
-        }
-
-        100% {
-          transform: translateX(-100%);
-        }
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
       }
 
       .jobhir-marquee {
@@ -499,36 +494,167 @@ export default function App() {
 
       .jobhir-scrollbar::-webkit-scrollbar-track {
         background: #f1f5f9;
+        border-radius: 20px;
       }
 
       .jobhir-scrollbar::-webkit-scrollbar-thumb {
         background: linear-gradient(#2563eb, #7c3aed);
-        border-radius: 10px;
+        border-radius: 20px;
       }
 
       .jobhir-scrollbar {
         scrollbar-width: thin;
         scrollbar-color: #6366f1 #f1f5f9;
       }
-              /* JobHir rounded app design */
-      .jobhir-scrollbar,
-      .jobhir-scrollbar > div {
-        border-radius: 16px;
+
+      /* =================================
+         JOBHIR MODERN ROUNDED APP DESIGN
+      ================================= */
+
+      .jobhir-app {
+        background: #f5f7fc !important;
       }
 
-      .jobhir-scrollbar button,
-      .jobhir-scrollbar a {
+      .jobhir-app button {
+        border-radius: 12px;
+        transition:
+          background-color .2s ease,
+          border-color .2s ease,
+          box-shadow .2s ease,
+          transform .2s ease;
+      }
+
+      /* Main panels and sections */
+      .jobhir-app main {
+        border-radius: 24px !important;
+        border-color: #e5eaf3 !important;
+        background: #f5f7fc !important;
+      }
+
+      .jobhir-app main section > div:not(.grid),
+      .jobhir-app main article {
+        border-radius: 18px !important;
+      }
+
+      /* Category cards */
+      .jobhir-app main section button {
+        border-radius: 18px !important;
+      }
+
+      .jobhir-app main section button > div:first-child {
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+      }
+
+      /* Job cards */
+      .jobhir-app article {
+        border: 1px solid #e7eaf2 !important;
+        box-shadow: 0 5px 20px rgba(30, 41, 59, .06) !important;
+      }
+
+      .jobhir-app article:hover {
+        border-color: #c7d2fe !important;
+        box-shadow: 0 14px 32px rgba(79, 70, 229, .12) !important;
+        transform: translateY(-3px);
+      }
+
+      /* Buttons */
+      .jobhir-app button:hover {
+        transition-duration: .2s;
+      }
+
+      .jobhir-app article button {
+        border-radius: 12px !important;
+      }
+
+      /* Inputs and dropdowns */
+      .jobhir-app input,
+      .jobhir-app select,
+      .jobhir-app textarea {
+        border-radius: 12px !important;
+      }
+
+      .jobhir-app input:focus,
+      .jobhir-app select:focus,
+      .jobhir-app textarea:focus {
+        outline: none;
+        border-color: #818cf8 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, .13);
+      }
+
+      /* Payment boxes and detail panels */
+      .jobhir-app article [class*="border"] {
         border-radius: 12px;
       }
 
-      .jobhir-scrollbar input,
-      .jobhir-scrollbar select,
-      .jobhir-scrollbar textarea {
-        border-radius: 12px;
+      /* Apply and payment buttons */
+      .jobhir-app article button,
+      .jobhir-app .jobhir-scrollbar button {
+        border-radius: 12px !important;
       }
 
-      .jobhir-scrollbar img {
+      /* Application modal */
+      .jobhir-app .jobhir-scrollbar {
+        border-radius: 22px !important;
+        border: 1px solid rgba(255,255,255,.65);
+        box-shadow: 0 24px 80px rgba(15, 23, 42, .28);
+      }
+
+      .jobhir-app .jobhir-scrollbar input {
+        min-height: 44px;
+      }
+
+      /* Location map */
+      .jobhir-app .leaflet-container {
         border-radius: 14px;
+      }
+
+      /* Bottom action buttons */
+      .jobhir-app .jobhir-bottom-actions button {
+        border-radius: 14px !important;
+        box-shadow: 0 5px 14px rgba(15, 23, 42, .12);
+      }
+
+      /* Top search panel */
+      .jobhir-app .jobhir-top-panel {
+        border-radius: 20px !important;
+        border-color: #e5eaf3 !important;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, .045);
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Mobile spacing */
+      @media (max-width: 640px) {
+        .jobhir-app main {
+          padding-left: 12px !important;
+          padding-right: 12px !important;
+          border-radius: 18px !important;
+        }
+
+        .jobhir-app main section button {
+          border-radius: 15px !important;
+        }
+
+        .jobhir-app article {
+          border-radius: 16px !important;
+        }
+
+        .jobhir-app .jobhir-scrollbar {
+          border-radius: 18px !important;
+        }
+      }
+
+      /* Respect reduced-motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        .jobhir-app *,
+        .jobhir-marquee {
+          animation-duration: .01ms !important;
+          transition-duration: .01ms !important;
+        }
       }
     `;
 
@@ -895,7 +1021,7 @@ export default function App() {
   // ====================================================
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 text-slate-900">
+    <div className="jobhir-app min-h-screen w-full overflow-x-hidden bg-slate-50 text-slate-900">
 
       {/* ==================================================
           HEADER
@@ -950,7 +1076,7 @@ export default function App() {
       ================================================== */}
 
       <section className="w-full px-3 pt-4 sm:px-5 lg:px-8 xl:px-10">
-        <div className="w-full border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="jobhir-top-panel w-full border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
 
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
@@ -1702,7 +1828,7 @@ export default function App() {
 
 </main>
 
-<div className="flex w-full justify-center gap-2 px-2">
+<div className="jobhir-bottom-actions flex w-full justify-center gap-2 px-2 py-3">
   <button
     type="button"
     onClick={() => navigate("/working-workers")}
