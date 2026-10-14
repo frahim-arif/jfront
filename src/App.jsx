@@ -467,6 +467,7 @@ export default function App() {
   // ====================================================
 
  
+
 useEffect(() => {
   const style = document.createElement("style");
   style.setAttribute("data-jobhir-style", "true");
@@ -507,14 +508,18 @@ useEffect(() => {
       border-radius: 20px;
     }
 
-    /* Main app background */
+    /* Main application */
     .jobhir-app {
       min-height: 100vh;
       background: #f5f7fb !important;
       color: #172033;
     }
 
-    /* Consistent button styling */
+    .jobhir-app * {
+      box-sizing: border-box;
+    }
+
+    /* Smooth interactions */
     .jobhir-app button {
       transition:
         background-color .2s ease,
@@ -531,33 +536,38 @@ useEffect(() => {
     /* Search and filter panel */
     .jobhir-app .jobhir-top-panel {
       background: #ffffff !important;
-      border: 1px solid #e5eaf3 !important;
+      border: 1px solid #e2e8f0 !important;
       border-radius: 20px !important;
-      box-shadow: 0 6px 24px rgba(15, 23, 42, .045);
+      box-shadow: 0 8px 28px rgba(15, 23, 42, .05);
     }
 
-    /* Cards */
-    .jobhir-app article {
+    /* Job cards and content cards */
+    .jobhir-app main article {
       overflow: hidden;
-      border: 1px solid #e6eaf2 !important;
+      border: 1px solid #e2e8f0 !important;
       border-radius: 18px !important;
       background: #ffffff !important;
-      box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, .05);
       transition:
         border-color .2s ease,
         box-shadow .2s ease,
         transform .2s ease;
     }
 
-    .jobhir-app article:hover {
+    .jobhir-app main article:hover {
       border-color: #c7d2fe !important;
-      box-shadow: 0 12px 28px rgba(79, 70, 229, .09);
+      box-shadow: 0 12px 28px rgba(79, 70, 229, .10);
       transform: translateY(-2px);
     }
 
-    /* Category buttons */
+    /* Category cards */
     .jobhir-app main section button {
-      border-radius: 14px;
+      border-radius: 18px !important;
+      overflow: hidden;
+    }
+
+    .jobhir-app main section button .rounded-lg {
+      border-radius: 12px !important;
     }
 
     /* Inputs */
@@ -566,7 +576,9 @@ useEffect(() => {
     .jobhir-app textarea {
       border-radius: 12px !important;
       border-color: #dce2ec;
-      transition: border-color .2s ease, box-shadow .2s ease;
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
     }
 
     .jobhir-app input:focus,
@@ -577,15 +589,25 @@ useEffect(() => {
       box-shadow: 0 0 0 3px rgba(99, 102, 241, .12);
     }
 
-    /* Job action buttons */
-    .jobhir-app article button {
+    /* Buttons inside job cards */
+    .jobhir-app main article button {
       border-radius: 12px;
     }
 
-    /* Application/payment modal */
+    /* Bottom action buttons */
+    .jobhir-app .jobhir-bottom-actions {
+      gap: 10px;
+    }
+
+    .jobhir-app .jobhir-bottom-actions button {
+      border-radius: 14px !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+    }
+
+    /* Application and payment modal */
     .jobhir-app .jobhir-scrollbar {
       border-radius: 20px;
-      box-shadow: 0 24px 70px rgba(15, 23, 42, .2);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .20);
     }
 
     .jobhir-app .jobhir-scrollbar input,
@@ -597,16 +619,6 @@ useEffect(() => {
     .jobhir-app .leaflet-container {
       border-radius: 16px;
       overflow: hidden;
-    }
-
-    /* Bottom actions */
-    .jobhir-app .jobhir-bottom-actions {
-      gap: 10px;
-    }
-
-    .jobhir-app .jobhir-bottom-actions button {
-      border-radius: 14px !important;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
     }
 
     /* Mobile layout */
@@ -621,8 +633,12 @@ useEffect(() => {
         padding: 14px !important;
       }
 
-      .jobhir-app article {
+      .jobhir-app main article {
         border-radius: 16px !important;
+      }
+
+      .jobhir-app main section button {
+        border-radius: 15px !important;
       }
 
       .jobhir-app .jobhir-bottom-actions {
@@ -636,6 +652,7 @@ useEffect(() => {
       }
     }
 
+    /* Accessibility: reduce animation when requested */
     @media (prefers-reduced-motion: reduce) {
       .jobhir-app *,
       .jobhir-marquee {
@@ -651,6 +668,7 @@ useEffect(() => {
     style.remove();
   };
 }, []);
+
 
 
   // ====================================================
