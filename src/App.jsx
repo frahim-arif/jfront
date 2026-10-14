@@ -466,224 +466,192 @@ export default function App() {
   // CUSTOM CSS
   // ====================================================
 
-  useEffect(() => {
-    const style = document.createElement("style");
+ 
+useEffect(() => {
+  const style = document.createElement("style");
+  style.setAttribute("data-jobhir-style", "true");
 
-    style.setAttribute("data-jobhir-style", "true");
+  style.innerHTML = `
+    @keyframes jobhirMarquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
 
-       style.innerHTML = `
-      @keyframes jobhirMarquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-      }
+    .jobhir-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: jobhirMarquee 18s linear infinite;
+    }
 
-      .jobhir-marquee {
-        display: inline-block;
-        white-space: nowrap;
-        animation: jobhirMarquee 18s linear infinite;
-      }
+    .jobhir-location-marker {
+      background: transparent !important;
+      border: none !important;
+    }
 
-      .jobhir-location-marker {
-        background: transparent !important;
-        border: none !important;
-      }
+    .jobhir-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #64748b #f1f5f9;
+    }
 
-      .jobhir-scrollbar::-webkit-scrollbar {
-        width: 6px;
-      }
+    .jobhir-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
 
-      .jobhir-scrollbar::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 20px;
-      }
+    .jobhir-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 20px;
+    }
 
-      .jobhir-scrollbar::-webkit-scrollbar-thumb {
-        background: linear-gradient(#2563eb, #7c3aed);
-        border-radius: 20px;
-      }
+    .jobhir-scrollbar::-webkit-scrollbar-thumb {
+      background: #64748b;
+      border-radius: 20px;
+    }
 
-      .jobhir-scrollbar {
-        scrollbar-width: thin;
-        scrollbar-color: #6366f1 #f1f5f9;
-      }
+    /* Main app background */
+    .jobhir-app {
+      min-height: 100vh;
+      background: #f5f7fb !important;
+      color: #172033;
+    }
 
-      /* =================================
-         JOBHIR MODERN ROUNDED APP DESIGN
-      ================================= */
+    /* Consistent button styling */
+    .jobhir-app button {
+      transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+    }
 
-      .jobhir-app {
-        background: #f5f7fc !important;
-      }
+    /* Main content */
+    .jobhir-app main {
+      border-color: #e6eaf2 !important;
+    }
 
-      .jobhir-app button {
-        border-radius: 12px;
-        transition:
-          background-color .2s ease,
-          border-color .2s ease,
-          box-shadow .2s ease,
-          transform .2s ease;
-      }
+    /* Search and filter panel */
+    .jobhir-app .jobhir-top-panel {
+      background: #ffffff !important;
+      border: 1px solid #e5eaf3 !important;
+      border-radius: 20px !important;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, .045);
+    }
 
-      /* Main panels and sections */
+    /* Cards */
+    .jobhir-app article {
+      overflow: hidden;
+      border: 1px solid #e6eaf2 !important;
+      border-radius: 18px !important;
+      background: #ffffff !important;
+      box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+    }
+
+    .jobhir-app article:hover {
+      border-color: #c7d2fe !important;
+      box-shadow: 0 12px 28px rgba(79, 70, 229, .09);
+      transform: translateY(-2px);
+    }
+
+    /* Category buttons */
+    .jobhir-app main section button {
+      border-radius: 14px;
+    }
+
+    /* Inputs */
+    .jobhir-app input,
+    .jobhir-app select,
+    .jobhir-app textarea {
+      border-radius: 12px !important;
+      border-color: #dce2ec;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .jobhir-app input:focus,
+    .jobhir-app select:focus,
+    .jobhir-app textarea:focus {
+      outline: none;
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .12);
+    }
+
+    /* Job action buttons */
+    .jobhir-app article button {
+      border-radius: 12px;
+    }
+
+    /* Application/payment modal */
+    .jobhir-app .jobhir-scrollbar {
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .2);
+    }
+
+    .jobhir-app .jobhir-scrollbar input,
+    .jobhir-app .jobhir-scrollbar select {
+      min-height: 44px;
+    }
+
+    /* Map */
+    .jobhir-app .leaflet-container {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* Bottom actions */
+    .jobhir-app .jobhir-bottom-actions {
+      gap: 10px;
+    }
+
+    .jobhir-app .jobhir-bottom-actions button {
+      border-radius: 14px !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+    }
+
+    /* Mobile layout */
+    @media (max-width: 640px) {
       .jobhir-app main {
-        border-radius: 24px !important;
-        border-color: #e5eaf3 !important;
-        background: #f5f7fc !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
       }
 
-      .jobhir-app main section > div:not(.grid),
-      .jobhir-app main article {
-        border-radius: 18px !important;
-      }
-
-      /* Category cards */
-      .jobhir-app main section button {
-        border-radius: 18px !important;
-      }
-
-      .jobhir-app main section button > div:first-child {
-        border-top-left-radius: 18px;
-        border-top-right-radius: 18px;
-      }
-
-      /* Job cards */
-      .jobhir-app article {
-        border: 1px solid #e7eaf2 !important;
-        box-shadow: 0 5px 20px rgba(30, 41, 59, .06) !important;
-      }
-
-      .jobhir-app article:hover {
-        border-color: #c7d2fe !important;
-        box-shadow: 0 14px 32px rgba(79, 70, 229, .12) !important;
-        transform: translateY(-3px);
-      }
-
-      /* Buttons */
-      .jobhir-app button:hover {
-        transition-duration: .2s;
-      }
-
-      .jobhir-app article button {
-        border-radius: 12px !important;
-      }
-
-      /* Inputs and dropdowns */
-      .jobhir-app input,
-      .jobhir-app select,
-      .jobhir-app textarea {
-        border-radius: 12px !important;
-      }
-
-      .jobhir-app input:focus,
-      .jobhir-app select:focus,
-      .jobhir-app textarea:focus {
-        outline: none;
-        border-color: #818cf8 !important;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, .13);
-      }
-
-      /* Payment boxes and detail panels */
-      .jobhir-app article [class*="border"] {
-        border-radius: 12px;
-      }
-
-      /* Apply and payment buttons */
-      .jobhir-app article button,
-      .jobhir-app .jobhir-scrollbar button {
-        border-radius: 12px !important;
-      }
-
-      /* Application modal */
-      .jobhir-app .jobhir-scrollbar {
-        border-radius: 22px !important;
-        border: 1px solid rgba(255,255,255,.65);
-        box-shadow: 0 24px 80px rgba(15, 23, 42, .28);
-      }
-
-      .jobhir-app .jobhir-scrollbar input {
-        min-height: 44px;
-      }
-
-      /* Location map */
-      .jobhir-app .leaflet-container {
-        border-radius: 14px;
-      }
-
-      /* Bottom action buttons */
-      .jobhir-app .jobhir-bottom-actions button {
-        border-radius: 14px !important;
-        box-shadow: 0 5px 14px rgba(15, 23, 42, .12);
-      }
-
-      /* Top search panel */
       .jobhir-app .jobhir-top-panel {
-        border-radius: 20px !important;
-        border-color: #e5eaf3 !important;
-        box-shadow: 0 6px 24px rgba(15, 23, 42, .045);
+        border-radius: 16px !important;
+        padding: 14px !important;
       }
 
-      /* Smooth scrolling */
-      html {
-        scroll-behavior: smooth;
+      .jobhir-app article {
+        border-radius: 16px !important;
       }
 
-      /* Mobile spacing */
-      @media (max-width: 640px) {
-        .jobhir-app main {
-          padding-left: 12px !important;
-          padding-right: 12px !important;
-          border-radius: 18px !important;
-        }
-
-        .jobhir-app main section button {
-          border-radius: 15px !important;
-        }
-
-        .jobhir-app article {
-          border-radius: 16px !important;
-        }
-
-        .jobhir-app .jobhir-scrollbar {
-          border-radius: 18px !important;
-        }
+      .jobhir-app .jobhir-bottom-actions {
+        padding: 10px 8px;
+        flex-wrap: wrap;
       }
 
-      /* Respect reduced-motion preferences */
-      @media (prefers-reduced-motion: reduce) {
-        .jobhir-app *,
-        .jobhir-marquee {
-          animation-duration: .01ms !important;
-          transition-duration: .01ms !important;
-        }
+      .jobhir-app .jobhir-scrollbar {
+        max-width: calc(100vw - 24px);
+        border-radius: 18px;
       }
-        /* Center job category icons and labels */
-.jobhir-app main section button {
-  text-align: center !important;
-}
+    }
 
-.jobhir-app main section button > div {
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-}
+    @media (prefers-reduced-motion: reduce) {
+      .jobhir-app *,
+      .jobhir-marquee {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  `;
 
-.jobhir-app main section button svg {
-  margin-left: auto;
-  margin-right: auto;
-}
+  document.head.appendChild(style);
 
-/* Center category names */
-.jobhir-app main section button span {
-  text-align: center !important;
-}
-    `;
+  return () => {
+    style.remove();
+  };
+}, []);
 
-    document.head.appendChild(style);
-
-    return () => {
-      style.remove();
-    };
-  }, []);
 
   // ====================================================
   // LIVE TIME
