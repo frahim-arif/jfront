@@ -1218,19 +1218,28 @@ useEffect(() => {
       />
 
       {/* Content */}
-      <span className="relative z-10 flex items-center justify-center gap-1.5">
-        <span className="text-lg leading-none">+</span>
+     
+{/* Content */}
+<span className="relative z-10 flex items-center justify-center gap-1.5">
+  <span className="text-lg leading-none">+</span>
 
-        <span className="whitespace-nowrap">
-          Post a Job
-        </span>
+  <span className="flex flex-col items-center justify-center leading-tight">
+    <span className="whitespace-nowrap">
+      Post a Job
+    </span>
 
-        {/* Live indicator */}
-        <span className="relative ml-0.5 flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping bg-yellow-300 opacity-80" />
-          <span className="relative inline-flex h-2.5 w-2.5 bg-yellow-300 shadow-sm shadow-yellow-300/80" />
-        </span>
-      </span>
+    <span className="text-[9px] font-black uppercase tracking-[1.5px]">
+      FREE
+    </span>
+  </span>
+
+  {/* Live indicator */}
+  <span className="relative ml-0.5 flex h-2.5 w-2.5">
+    <span className="absolute inline-flex h-full w-full animate-ping bg-yellow-300 opacity-80" />
+    <span className="relative inline-flex h-2.5 w-2.5 bg-yellow-300 shadow-sm shadow-yellow-300/80" />
+  </span>
+</span>
+
     </button>
 
     <button
