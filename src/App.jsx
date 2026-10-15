@@ -1077,6 +1077,85 @@ useEffect(() => {
         </div>
       </div>
 
+      
+      {/* ==================================================
+          WORKER REGISTRATION OFFER
+      ================================================== */}
+
+      <section className="w-full px-3 pt-4 sm:px-5 sm:pt-5 lg:px-8 xl:px-10">
+        <div className="relative isolate overflow-hidden border border-[#c8ae6a]/60 bg-gradient-to-r from-[#071c19] via-[#0b302a] to-[#123d32] p-4 shadow-lg sm:p-6 lg:p-7">
+
+          {/* Decorative background */}
+          <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-[#c8ae6a]/20 sm:h-56 sm:w-56" />
+          <div className="pointer-events-none absolute -right-5 -top-7 h-28 w-28 rounded-full border border-[#c8ae6a]/15 sm:h-40 sm:w-40" />
+
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+            {/* Offer details */}
+            <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[#c8ae6a]/50 bg-[#c8ae6a]/10 text-[#e2c77e] sm:h-14 sm:w-14">
+                <BriefcaseBusiness className="h-6 w-6 sm:h-7 sm:w-7" />
+              </div>
+
+              <div className="min-w-0">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#e2c77e] sm:text-xs">
+                    Special Worker Offer
+                  </span>
+
+                  <span className="border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-300 sm:text-[10px]">
+                    Save 60%
+                  </span>
+                </div>
+
+                <h2 className="text-lg font-black leading-tight text-white sm:text-2xl lg:text-3xl">
+                  Register as a Worker
+                </h2>
+
+                <p className="mt-2 text-xs leading-5 text-white/70 sm:text-sm">
+                  Get access to JobHir worker opportunities with our 15 Days offer.
+                </p>
+              </div>
+            </div>
+
+            {/* Price and CTA */}
+            <div className="flex shrink-0 items-center justify-between gap-4 border-t border-white/10 pt-4 sm:min-w-[240px] sm:justify-end sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+
+              <div>
+                <p className="text-xs font-semibold text-white/50">
+                  Offer Price
+                </p>
+
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="text-sm font-bold text-white/50 line-through">
+                    ₹250
+                  </span>
+
+                  <span className="text-3xl font-black tracking-tight text-[#e2c77e] sm:text-4xl">
+                    ₹100
+                  </span>
+                </div>
+
+                <p className="mt-1 text-[10px] font-semibold text-emerald-300 sm:text-xs">
+                  15 Days Registration
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => navigate("/worker-register")}
+                className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#c8ae6a] px-4 py-3 text-xs font-extrabold text-[#071c19] shadow-md transition hover:-translate-y-0.5 hover:bg-[#dfc783] active:translate-y-0 sm:px-5 sm:text-sm"
+              >
+                Register Now
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       {/* ==================================================
           TOP ACTION AREA
       ================================================== */}
