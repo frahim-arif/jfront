@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const UPI_ID = "9058596626@ptsbi";
-const DEFAULT_AMOUNT = 250;
+const DEFAULT_AMOUNT = 100;
 
 const Payment = () => {
   const [copied, setCopied] = useState(false);
