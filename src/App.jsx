@@ -1085,7 +1085,7 @@ useEffect(() => {
     
 {/* JOBHIR WORKER OFFER AD — place immediately after marquee */}
 
-<section className="px-3 pt-3 sm:px-5 lg:px-8 xl:px-10">
+<section className="px-3 pt-2 sm:px-5 lg:px-8 xl:px-10">
   <div className="relative overflow-hidden border border-orange-300 bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 shadow-md">
     <div className="relative flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-3">
 
