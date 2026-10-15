@@ -1145,7 +1145,7 @@ useEffect(() => {
           TOP ACTION AREA
       ================================================== */}
 
-      <section className="w-full px-3 pt-5 sm:px-5 sm:pt-7 lg:px-8 xl:px-10">
+      <section className="w-full px-3 pt-2 sm:px-5 sm:pt-3 lg:px-8 xl:px-10">
         <div className="jobhir-top-panel w-full p-5 sm:p-7 lg:p-8">
 
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
