@@ -1042,40 +1042,27 @@ useEffect(() => {
       {/* ==================================================
           TOP MARQUEE
       ================================================== */}
-
-      <div className="w-full overflow-hidden border-b border-[#c8ae6a]/40 bg-[#071c19] py-2.5 text-white shadow-sm">
+<div className="w-full overflow-hidden border-b border-[#c8ae6a]/40 bg-[#071c19] py-1 text-white shadow-sm">
   <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
 
-          <span className="text-slate-300">
-            {currentTime}
-          </span>
+    <span className="text-slate-300">
+      {currentTime}
+    </span>
 
-          <span className="mx-5 text-amber-400">
-            •
-          </span>
+    <span className="mx-5 text-amber-400">•</span>
 
-          <span>
-            Find genuine job opportunities near you
-          </span>
+    <span>Find genuine job opportunities near you</span>
 
-          <span className="mx-5 text-amber-400">
-            •
-          </span>
+    <span className="mx-5 text-amber-400">•</span>
 
-          <span>
-            100% Secure &amp; Safe
-          </span>
+    <span>100% Secure &amp; Safe</span>
 
-          <span className="mx-5 text-amber-400">
-            •
-          </span>
+    <span className="mx-5 text-amber-400">•</span>
 
-          <span>
-            JobHir — Jobs for Everyone
-          </span>
+    <span>JobHir — Jobs for Everyone</span>
 
-        </div>
-      </div>
+  </div>
+</div>
 
       
       {/* ==================================================
