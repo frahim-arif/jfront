@@ -1424,9 +1424,9 @@ useEffect(() => {
     rounded-2xl
     border border-slate-200
     bg-[#faf8ef]
-    px-3 pt-3 pb-6
+    px-3 pt-1 pb-6
     shadow-[0_10px_35px_rgba(15,23,42,0.07)]
-    sm:px-5 sm:pt-4 sm:pb-8
+    sm:px-5 sm:pt-2 sm:pb-8
     lg:px-8
     xl:px-10
   "
