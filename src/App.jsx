@@ -1182,9 +1182,7 @@ useEffect(() => {
           Find Your Next Job
         </h1>
 
-        <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-white/70 sm:text-sm lg:mx-0">
-          Discover opportunities and take the next step in your career.
-        </p>
+       
 
       </div>
 
@@ -1198,32 +1196,53 @@ useEffect(() => {
 
           {/* POST A JOB */}
 
-          <button
-            type="button"
-            onClick={() => navigate("/offer-job")}
-            className="
-              group relative flex min-h-[52px] items-center justify-center gap-2
-              overflow-hidden border border-[#d9c17f]
-              bg-[#c8ae6a] px-3 py-2.5
-              text-sm font-bold text-[#071c19]
-              shadow-sm transition-colors duration-200
-              hover:bg-[#d9c17f]
-              focus-visible:outline-none focus-visible:ring-2
-              focus-visible:ring-[#e2c77e] focus-visible:ring-offset-2
-              focus-visible:ring-offset-[#071c19]
-            "
-          >
-            <span className="text-xl font-normal leading-none">+</span>
+          
+{/* POST A JOB */}
 
-            <span className="flex flex-col items-start leading-tight">
-              <span className="whitespace-nowrap">
-                Post a Job
-              </span>
-              <span className="mt-1 text-[9px] font-extrabold uppercase tracking-[1.5px] text-[#344b28]">
-                Free Posting
-              </span>
-            </span>
-          </button>
+<button
+  type="button"
+  onClick={() => navigate("/offer-job")}
+  className="
+    group relative flex min-h-[52px] items-center justify-center gap-2
+    overflow-hidden border border-orange-300
+    bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400
+    px-3 py-2.5 text-sm font-extrabold text-[#17251c]
+    shadow-sm transition-all duration-200
+    hover:brightness-105 hover:shadow-md
+    focus-visible:outline-none focus-visible:ring-2
+    focus-visible:ring-amber-300 focus-visible:ring-offset-2
+    focus-visible:ring-offset-[#071c19]
+  "
+>
+  {/* Subtle shimmer */}
+  <span
+    className="
+      pointer-events-none absolute inset-0
+      -translate-x-full bg-gradient-to-r
+      from-transparent via-white/30 to-transparent
+      animate-[shimmer_2.5s_infinite]
+    "
+  />
+
+  {/* Button content */}
+  <span className="relative z-10 text-xl font-normal leading-none">
+    +
+  </span>
+
+  <span className="relative z-10 flex flex-col items-start leading-tight">
+    <span className="whitespace-nowrap">Post a Job</span>
+    <span className="mt-1 text-[9px] font-extrabold uppercase tracking-[1.5px]">
+      Free Posting
+    </span>
+  </span>
+
+  {/* Blinking live dot */}
+  <span className="relative z-10 ml-1 flex h-2.5 w-2.5 shrink-0">
+    <span className="absolute inline-flex h-full w-full animate-ping bg-white opacity-80" />
+    <span className="relative inline-flex h-2.5 w-2.5 bg-white shadow-sm" />
+  </span>
+</button>
+
 
           {/* WORKER REGISTER */}
 
