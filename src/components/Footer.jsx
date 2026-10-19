@@ -14,7 +14,11 @@ import {
   BriefcaseBusiness,
 } from "lucide-react";
 
-export default function Footer() {
+export default function Footer({
+  totalJobs = 0,
+  availableJobs = 0,
+  is24x7 = true,
+}) {
   const currentYear = new Date().getFullYear();
 
   const [showContact, setShowContact] = useState(false);

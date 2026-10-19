@@ -2436,7 +2436,11 @@ className="
           FOOTER
       ================================================== */}
 
-      <Footer />
+      <Footer
+  totalJobs={jobs.length}
+  availableJobs={availableJobs.length}
+  is24x7={true}
+/>
 
     </div>
   );
