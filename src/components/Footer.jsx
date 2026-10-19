@@ -96,6 +96,16 @@ export default function Footer() {
               </span>
             </div>
           </div>
+          
+<div className="mt-3 inline-flex items-center gap-2 border border-[#c8ae6a]/30 bg-[#c8ae6a]/[0.07] px-3 py-2">
+  <span className="flex h-6 w-6 items-center justify-center bg-[#c8ae6a] text-xs font-black text-[#071c19]">
+    24
+  </span>
+  <span className="text-[10px] font-semibold text-[#e5d29a]">
+    24/7 Job Access
+  </span>
+</div>
+
 
           {/* Contact & Healthcare */}
           <div className="md:col-span-2">
