@@ -141,3 +141,180 @@ select {
   width: 100%;
   height: 100%;
 }
+
+/* ==========================================
+   JOBHIR PREMIUM WORKER OFFER ANIMATIONS
+========================================== */
+
+.jobhir-offer-card {
+  isolation: isolate;
+  animation: jobhir-offer-enter 0.75s cubic-bezier(.2, .8, .2, 1) both;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.jobhir-offer-card:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 12px 32px rgba(120, 53, 15, 0.17);
+}
+
+/* Moving light reflection */
+.jobhir-offer-shimmer {
+  z-index: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(255, 255, 255, 0.65) 48%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 75%
+  );
+  transform: translateX(-120%);
+  animation: jobhir-shimmer 5s ease-in-out infinite;
+}
+
+/* Floating briefcase */
+.jobhir-offer-icon {
+  animation: jobhir-float 3s ease-in-out infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.jobhir-offer-card:hover .jobhir-offer-icon {
+  transform: translateY(-3px) rotate(-4deg);
+  box-shadow: 0 8px 20px rgba(7, 28, 25, 0.24);
+}
+
+/* Pulsing status dot */
+.jobhir-live-dot {
+  position: relative;
+  border-radius: 50%;
+  animation: jobhir-pulse 1.6s ease-out infinite;
+}
+
+/* Small icon notification */
+.jobhir-icon-ping {
+  border-radius: 50%;
+  animation: jobhir-ping 2s ease-out infinite;
+}
+
+/* Discount badge */
+.jobhir-save-badge {
+  animation: jobhir-badge-glow 2.5s ease-in-out infinite;
+}
+
+/* Price emphasis */
+.jobhir-price {
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.3s ease;
+}
+
+.jobhir-offer-card:hover .jobhir-price {
+  transform: scale(1.06);
+}
+
+/* Register button shine */
+.jobhir-offer-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.jobhir-offer-button::before {
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  content: "";
+  background: linear-gradient(
+    110deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.65s ease;
+}
+
+.jobhir-offer-button:hover::before {
+  left: 150%;
+}
+
+.jobhir-arrow {
+  position: relative;
+}
+
+/* Keyframes */
+@keyframes jobhir-offer-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes jobhir-shimmer {
+  0%, 15% {
+    transform: translateX(-120%);
+  }
+  65%, 100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes jobhir-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes jobhir-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0);
+  }
+}
+
+@keyframes jobhir-ping {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  }
+  70%, 100% {
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+  }
+}
+
+@keyframes jobhir-badge-glow {
+  0%, 100% {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* Respect accessibility settings */
+@media (prefers-reduced-motion: reduce) {
+  .jobhir-offer-card,
+  .jobhir-offer-shimmer,
+  .jobhir-offer-icon,
+  .jobhir-live-dot,
+  .jobhir-icon-ping,
+  .jobhir-save-badge {
+    animation: none !important;
+  }
+
+  .jobhir-offer-card,
+  .jobhir-offer-icon,
+  .jobhir-price,
+  .jobhir-offer-button,
+  .jobhir-arrow {
+    transition: none !important;
+  }
+}

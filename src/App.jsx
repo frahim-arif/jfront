@@ -1065,66 +1065,91 @@ useEffect(() => {
 </div>
 
       
-      {/* ==================================================
-          WORKER REGISTRATION OFFER
-      ================================================== */}
+  
+{/* ==================================================
+    JOBHIR WORKER REGISTRATION — ANIMATED OFFER
+================================================== */}
 
-    
-{/* JOBHIR WORKER OFFER AD — place immediately after marquee */}
+<section className="jobhir-offer-section px-3 pt-2 sm:px-5 lg:px-8 xl:px-10">
+  <div className="jobhir-offer-card relative overflow-hidden border border-amber-300/70 bg-gradient-to-r from-[#fff7df] via-[#ffda82] to-[#ffb347] shadow-lg">
 
-<section className="px-3 pt-2 sm:px-5 lg:px-8 xl:px-10">
-  <div className="relative overflow-hidden border border-orange-300 bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 shadow-md">
-    <div className="relative flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-3">
+    {/* Animated background effects */}
+    <div className="jobhir-offer-shimmer pointer-events-none absolute inset-0" />
 
-      {/* Offer text */}
+    <div className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-white/30 blur-2xl" />
+
+    <div className="pointer-events-none absolute -bottom-12 left-1/3 h-28 w-28 rounded-full bg-orange-300/40 blur-2xl" />
+
+    <div className="relative z-10 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-3.5">
+
+      {/* Offer details */}
       <div className="flex min-w-0 items-center gap-3">
-        <div className="hidden h-11 w-11 shrink-0 items-center justify-center bg-[#071c19] text-amber-300 sm:flex">
+
+        {/* Animated icon */}
+        <div className="jobhir-offer-icon relative hidden h-12 w-12 shrink-0 items-center justify-center border border-amber-300/30 bg-[#071c19] text-amber-300 shadow-lg sm:flex">
           <BriefcaseBusiness className="h-6 w-6" />
+          <span className="jobhir-icon-ping absolute -right-1 -top-1 h-3 w-3 border-2 border-[#fff1c2] bg-emerald-400" />
         </div>
 
         <div className="min-w-0">
-          <div className="mb-1 flex flex-wrap items-center gap-2">
-            <span className="bg-[#071c19] px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-amber-300 sm:text-[10px]">
+
+          {/* Animated badges */}
+          <div className="mb-1.5 flex flex-wrap items-center gap-2">
+            <span className="jobhir-offer-badge inline-flex items-center gap-1.5 bg-[#071c19] px-2 py-1 text-[9px] font-black uppercase tracking-wider text-amber-300 sm:text-[10px]">
+              <span className="jobhir-live-dot h-1.5 w-1.5 bg-emerald-400" />
               Limited Time Offer
             </span>
-            <span className="text-[10px] font-extrabold text-[#713400]">
-              SAVE 60%
+
+            <span className="jobhir-save-badge inline-flex items-center gap-1 border border-orange-700/20 bg-white/50 px-2 py-1 text-[9px] font-black tracking-wide text-[#8c3500] sm:text-[10px]">
+              <span>⚡</span> SAVE 60%
             </span>
           </div>
 
-          <h2 className="text-base font-black leading-tight text-[#071c19] sm:text-lg">
-            Worker Registration — 15 Days
+          <h2 className="text-base font-black leading-tight tracking-tight text-[#071c19] sm:text-lg">
+            Worker Registration
+            <span className="ml-1.5 inline-block text-[#8c3500]">
+              — 15 Days
+            </span>
           </h2>
 
-          <p className="mt-0.5 text-[11px] font-medium text-[#4f3210] sm:text-xs">
+          <p className="mt-1 text-[11px] font-medium leading-relaxed text-[#563817] sm:text-xs">
             Join JobHir and discover work opportunities near you.
           </p>
         </div>
       </div>
 
-      {/* Price and button */}
-      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-black/10 pt-2 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-[#713400] line-through">
-            ₹250
-          </span>
-          <span className="text-2xl font-black leading-none text-[#071c19] sm:text-3xl">
-            ₹100
-          </span>
+      {/* Price and CTA */}
+      <div className="jobhir-offer-bottom flex shrink-0 items-center justify-between gap-3 border-t border-[#713400]/15 pt-3 sm:gap-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
+
+        <div className="shrink-0">
+          <div className="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-[#79451b]">
+            Special Price
+          </div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-xs font-bold text-[#79451b]/70 line-through">
+              ₹250
+            </span>
+
+            <span className="jobhir-price text-2xl font-black leading-none tracking-tight text-[#071c19] sm:text-3xl">
+              ₹100
+            </span>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={() => navigate("/worker-register")}
-          className="inline-flex items-center justify-center gap-1.5 bg-[#071c19] px-4 py-2.5 text-xs font-extrabold text-white transition hover:bg-[#17483c] active:scale-95 sm:px-5 sm:py-3"
+          className="jobhir-offer-button group inline-flex shrink-0 items-center justify-center gap-2 border border-[#315d4b] bg-[#071c19] px-4 py-3 text-[11px] font-extrabold text-white shadow-md transition-all duration-300 hover:border-[#071c19] hover:bg-[#17483c] hover:shadow-xl active:scale-95 sm:px-5 sm:text-xs"
         >
           Register Now
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="jobhir-arrow h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </button>
       </div>
     </div>
   </div>
 </section>
+
 
 
 
