@@ -1174,9 +1174,9 @@ useEffect(() => {
                 Find Your Next Job
               </h1>
 
-              <p className="mt-2 text-sm leading-6 text-white/75 sm:text-base">
+              {/* <p className="mt-2 text-sm leading-6 text-white/75 sm:text-base">
                 Search genuine job opportunities across India.
-              </p>
+              </p> */}
 
             </div>
 
