@@ -44,6 +44,7 @@ import {
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import HealthcareJobs from "./HealthcareJobs";
+import JobStatsSection from "./components/JobStatsSection";
 
 
 // ======================================================
@@ -1940,6 +1941,12 @@ className="
     <span className="whitespace-nowrap">Pay JobHir</span>
   </button>
 </div>
+
+<JobStatsSection
+  totalJobs={jobs.length}
+  availableJobsCount={availableJobs.length}
+  is24x7={true}
+/>
 
       {/* ==================================================
           HEALTHCARE JOBS
