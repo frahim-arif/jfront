@@ -1,16 +1,43 @@
+/* =========================================
+   JOBHIR — PROFESSIONAL STATISTICS SECTION
+   Theme: Forest Green / Gold / Cream
+========================================= */
 
 .jobstats-section {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  margin: 12px auto 20px;
-  padding: 30px 18px 20px;
-  color: #fffdf4;
+  margin: 14px auto 24px;
+  padding: 34px 20px 23px;
+  color: #faf8ef;
   background:
-    radial-gradient(ellipse at 85% 0%, rgba(255, 211, 74, 0.13), transparent 42%),
-    linear-gradient(130deg, #101f16 0%, #173b25 55%, #23492c 100%);
-  border-top: 2px solid #f3ca45;
-  border-bottom: 1px solid rgba(243, 202, 69, 0.45);
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(200, 174, 106, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      #071c19 0%,
+      #0b302a 58%,
+      #123d32 100%
+    );
+  border-top: 2px solid #c8ae6a;
+  border-bottom: 1px solid rgba(200, 174, 106, 0.35);
+}
+
+.jobstats-section::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.13;
+  background-image: radial-gradient(
+    rgba(250, 248, 239, 0.24) 0.6px,
+    transparent 0.6px
+  );
+  background-size: 19px 19px;
 }
 
 .jobstats-inner {
@@ -23,44 +50,48 @@
 .jobstats-glow {
   position: absolute;
   z-index: -1;
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  filter: blur(65px);
-  opacity: 0.16;
+  filter: blur(75px);
+  opacity: 0.13;
   pointer-events: none;
-  animation: jobstats-float 8s ease-in-out infinite alternate;
+  animation: jobstats-float 10s ease-in-out infinite alternate;
 }
 
 .jobstats-glow-one {
-  top: -150px;
-  right: 8%;
-  background: #ffd84d;
+  top: -140px;
+  right: 7%;
+  background: #c8ae6a;
 }
 
 .jobstats-glow-two {
-  bottom: -170px;
-  left: 8%;
-  background: #70bd79;
-  animation-delay: -4s;
+  bottom: -160px;
+  left: 5%;
+  background: #6ba88a;
+  animation-delay: -5s;
 }
+
+/* Heading */
 
 .jobstats-heading {
   max-width: 650px;
-  margin: 0 auto 22px;
+  margin: 0 auto 25px;
   text-align: center;
-  animation: jobstats-rise 600ms ease both;
+  animation: jobstats-rise 550ms ease both;
 }
 
 .jobstats-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  margin-bottom: 8px;
-  color: #ffdc65;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #d9c58f;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  font-weight: 750;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
 }
 
 .jobstats-live-dot,
@@ -69,162 +100,169 @@
   height: 7px;
   flex: 0 0 7px;
   border-radius: 50%;
-  background: #a9f3a6;
-  box-shadow: 0 0 0 3px rgba(169, 243, 166, 0.13);
-  animation: jobstats-pulse 1.8s ease-in-out infinite;
+  background: #91d7a6;
+  box-shadow: 0 0 0 3px rgba(145, 215, 166, 0.12);
+  animation: jobstats-pulse 2.2s ease-in-out infinite;
 }
 
 .jobstats-heading h2 {
   margin: 0;
-  color: #fffdf4;
-  font-size: clamp(23px, 3vw, 34px);
-  font-weight: 850;
+  color: #faf8ef;
+  font-size: clamp(25px, 3vw, 35px);
+  font-weight: 800;
   line-height: 1.2;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.8px;
 }
 
 .jobstats-heading h2 span {
-  color: #ffd84d;
+  color: #d8bf7c;
 }
 
 .jobstats-heading > p {
-  max-width: 500px;
-  margin: 8px auto 0;
-  color: rgba(255, 253, 244, 0.74);
+  max-width: 490px;
+  margin: 10px auto 0;
+  color: rgba(250, 248, 239, 0.72);
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.75;
 }
+
+/* Statistics grid */
 
 .jobstats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 13px;
+  gap: 15px;
 }
 
 .jobstat-card {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  padding: 17px 18px 14px;
-  border: 1px solid rgba(255, 216, 77, 0.28);
-  border-radius: 12px;
+  padding: 19px 19px 16px;
+  border: 1px solid rgba(200, 174, 106, 0.24);
+  border-radius: 10px;
   background: linear-gradient(
     145deg,
-    rgba(255, 253, 244, 0.09),
-    rgba(255, 253, 244, 0.035)
+    rgba(250, 248, 239, 0.075),
+    rgba(250, 248, 239, 0.025)
   );
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(8px);
-  animation: jobstats-rise 600ms ease both;
+  animation: jobstats-rise 550ms ease both;
   animation-delay: var(--card-delay, 0ms);
-  transition: transform 250ms ease, border-color 250ms ease,
-    box-shadow 250ms ease;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .jobstat-card::before {
   position: absolute;
   top: 0;
-  left: -120%;
-  width: 70%;
-  height: 100%;
+  left: 0;
+  width: 100%;
+  height: 2px;
   content: "";
-  pointer-events: none;
   background: linear-gradient(
-    105deg,
+    90deg,
     transparent,
-    rgba(255, 216, 77, 0.12),
+    #c8ae6a,
     transparent
   );
-  transform: skewX(-18deg);
-  transition: left 550ms ease;
-}
-
-.jobstat-card:hover::before {
-  left: 150%;
+  opacity: 0.75;
 }
 
 .jobstat-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 216, 77, 0.8);
-  box-shadow: 0 13px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  border-color: rgba(200, 174, 106, 0.62);
+  background-color: rgba(250, 248, 239, 0.035);
+  box-shadow: 0 13px 28px rgba(0, 0, 0, 0.19);
 }
 
 .jobstat-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 17px;
 }
 
 .jobstat-icon-wrap {
   display: grid;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
   place-items: center;
-  border: 1px solid rgba(255, 216, 77, 0.45);
-  border-radius: 10px;
-  background: rgba(255, 216, 77, 0.12);
-  color: #ffdc65;
-  animation: jobstats-icon-float 3s ease-in-out infinite;
+  border: 1px solid rgba(200, 174, 106, 0.38);
+  border-radius: 9px;
+  background: rgba(200, 174, 106, 0.10);
+  color: #d9c58f;
+  animation: jobstats-icon-float 4s ease-in-out infinite;
 }
 
 .jobstat-card-green .jobstat-icon-wrap {
-  color: #a9f3a6;
-  border-color: rgba(169, 243, 166, 0.35);
-  background: rgba(169, 243, 166, 0.09);
-  animation-delay: -1s;
+  color: #a9d9b3;
+  border-color: rgba(145, 215, 166, 0.30);
+  background: rgba(145, 215, 166, 0.08);
+  animation-delay: -1.5s;
 }
 
 .jobstat-arrow {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 29px;
+  height: 29px;
   place-items: center;
-  border-radius: 50%;
-  background: rgba(255, 253, 244, 0.07);
-  color: #ffdc65;
+  border: 1px solid rgba(250, 248, 239, 0.09);
+  border-radius: 8px;
+  background: rgba(250, 248, 239, 0.045);
+  color: #c8ae6a;
 }
+
+/* Numbers */
 
 .jobstat-number {
   display: flex;
   align-items: baseline;
   gap: 3px;
-  color: #fffdf4;
-  font-size: clamp(30px, 3.5vw, 42px);
-  font-weight: 850;
-  line-height: 1.05;
-  letter-spacing: -1px;
+  color: #faf8ef;
+  font-size: clamp(32px, 3.5vw, 43px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1.3px;
   font-variant-numeric: tabular-nums;
 }
 
 .jobstat-plus {
-  color: #ffd84d;
-  font-size: 22px;
+  color: #d8bf7c;
+  font-size: 23px;
+  font-weight: 700;
 }
 
 .jobstat-card h3 {
-  margin: 8px 0 3px;
-  color: #fffdf4;
+  margin: 10px 0 5px;
+  color: #faf8ef;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .jobstat-card > p {
   min-height: 18px;
   margin: 0;
-  color: rgba(255, 253, 244, 0.68);
+  color: rgba(250, 248, 239, 0.65);
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.65;
 }
+
+/* Progress indicator */
 
 .jobstat-progress {
   height: 3px;
-  margin-top: 13px;
+  margin-top: 17px;
   overflow: hidden;
-  border-radius: 8px;
-  background: rgba(255, 253, 244, 0.1);
+  border-radius: 10px;
+  background: rgba(250, 248, 239, 0.10);
 }
 
 .jobstat-progress > span {
@@ -232,75 +270,85 @@
   width: 40%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #d9a900, #ffe887);
-  animation: jobstats-progress 2.4s ease-in-out infinite alternate;
+  background: linear-gradient(90deg, #a18137, #d8bf7c);
+  animation: jobstats-progress 3s ease-in-out infinite alternate;
 }
 
 .jobstat-card-green .jobstat-progress > span {
-  background: linear-gradient(90deg, #3c9c5b, #a9f3a6);
+  background: linear-gradient(90deg, #43845d, #a9d9b3);
   animation-delay: -1s;
 }
 
 .jobstat-card-access .jobstat-progress > span {
   width: 100%;
-  background: linear-gradient(90deg, #e7b91f, #a9f3a6, #e7b91f);
+  background: linear-gradient(
+    90deg,
+    #a18137,
+    #d8bf7c,
+    #a9d9b3,
+    #a18137
+  );
   background-size: 200% 100%;
-  animation: jobstats-gradient 3s linear infinite;
+  animation: jobstats-gradient 4s linear infinite;
 }
 
 .jobstat-access-number {
-  color: #ffd84d;
-  font-size: clamp(31px, 3.5vw, 42px);
-  font-weight: 900;
-  line-height: 1.05;
+  color: #d8bf7c;
+  font-size: clamp(32px, 3.5vw, 43px);
+  font-weight: 850;
+  line-height: 1.08;
   letter-spacing: -1px;
-  text-shadow: 0 0 20px rgba(255, 216, 77, 0.15);
 }
 
 .jobstat-status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #b8f1b1;
+  gap: 7px;
+  color: #b7dfbf;
   font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
+  font-weight: 750;
+  letter-spacing: 0.9px;
 }
+
+/* Trust indicators */
 
 .jobstats-trust {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  margin-top: 19px;
-  color: rgba(255, 253, 244, 0.78);
+  gap: 14px;
+  margin-top: 22px;
+  color: rgba(250, 248, 239, 0.76);
   font-size: 11px;
 }
 
 .jobstats-trust > div {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 
 .jobstats-trust svg {
   width: 16px;
   height: 16px;
-  color: #ffd84d;
+  color: #d8bf7c;
 }
 
 .jobstats-trust-divider {
   width: 1px;
   height: 13px;
-  background: rgba(255, 216, 77, 0.35);
+  background: rgba(200, 174, 106, 0.35);
 }
+
+/* Animations */
 
 @keyframes jobstats-rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -309,26 +357,31 @@
 
 @keyframes jobstats-float {
   from {
-    transform: translate3d(-10px, 0, 0) scale(0.9);
+    transform: translate3d(-8px, 0, 0) scale(0.94);
   }
+
   to {
-    transform: translate3d(15px, 18px, 0) scale(1.1);
+    transform: translate3d(12px, 14px, 0) scale(1.06);
   }
 }
 
 @keyframes jobstats-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 3px rgba(169, 243, 166, 0.13);
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(145, 215, 166, 0.12);
   }
+
   50% {
-    box-shadow: 0 0 0 6px rgba(169, 243, 166, 0.04);
+    box-shadow: 0 0 0 5px rgba(145, 215, 166, 0.035);
   }
 }
 
 @keyframes jobstats-icon-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-2px);
   }
@@ -336,10 +389,11 @@
 
 @keyframes jobstats-progress {
   from {
-    width: 30%;
+    width: 32%;
   }
+
   to {
-    width: 78%;
+    width: 76%;
   }
 }
 
@@ -347,83 +401,86 @@
   from {
     background-position: 0% 50%;
   }
+
   to {
     background-position: 200% 50%;
   }
 }
 
 /* Tablet */
+
 @media (max-width: 760px) {
   .jobstats-section {
-    padding: 25px 14px 17px;
-    margin: 10px auto 16px;
+    margin: 11px auto 18px;
+    padding: 27px 15px 19px;
   }
 
   .jobstats-heading {
-    margin-bottom: 17px;
-  }
-
-  .jobstats-heading h2 {
-    font-size: clamp(22px, 5vw, 29px);
+    margin-bottom: 20px;
   }
 
   .jobstats-grid {
-    gap: 10px;
+    gap: 11px;
   }
 
   .jobstat-card {
-    padding: 14px 13px 12px;
-    border-radius: 11px;
+    padding: 15px 14px 13px;
   }
 
   .jobstat-card-top {
-    margin-bottom: 10px;
+    margin-bottom: 13px;
   }
 
   .jobstat-icon-wrap {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
   }
 
   .jobstat-number,
   .jobstat-access-number {
-    font-size: 32px;
+    font-size: 33px;
   }
 
   .jobstat-card h3 {
     font-size: 13px;
   }
 
-  .jobstat-card > p {
-    font-size: 10px;
-  }
-
   .jobstats-trust {
-    gap: 10px;
-    margin-top: 15px;
+    gap: 11px;
+    margin-top: 18px;
   }
 }
 
-/* Small mobile */
+/* Mobile */
+
 @media (max-width: 480px) {
   .jobstats-section {
-    padding: 22px 11px 15px;
+    margin: 9px auto 15px;
+    padding: 23px 11px 16px;
+  }
+
+  .jobstats-heading {
+    margin-bottom: 17px;
   }
 
   .jobstats-eyebrow {
+    gap: 6px;
     font-size: 8px;
-    letter-spacing: 1px;
+    letter-spacing: 1.15px;
   }
 
   .jobstats-heading h2 {
     font-size: 23px;
-    line-height: 1.25;
+    line-height: 1.28;
+    letter-spacing: -0.5px;
   }
 
   .jobstats-heading > p {
     max-width: 330px;
+    margin-top: 8px;
     font-size: 11px;
+    line-height: 1.65;
   }
 
   .jobstats-grid {
@@ -432,29 +489,62 @@
   }
 
   .jobstat-card {
-    padding: 12px 10px 11px;
+    padding: 13px 11px 12px;
+    border-radius: 9px;
+  }
+
+  .jobstat-card-top {
+    margin-bottom: 12px;
+  }
+
+  .jobstat-icon-wrap {
+    width: 33px;
+    height: 33px;
+    flex-basis: 33px;
+    border-radius: 8px;
+  }
+
+  .jobstat-arrow {
+    width: 25px;
+    height: 25px;
   }
 
   .jobstat-number,
   .jobstat-access-number {
     font-size: 29px;
+    letter-spacing: -0.8px;
+  }
+
+  .jobstat-plus {
+    font-size: 19px;
   }
 
   .jobstat-card h3 {
+    margin-top: 8px;
     font-size: 12px;
   }
 
   .jobstat-card > p {
     min-height: 30px;
     font-size: 10px;
+    line-height: 1.55;
+  }
+
+  .jobstat-progress {
+    margin-top: 13px;
+  }
+
+  .jobstat-status {
+    font-size: 8px;
+    letter-spacing: 0.6px;
   }
 
   .jobstat-card-access {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    column-gap: 10px;
+    column-gap: 12px;
   }
 
   .jobstat-card-access .jobstat-card-top {
@@ -463,12 +553,12 @@
 
   .jobstat-card-access .jobstat-access-number {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: auto;
   }
 
   .jobstat-card-access h3,
   .jobstat-card-access > p {
-    grid-column: 1;
+    grid-column: 1 / -1;
   }
 
   .jobstat-card-access .jobstat-progress {
@@ -476,7 +566,8 @@
   }
 
   .jobstats-trust {
-    gap: 9px 13px;
+    gap: 10px 13px;
+    margin-top: 16px;
     font-size: 10px;
   }
 
@@ -485,13 +576,14 @@
   }
 }
 
+/* Accessibility */
+
 @media (prefers-reduced-motion: reduce) {
   .jobstats-section *,
   .jobstats-section *::before,
   .jobstats-section *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    animation: none !important;
     scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
+    transition: none !important;
   }
 }
