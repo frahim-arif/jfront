@@ -1177,33 +1177,9 @@ useEffect(() => {
           </span>
         </div>
 
-        <h1 className="text-[28px] font-extrabold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-[42px]">
-          Find Work.
-          <span className="mt-1 block text-[#e2c77e]">
-            Build Your Future.
-          </span>
-        </h1>
+        
 
-        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/70 lg:mx-0">
-          Discover job opportunities across India or connect with skilled workers for your next project.
-        </p>
-
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium text-white/75 lg:justify-start">
-          <span className="inline-flex items-center gap-2">
-            <svg className="h-4 w-4 text-[#e2c77e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="m5 12 4 4L19 6" />
-            </svg>
-            Simple & Easy
-          </span>
-
-          <span className="inline-flex items-center gap-2">
-            <svg className="h-4 w-4 text-[#e2c77e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
-              <path d="m9 12 2 2 4-4" />
-            </svg>
-            Job Opportunities
-          </span>
-        </div>
+       
 
       </div>
 
