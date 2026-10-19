@@ -1155,157 +1155,182 @@ useEffect(() => {
 
 
  
+
 {/* ==================================================
-    TOP ACTION AREA — PROFESSIONAL JOBHIR DESIGN
+    JOBHIR — PREMIUM TOP ACTION AREA
 ================================================== */}
 
 <section className="w-full px-3 pt-3 sm:px-5 sm:pt-4 lg:px-8 xl:px-10">
-  <div className="jobhir-top-panel relative w-full overflow-hidden border border-[#c8ae6a]/40 p-5 shadow-[0_8px_28px_rgba(7,28,25,0.12)] sm:p-7 lg:p-8">
+  <div className="jobhir-top-panel relative w-full overflow-hidden border border-[#c8ae6a]/30 shadow-[0_12px_35px_rgba(7,28,25,0.12)]">
 
-    <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <div className="relative z-10 grid grid-cols-1 items-center gap-7 p-5 sm:p-7 lg:grid-cols-[1fr_390px] lg:gap-10 lg:p-9">
 
-      {/* LEFT: HEADING */}
+      {/* LEFT — INTRODUCTION */}
 
       <div className="min-w-0 text-center lg:text-left">
 
-        <div className="flex items-center justify-center gap-2 lg:justify-start">
-          <span className="h-px w-6 bg-[#c8ae6a]" />
+        <div className="mb-4 inline-flex items-center gap-2 border border-[#c8ae6a]/30 bg-white/[0.04] px-3 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#c8ae6a]" />
 
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#e2c77e] sm:text-xs">
-            India's Job Platform
-          </p>
-
-          <span className="h-px w-6 bg-[#c8ae6a] lg:hidden" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e2c77e]">
+            Your Career Starts Here
+          </span>
         </div>
 
-        <h1 className="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
-          Find Your Next Job
+        <h1 className="text-[28px] font-extrabold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-[42px]">
+          Find Work.
+          <span className="mt-1 block text-[#e2c77e]">
+            Build Your Future.
+          </span>
         </h1>
 
-       
+        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/70 lg:mx-0">
+          Discover job opportunities across India or connect with skilled workers for your next project.
+        </p>
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-medium text-white/75 lg:justify-start">
+          <span className="inline-flex items-center gap-2">
+            <svg className="h-4 w-4 text-[#e2c77e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="m5 12 4 4L19 6" />
+            </svg>
+            Simple & Easy
+          </span>
+
+          <span className="inline-flex items-center gap-2">
+            <svg className="h-4 w-4 text-[#e2c77e]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            Job Opportunities
+          </span>
+        </div>
 
       </div>
 
-      {/* RIGHT: ACTIONS */}
+      {/* RIGHT — ACTION PANEL */}
 
-      <div className="flex w-full flex-col gap-3 lg:w-auto lg:min-w-[420px]">
+      <div className="border border-white/10 bg-[#061a17]/55 p-4 sm:p-5">
 
-        {/* ACTION BUTTONS */}
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-white/65">
+          Get Started
+        </p>
 
-        <div className="grid grid-cols-2 gap-3">
+        {/* POST A JOB */}
 
-          {/* POST A JOB */}
+        <button
+          type="button"
+          onClick={() => navigate("/offer-job")}
+          className="
+            group relative flex min-h-[56px] w-full items-center
+            justify-center gap-3 overflow-hidden
+            border border-[#f5b36a]
+            bg-[#f59e45] px-4 py-3
+            text-[#17251c]
+            transition-colors duration-200
+            hover:bg-[#ffb45e]
+            focus-visible:outline-none focus-visible:ring-2
+            focus-visible:ring-[#f5b36a] focus-visible:ring-offset-2
+            focus-visible:ring-offset-[#061a17]
+          "
+        >
+          <span className="relative z-10 flex h-8 w-8 items-center justify-center bg-black/[0.07] text-2xl font-normal leading-none">
+            +
+          </span>
 
-          
-{/* POST A JOB */}
+          <span className="relative z-10 flex flex-1 flex-col items-start">
+            <span className="text-sm font-extrabold">
+              Post a Job
+            </span>
+            <span className="mt-0.5 text-[10px] font-semibold text-[#47321e]">
+              Free job posting
+            </span>
+          </span>
 
-<button
-  type="button"
-  onClick={() => navigate("/offer-job")}
-  className="
-    group relative flex min-h-[52px] items-center justify-center gap-2
-    overflow-hidden border border-orange-300
-    bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400
-    px-3 py-2.5 text-sm font-extrabold text-[#17251c]
-    shadow-sm transition-all duration-200
-    hover:brightness-105 hover:shadow-md
-    focus-visible:outline-none focus-visible:ring-2
-    focus-visible:ring-amber-300 focus-visible:ring-offset-2
-    focus-visible:ring-offset-[#071c19]
-  "
->
-  {/* Subtle shimmer */}
-  <span
-    className="
-      pointer-events-none absolute inset-0
-      -translate-x-full bg-gradient-to-r
-      from-transparent via-white/30 to-transparent
-      animate-[shimmer_2.5s_infinite]
-    "
-  />
+          {/* Blinking dot */}
 
-  {/* Button content */}
-  <span className="relative z-10 text-xl font-normal leading-none">
-    +
-  </span>
+          <span className="relative z-10 flex h-2.5 w-2.5 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-80" />
+            <span className="relative h-2.5 w-2.5 rounded-full bg-white" />
+          </span>
 
-  <span className="relative z-10 flex flex-col items-start leading-tight">
-    <span className="whitespace-nowrap">Post a Job</span>
-    <span className="mt-1 text-[9px] font-extrabold uppercase tracking-[1.5px]">
-      Free Posting
-    </span>
-  </span>
+          {/* Subtle shimmer */}
 
-  {/* Blinking live dot */}
-  <span className="relative z-10 ml-1 flex h-2.5 w-2.5 shrink-0">
-    <span className="absolute inline-flex h-full w-full animate-ping bg-white opacity-80" />
-    <span className="relative inline-flex h-2.5 w-2.5 bg-white shadow-sm" />
-  </span>
-</button>
+          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_3s_infinite]" />
+        </button>
 
+        {/* WORKER REGISTRATION */}
 
-          {/* WORKER REGISTER */}
-
-          <button
-            type="button"
-            onClick={() => navigate("/worker-register")}
-            className="
-              flex min-h-[52px] items-center justify-center gap-2
-              border border-white/30 bg-white/5 px-3 py-2.5
-              text-sm font-bold text-white
-              transition-colors duration-200
-              hover:border-[#c8ae6a] hover:bg-white/10
-              focus-visible:outline-none focus-visible:ring-2
-              focus-visible:ring-[#e2c77e]
-            "
+        <button
+          type="button"
+          onClick={() => navigate("/worker-register")}
+          className="
+            mt-3 flex min-h-[50px] w-full items-center
+            justify-center gap-2 border border-white/20
+            bg-white/[0.04] px-4 py-3
+            text-sm font-bold text-white
+            transition-colors duration-200
+            hover:border-[#c8ae6a]/70 hover:bg-white/[0.08]
+            focus-visible:outline-none focus-visible:ring-2
+            focus-visible:ring-[#e2c77e]
+          "
+        >
+          <svg
+            className="h-[18px] w-[18px] text-[#e2c77e]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
           >
-            <svg
-              className="h-4 w-4 shrink-0 text-[#e2c77e]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
-            </svg>
+            <circle cx="12" cy="8" r="4" />
+            <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+          </svg>
 
-            Register
-          </button>
+          Register as a Worker
 
-        </div>
+          <svg
+            className="ml-auto h-4 w-4 text-white/50"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </button>
 
-        {/* STATE SELECTOR */}
+        {/* LOCATION FILTER */}
 
-        <div className="relative w-full">
+        <div className="mt-5 border-t border-white/10 pt-4">
 
           <label
             htmlFor="jobhir-state-selector"
-            className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-white/65"
+            className="mb-2 block text-xs font-semibold text-white/75"
           >
-            Explore jobs by state
+            Explore jobs by location
           </label>
 
           <div className="relative">
 
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-              <svg
-                className="h-[18px] w-[18px] text-[#806b35]"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M12 22s8-4.5 8-12a8 8 0 0 0-16 0c0 7.5 8 12 8 12Z" />
-                <circle cx="12" cy="10" r="2.5" />
-              </svg>
-            </div>
+            <svg
+              className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#8d7947]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 22s8-4.5 8-12a8 8 0 0 0-16 0c0 7.5 8 12 8 12Z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
 
             <select
               id="jobhir-state-selector"
@@ -1317,10 +1342,10 @@ useEffect(() => {
               }}
               className="
                 h-12 w-full appearance-none
-                border border-[#c8ae6a]/45
+                border border-[#d9d5c7]
                 bg-[#faf8ef] pl-10 pr-10
                 text-sm font-semibold text-[#172d27]
-                outline-none transition-colors duration-200
+                outline-none transition-colors
                 hover:border-[#c8ae6a]
                 focus:border-[#c8ae6a]
                 focus:ring-2 focus:ring-[#c8ae6a]/25
@@ -1336,20 +1361,18 @@ useEffect(() => {
               ))}
             </select>
 
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-              <svg
-                className="h-4 w-4 text-[#53665d]"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.51a.75.75 0 0 1-1.08 0l-4.25-4.51a.75.75 0 0 1 .02-1.06Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
+            <svg
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#53665d]"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.51a.75.75 0 0 1-1.08 0l-4.25-4.51a.75.75 0 0 1 .02-1.06Z"
+                clipRule="evenodd"
+              />
+            </svg>
 
           </div>
         </div>
@@ -1358,6 +1381,7 @@ useEffect(() => {
     </div>
   </div>
 </section>
+
 
 
       {/* ==================================================
