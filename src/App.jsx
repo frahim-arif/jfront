@@ -1065,7 +1065,7 @@ useEffect(() => {
   </div>
 </div>
 
- 
+
 {/* ==================================================
     JOBHIR — COMPACT PREMIUM ACTION AREA
 ================================================== */}
@@ -1076,24 +1076,9 @@ useEffect(() => {
 
     <div className="relative z-10 grid grid-cols-1 items-center gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-7 lg:p-6">
 
-      {/* LEFT — BRAND MESSAGE */}
+      
 
-      <div className="flex min-h-[100px] items-center justify-center lg:justify-start">
-
-        <div className="inline-flex items-center gap-2.5 border border-[#c8ae6a]/45 bg-white/[0.04] px-3.5 py-2.5">
-
-          <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="absolute h-full w-full animate-pulse rounded-full bg-[#e2c77e]/50" />
-            <span className="relative m-auto h-1.5 w-1.5 rounded-full bg-[#e2c77e]" />
-          </span>
-
-          <span className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#e2c77e] sm:text-xs">
-            Your Career Starts Here
-          </span>
-
-        </div>
-
-      </div>
+      
 
       {/* RIGHT — ACTIONS */}
 
