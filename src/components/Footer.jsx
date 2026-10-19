@@ -97,13 +97,36 @@ export default function Footer() {
             </div>
           </div>
           
-<div className="mt-3 inline-flex items-center gap-2 border border-[#c8ae6a]/30 bg-[#c8ae6a]/[0.07] px-3 py-2">
-  <span className="flex h-6 w-6 items-center justify-center bg-[#c8ae6a] text-xs font-black text-[#071c19]">
-    24
-  </span>
-  <span className="text-[10px] font-semibold text-[#e5d29a]">
-    24/7 Job Access
-  </span>
+{/* Dynamic Job Statistics */}
+<div className="mt-3 flex flex-wrap items-center gap-2">
+  <div className="inline-flex items-center gap-2 border border-[#c8ae6a]/30 bg-[#c8ae6a]/[0.07] px-3 py-2">
+    <span className="text-lg font-black text-[#c8ae6a]">
+      {totalJobs}
+    </span>
+    <span className="text-xs font-semibold text-[#faf8ef]">
+      Total Jobs
+    </span>
+  </div>
+
+  <div className="inline-flex items-center gap-2 border border-emerald-400/30 bg-emerald-400/[0.07] px-3 py-2">
+    <span className="text-lg font-black text-emerald-300">
+      {availableJobs}
+    </span>
+    <span className="text-xs font-semibold text-[#faf8ef]">
+      Available Jobs
+    </span>
+  </div>
+
+  {is24x7 && (
+    <div className="inline-flex items-center gap-2 border border-[#c8ae6a]/30 bg-[#c8ae6a]/[0.07] px-3 py-2">
+      <span className="flex h-6 w-6 items-center justify-center bg-[#c8ae6a] text-xs font-black text-[#071c19]">
+        24
+      </span>
+      <span className="text-xs font-semibold text-[#e5d29a]">
+        24/7 Job Access
+      </span>
+    </div>
+  )}
 </div>
 
 
