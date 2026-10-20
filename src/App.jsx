@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MobileBottomNav from "./components/MobileBottomNav.jsx";
 
 
 import {
@@ -2473,7 +2474,7 @@ className="
   availableJobs={availableJobs.length}
   is24x7={true}
 />
-
+<MobileBottomNav />
     </div>
   );
 }
