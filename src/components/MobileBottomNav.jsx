@@ -1,6 +1,5 @@
-"use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
@@ -38,52 +37,148 @@ const items = [
 ];
 
 export default function MobileBottomNav() {
-  const { pathname } = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const { pathname, hash } = location;
+
+  const [activeScroll, setActiveScroll] = useState("home");
+  const scrollTimerRef = useRef(null);
+
+  // Pending timers cleanup
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) {
+        window.clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, []);
 
   // Admin pages par bottom navigation hide rahega
   if (pathname.startsWith("/admin")) return null;
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    setActiveScroll("home");
+  };
+
   const scrollToJobs = () => {
     const element = document.getElementById("jobs");
 
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    if (!element) return false;
+
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    setActiveScroll("jobs");
+    return true;
+  };
+
+  // Home page render hone tak Jobs section ko retry karo
+  const waitAndScrollToJobs = () => {
+    if (scrollTimerRef.current) {
+      window.clearTimeout(scrollTimerRef.current);
     }
+
+    let attempts = 0;
+    const maxAttempts = 30;
+
+    const tryScroll = () => {
+      const element = document.getElementById("jobs");
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        setActiveScroll("jobs");
+        scrollTimerRef.current = null;
+        return;
+      }
+
+      attempts += 1;
+
+      if (attempts < maxAttempts) {
+        scrollTimerRef.current = window.setTimeout(tryScroll, 150);
+      } else {
+        scrollTimerRef.current = null;
+        console.warn(
+          'JobHir: Jobs section nahi mila. App.jsx mein id="jobs" check karein.'
+        );
+      }
+    };
+
+    tryScroll();
   };
 
   const handleClick = (item) => {
-    if (item.targetId) {
+    if (item.key === "jobs") {
+      setActiveScroll("jobs");
+
       if (pathname !== "/") {
         navigate("/");
-        window.setTimeout(scrollToJobs, 350);
+        waitAndScrollToJobs();
       } else {
-        scrollToJobs();
+        const found = scrollToJobs();
+
+        if (!found) {
+          waitAndScrollToJobs();
+        }
       }
+
       return;
     }
 
-    navigate(item.href);
+    if (item.key === "home") {
+      setActiveScroll("home");
 
-    if (item.key === "home" && pathname === "/") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (pathname !== "/") {
+        navigate("/");
+      } else {
+        scrollToTop();
+      }
+
+      return;
     }
+
+    setActiveScroll("");
+
+    navigate(item.href);
   };
 
   const isActive = (item) => {
-    if (item.key === "home") return pathname === "/";
-    if (item.key === "post") return pathname === "/offer-job";
+    if (item.key === "home") {
+      return pathname === "/" && activeScroll !== "jobs";
+    }
+
+    if (item.key === "jobs") {
+      return pathname === "/" && activeScroll === "jobs";
+    }
+
+    if (item.key === "post") {
+      return pathname === "/offer-job";
+    }
+
     if (item.key === "register") {
       return pathname.startsWith("/worker-register");
     }
+
     return false;
   };
+
+  // URL hash ke zariye Jobs section khulne par active state update
+  useEffect(() => {
+    if (pathname === "/" && hash === "#jobs") {
+      setActiveScroll("jobs");
+    }
+  }, [pathname, hash]);
 
   return (
     <>
@@ -141,6 +236,9 @@ export default function MobileBottomNav() {
                   className="relative flex min-h-[66px] w-full flex-col items-center justify-center gap-1 px-1 pt-2 pb-1.5"
                   style={{
                     color: active ? "#0b302a" : "#7b827d",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
                   }}
                 >
                   {/* Golden active indicator */}
