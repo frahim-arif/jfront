@@ -53,7 +53,6 @@ export default function MobileBottomNav() {
       }
     };
   }, []);
-
   // Admin pages par bottom navigation hide rahega
   if (pathname.startsWith("/admin")) return null;
 
