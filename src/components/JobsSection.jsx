@@ -103,6 +103,42 @@ const HINDI = {
 const iconFor = (type) => ICONS[normalize(type)] || BriefcaseBusiness;
 const hindiFor = (type) => HINDI[normalize(type)] || "";
 
+// Muted jewel tones: icon chip ke liye halka tint + gehra icon rang.
+// Brand (deep green + gold) structure me rehta hai, sirf chhote accents rangeen hain.
+const TONES = {
+  warm: { bg: "#fbe6da", fg: "#b4532a" },
+  ochre: { bg: "#faefc8", fg: "#946400" },
+  teal: { bg: "#d9f0ec", fg: "#0f766e" },
+  leaf: { bg: "#e0f0d8", fg: "#3d7a2a" },
+  plum: { bg: "#f0dff0", fg: "#86388a" },
+  indigo: { bg: "#e1e6f6", fg: "#3b4a9c" },
+  rose: { bg: "#fbe1e5", fg: "#ad3450" },
+  sand: { bg: "#efe8d2", fg: "#6b5a2a" },
+};
+
+const TONE_OF = {
+  mason: "warm",
+  carpenter: "warm",
+  "furniture worker": "warm",
+  "construction worker": "warm",
+  electrician: "ochre",
+  welder: "ochre",
+  plumber: "teal",
+  "ac technician": "teal",
+  cleaner: "teal",
+  gardener: "leaf",
+  helper: "leaf",
+  painter: "plum",
+  "graphic designer": "plum",
+  driver: "indigo",
+  mechanic: "indigo",
+  "tiles worker": "indigo",
+  "home care": "rose",
+  other: "sand",
+};
+
+const toneFor = (type) => TONES[TONE_OF[normalize(type)]] || TONES.sand;
+
 /* ======================================================
    COMPONENT
    ====================================================== */
@@ -204,6 +240,7 @@ export default function JobsSection({
           {categories.map(({ workType, count }) => {
             const Icon = iconFor(workType);
             const hindi = hindiFor(workType);
+            const tone = toneFor(workType);
 
             return (
               <li key={workType}>
@@ -213,6 +250,14 @@ export default function JobsSection({
                   className="group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-2xl border bg-white p-3.5 text-left shadow-[0_3px_12px_rgba(7,28,25,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(7,28,25,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8ae6a] focus-visible:ring-offset-2"
                   style={{ borderColor: LINE }}
                 >
+                  {/* soft tinted corner glow */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: `radial-gradient(130px 100px at 0% 0%, ${tone.bg}, transparent 70%)`,
+                    }}
+                  />
                   {/* hover: tile turns deep green */}
                   <span
                     aria-hidden="true"
@@ -231,7 +276,11 @@ export default function JobsSection({
                   <span className="relative flex items-start justify-between">
                     <span
                       className="flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-300 group-hover:!bg-[#c8ae6a] group-hover:!text-[#071c19]"
-                      style={{ background: DEEP, color: GOLD_LIGHT }}
+                      style={{
+                        background: tone.bg,
+                        color: tone.fg,
+                        boxShadow: `inset 0 0 0 1px ${tone.fg}26`,
+                      }}
                     >
                       <Icon className="h-5 w-5" strokeWidth={2.1} />
                     </span>
@@ -239,7 +288,7 @@ export default function JobsSection({
                     <span className="text-right leading-none">
                       <span
                         className="block text-2xl font-black transition-colors duration-300 group-hover:!text-[#e2c77e]"
-                        style={{ color: DEEP }}
+                        style={{ color: tone.fg }}
                       >
                         {count}
                       </span>
@@ -368,6 +417,7 @@ export default function JobsSection({
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {categoryJobs.map((job) => {
             const Icon = iconFor(job?.workType || selectedWorkType);
+            const tone = toneFor(job?.workType || selectedWorkType);
             const state = getJobState(job);
             const district = getJobDistrict(job);
             const address = getJobAddress(job);
@@ -393,7 +443,11 @@ export default function JobsSection({
                       <div className="flex min-w-0 items-center gap-3">
                         <span
                           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                          style={{ background: DEEP, color: GOLD_LIGHT }}
+                          style={{
+                            background: tone.bg,
+                            color: tone.fg,
+                            boxShadow: `inset 0 0 0 1px ${tone.fg}26`,
+                          }}
                         >
                           <Icon className="h-5 w-5" strokeWidth={2.1} />
                         </span>
@@ -432,15 +486,18 @@ export default function JobsSection({
 
                     {/* Pay */}
                     <div
-                      className="mt-4 flex items-center justify-between rounded-xl border px-3.5 py-3"
-                      style={{ background: "#faf8ef", borderColor: LINE }}
+                      className="relative mt-4 flex items-center justify-between overflow-hidden rounded-xl px-3.5 py-3"
+                      style={{
+                        backgroundColor: FOREST,
+                        backgroundImage: `${STAR_GOLD}, linear-gradient(135deg, ${DEEP}, ${FOREST})`,
+                        backgroundSize: "44px 44px, 100% 100%",
+                        boxShadow: `inset 0 0 0 1px ${GOLD}55`,
+                      }}
                     >
-                      <span className="text-xs font-bold" style={{ color: MUTED }}>
-                        Job payment
-                      </span>
+                      <span className="text-xs font-bold text-white/75">Job payment</span>
                       <span
-                        className="text-xl font-black tracking-tight"
-                        style={{ color: DEEP }}
+                        className={`font-black tracking-tight ${amount > 0 ? "text-2xl" : "text-sm"}`}
+                        style={{ color: GOLD_LIGHT }}
                       >
                         {amount > 0 ? `₹${amount.toLocaleString("en-IN")}` : "Not specified"}
                       </span>
@@ -494,8 +551,11 @@ export default function JobsSection({
                       <button
                         type="button"
                         onClick={() => onApply?.(job)}
-                        className="group/btn flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold shadow-sm transition-all duration-200 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8ae6a] focus-visible:ring-offset-2 active:scale-[0.98]"
-                        style={{ background: DEEP, color: GOLD_LIGHT }}
+                        className="group/btn flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#071c19] focus-visible:ring-offset-2 active:scale-[0.98]"
+                        style={{
+                          background: `linear-gradient(135deg, ${GOLD_LIGHT}, ${GOLD})`,
+                          color: DEEP,
+                        }}
                       >
                         Apply now
                         <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
