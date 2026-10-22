@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MobileBottomNav from "./components/MobileBottomNav.jsx";
+import { Hero, HowItWorks, LiveClock } from "./components/JobhirHero.jsx";
 
 
 import {
@@ -121,6 +122,7 @@ const WORK_TYPES = [
   "Graphic Designer",
   "Other",
 ];
+
 
 // ======================================================
 // HELPERS
@@ -458,11 +460,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ====================================================
-  // CURRENT TIME
-  // ====================================================
-
-  const [currentTime, setCurrentTime] = useState("");
+  
 
   // ====================================================
   // CUSTOM CSS
@@ -673,33 +671,7 @@ useEffect(() => {
 
 
 
-  // ====================================================
-  // LIVE TIME
-  // ====================================================
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-
-      setCurrentTime(
-        now.toLocaleString("en-IN", {
-          weekday: "short",
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
-    };
-
-    updateTime();
-
-    const timer = setInterval(updateTime, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+  
 
   // ====================================================
   // FETCH JOBS
@@ -756,6 +728,9 @@ useEffect(() => {
     };
   }, []);
 
+
+
+  
   // ====================================================
   // FETCH APPLIED JOBS
   // ====================================================
@@ -1047,9 +1022,7 @@ useEffect(() => {
 <div className="w-full overflow-hidden border-b border-[#c8ae6a]/40 bg-[#071c19] py-1 text-white shadow-sm">
   <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
 
-    <span className="text-slate-300">
-      {currentTime}
-    </span>
+        <LiveClock />
 
     <span className="mx-5 text-amber-400">•</span>
 
@@ -1071,215 +1044,20 @@ useEffect(() => {
     JOBHIR — COMPACT PREMIUM ACTION AREA
 ================================================== */}
 
-<section className="w-full px-3 pt-2 sm:px-5 sm:pt-3 lg:px-8 xl:px-10">
-
-  <div className="jobhir-top-panel relative w-full overflow-hidden border border-[#c8ae6a]/50 shadow-[0_8px_24px_rgba(7,28,25,0.12)]">
-
-    <div className="relative z-10 grid grid-cols-1 items-center gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-7 lg:p-6">
-
-      
-
-      
-
-      {/* RIGHT — ACTIONS */}
-
-      <div className="min-w-0">
-
-        <div className="mb-3 flex items-center gap-3">
-
-          <h2 className="whitespace-nowrap text-xs font-extrabold uppercase tracking-[0.16em] text-white sm:text-sm">
-            Get Started
-          </h2>
-
-          <span className="h-px flex-1 bg-gradient-to-r from-[#c8ae6a]/70 to-transparent" />
-
-        </div>
-
-        {/* TWO BUTTONS SIDE BY SIDE */}
-
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-
-          {/* POST A JOB */}
-
-          <button
-            type="button"
-            onClick={() => navigate("/offer-job")}
-            className="
-              group relative flex min-h-[54px] min-w-0
-              items-center justify-center gap-2
-              overflow-hidden border border-[#f5b36a]
-              bg-gradient-to-r from-orange-500 to-amber-400
-              px-2.5 py-2
-              text-[#17251c]
-              transition-all duration-200
-              hover:brightness-105 hover:shadow-md
-              focus-visible:outline-none focus-visible:ring-2
-              focus-visible:ring-amber-300
-            "
-          >
-
-            <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center bg-black/[0.07] text-2xl font-normal leading-none">
-              +
-            </span>
-
-            <span className="relative z-10 flex min-w-0 flex-1 flex-col items-start leading-tight">
-              <span className="whitespace-nowrap text-xs font-extrabold sm:text-sm">
-                Post a Job
-              </span>
-
-              <span className="mt-1 whitespace-nowrap text-[9px] font-bold uppercase tracking-wide text-[#47321e]">
-                Free Posting
-              </span>
-            </span>
-
-            {/* Blinking Dot */}
-
-            <span className="relative z-10 flex h-2.5 w-2.5 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-80" />
-              <span className="relative h-2.5 w-2.5 rounded-full bg-white shadow-sm" />
-            </span>
-
-            {/* Shimmer */}
-
-            <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent animate-[shimmer_3s_infinite]" />
-
-          </button>
-
-          {/* REGISTER */}
-
-          <button
-            type="button"
-            onClick={() => navigate("/worker-register")}
-            className="
-              flex min-h-[54px] min-w-0 items-center
-              justify-center gap-2
-              border border-[#c8ae6a]/55
-              bg-white/[0.035] px-2.5 py-2
-              text-xs font-bold text-white
-              transition-all duration-200
-              hover:border-[#e2c77e] hover:bg-white/[0.08]
-              focus-visible:outline-none focus-visible:ring-2
-              focus-visible:ring-[#e2c77e]
-              sm:text-sm
-            "
-          >
-
-            <svg
-              className="h-[18px] w-[18px] shrink-0 text-[#e2c77e]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
-            </svg>
-
-            <span className="whitespace-nowrap">
-              Register
-            </span>
-
-            <svg
-              className="ml-auto hidden h-4 w-4 shrink-0 text-white/55 sm:block"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-
-          </button>
-
-        </div>
-
-        {/* LOCATION SELECTOR */}
-
-        <div className="mt-3">
-
-          <label
-            htmlFor="jobhir-state-selector"
-            className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.12em] text-white/70"
-          >
-            Explore Jobs by Location
-          </label>
-
-          <div className="relative">
-
-            <svg
-              className="pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-[#8d7947]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 22s8-4.5 8-12a8 8 0 0 0-16 0c0 7.5 8 12 8 12Z" />
-              <circle cx="12" cy="10" r="2.5" />
-            </svg>
-
-            <select
-              id="jobhir-state-selector"
-              value={selectedState}
-              onChange={(event) => {
-                setSelectedState(event.target.value);
-                setSelectedWorkType(null);
-                setTimeout(scrollToJobs, 50);
-              }}
-              className="
-                h-11 w-full appearance-none
-                border border-[#d9d5c7]
-                bg-[#faf8ef] pl-10 pr-9
-                text-sm font-semibold text-[#172d27]
-                outline-none transition-colors duration-200
-                hover:border-[#c8ae6a]
-                focus:border-[#c8ae6a]
-                focus:ring-2 focus:ring-[#c8ae6a]/25
-                cursor-pointer
-              "
-            >
-
-              <option value="All">All India — All States</option>
-
-              {stateList.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-
-            </select>
-
-            <svg
-              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#53665d]"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.51a.75.75 0 0 1-1.08 0l-4.25-4.51a.75.75 0 0 1 .02-1.06Z"
-                clipRule="evenodd"
-              />
-            </svg>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-</section>
+<Hero
+  stateList={stateList}
+  selectedState={selectedState}
+  workTypes={workTypeCategories.map((c) => c.workType)}
+  selectedWorkType={selectedWorkType}
+  totalJobs={availableJobs.length}
+  onSearch={({ state, workType }) => {
+    setSelectedState(state);
+    setSelectedWorkType(workType);
+    setTimeout(scrollToJobs, 50);
+  }}
+  onPostJob={() => navigate("/offer-job")}
+  onRegister={() => navigate("/worker-register")}
+/>
    
   
 {/* ==================================================
@@ -1371,7 +1149,7 @@ useEffect(() => {
 
  
 
-
+<HowItWorks />
 
 
 
@@ -1443,7 +1221,9 @@ useEffect(() => {
 
   
 <main
+  id="jobs"
   className="
+    scroll-mt-24
     w-full
     rounded-2xl
     border border-slate-200
@@ -1952,7 +1732,7 @@ className="
   <button
     type="button"
     onClick={() => navigate("/working-workers")}
-    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-700 px-3 py-3 text-sm font-semibold text-black transition hover:bg-red-700 sm:flex-none sm:px-5"
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-700 px-3 py-3 text-sm font-semibold text-white transition hover:bg-red-700 sm:flex-none sm:px-5"
   >
     <BriefcaseBusiness size={18} />
     <span className="whitespace-nowrap">Now Workers</span>
