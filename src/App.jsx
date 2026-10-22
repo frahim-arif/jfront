@@ -1282,89 +1282,155 @@ useEffect(() => {
 </section>
    
   
-{/* ==================================================
-    JOBHIR WORKER REGISTRATION — ANIMATED OFFER
-================================================== */}
+import { ArrowRight, BriefcaseBusiness } from "lucide-react";
 
-<section className="jobhir-offer-section px-3 pt-2 sm:px-5 lg:px-8 xl:px-10">
-  <div className="jobhir-offer-card relative overflow-hidden border border-amber-300/70 bg-gradient-to-r from-[#fff7df] via-[#ffda82] to-[#ffb347] shadow-lg">
+/* ======================================================
+   JOBHIR — COMPACT OFFER BANNER (coupon style)
+   Save as: src/components/OfferBanner.jsx
 
-    {/* Animated background effects */}
-    <div className="jobhir-offer-shimmer pointer-events-none absolute inset-0" />
+   Use in App.jsx:
+     import OfferBanner from "./components/OfferBanner.jsx";
+     <OfferBanner onRegister={() => navigate("/worker-register")} />
+   ====================================================== */
 
-    <div className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full bg-white/30 blur-2xl" />
+const DEEP = "#071c19";
+const BROWN = "#8c3500";
+const PAGE_BG = "#faf8ef"; // notch colour = page background
 
-    <div className="pointer-events-none absolute -bottom-12 left-1/3 h-28 w-28 rounded-full bg-orange-300/40 blur-2xl" />
+// same 8-point star as the header, very faint
+const TILE = `<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 60 60'><g fill='none' stroke='rgba(113,52,0,0.10)' stroke-width='1'><rect x='17' y='17' width='26' height='26'/><rect x='17' y='17' width='26' height='26' transform='rotate(45 30 30)'/></g></svg>`;
+const PATTERN = `url("data:image/svg+xml,${encodeURIComponent(TILE)}")`;
 
-    <div className="relative z-10 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-3.5">
+export default function OfferBanner({
+  onRegister,
+  price = 100,
+  oldPrice = 250,
+  days = 15,
+}) {
+  const off = Math.round(((oldPrice - price) / oldPrice) * 100);
 
-      {/* Offer details */}
-      <div className="flex min-w-0 items-center gap-3">
+  return (
+    <section className="px-3 pt-2 sm:px-5 lg:px-8 xl:px-10">
+      <style>{`
+        .jobhir-offer-btn { position: relative; overflow: hidden; }
+        .jobhir-offer-btn::after {
+          content: "";
+          position: absolute; inset: 0 auto 0 -60%;
+          width: 40%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+          transform: skewX(-20deg);
+          animation: jobhirOfferShine 4.5s ease-in-out infinite;
+        }
+        @keyframes jobhirOfferShine {
+          0%, 55% { left: -60%; }
+          100% { left: 140%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .jobhir-offer-btn::after { animation: none; display: none; }
+        }
+      `}</style>
 
-        {/* Animated icon */}
-        <div className="jobhir-offer-icon relative hidden h-12 w-12 shrink-0 items-center justify-center border border-amber-300/30 bg-[#071c19] text-amber-300 shadow-lg sm:flex">
-          <BriefcaseBusiness className="h-6 w-6" />
-          <span className="jobhir-icon-ping absolute -right-1 -top-1 h-3 w-3 border-2 border-[#fff1c2] bg-emerald-400" />
+      <div
+        className="relative flex items-stretch overflow-hidden rounded-2xl border shadow-[0_8px_22px_rgba(140,53,0,0.14)]"
+        style={{
+          borderColor: "rgba(180,120,30,.45)",
+          backgroundImage: `${PATTERN}, linear-gradient(100deg,#fff3cf 0%,#f7d684 55%,#eab34f 100%)`,
+          backgroundSize: "48px 48px, 100% 100%",
+        }}
+      >
+        {/* ---------- LEFT: offer text ---------- */}
+        <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 sm:px-5">
+          <span
+            className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full sm:flex"
+            style={{ background: DEEP, color: "#e2c77e" }}
+          >
+            <BriefcaseBusiness className="h-5 w-5" />
+          </span>
+
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span
+                className="hidden items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold sm:inline-flex"
+                style={{ background: DEEP, color: "#e2c77e" }}
+              >
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                Limited offer
+              </span>
+
+              <h2
+                className="truncate text-[15px] font-extrabold leading-tight sm:text-lg"
+                style={{ color: DEEP }}
+              >
+                Worker registration
+                <span className="ml-1.5 font-bold" style={{ color: BROWN }}>
+                  · {days} days
+                </span>
+              </h2>
+            </div>
+
+            <p
+              className="mt-0.5 truncate text-[11px] font-medium sm:text-xs"
+              style={{ color: "#563817" }}
+            >
+              <span className="sm:hidden">Limited offer · </span>
+              Join JobHir and find work near you.
+            </p>
+          </div>
         </div>
 
-        <div className="min-w-0">
-
-          {/* Animated badges */}
-          <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <span className="jobhir-offer-badge inline-flex items-center gap-1.5 bg-[#071c19] px-2 py-1 text-[9px] font-black uppercase tracking-wider text-amber-300 sm:text-[10px]">
-              <span className="jobhir-live-dot h-1.5 w-1.5 bg-emerald-400" />
-              Limited Time Offer
-            </span>
-
-            <span className="jobhir-save-badge inline-flex items-center gap-1 border border-orange-700/20 bg-white/50 px-2 py-1 text-[9px] font-black tracking-wide text-[#8c3500] sm:text-[10px]">
-              <span>⚡</span> SAVE 60%
-            </span>
-          </div>
-
-          <h2 className="text-base font-black leading-tight tracking-tight text-[#071c19] sm:text-lg">
-            Worker Registration
-            <span className="ml-1.5 inline-block text-[#8c3500]">
-              — 15 Days
-            </span>
-          </h2>
-
-          <p className="mt-1 text-[11px] font-medium leading-relaxed text-[#563817] sm:text-xs">
-            Join JobHir and discover work opportunities near you.
-          </p>
-        </div>
-      </div>
-
-      {/* Price and CTA */}
-      <div className="jobhir-offer-bottom flex shrink-0 items-center justify-between gap-3 border-t border-[#713400]/15 pt-3 sm:gap-4 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
-
-        <div className="shrink-0">
-          <div className="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-[#79451b]">
-            Special Price
-          </div>
-
-          <div className="flex items-baseline gap-2">
-            <span className="text-xs font-bold text-[#79451b]/70 line-through">
-              ₹250
-            </span>
-
-            <span className="jobhir-price text-2xl font-black leading-none tracking-tight text-[#071c19] sm:text-3xl">
-              ₹100
-            </span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => navigate("/worker-register")}
-          className="jobhir-offer-button group inline-flex shrink-0 items-center justify-center gap-2 border border-[#315d4b] bg-[#071c19] px-4 py-3 text-[11px] font-extrabold text-white shadow-md transition-all duration-300 hover:border-[#071c19] hover:bg-[#17483c] hover:shadow-xl active:scale-95 sm:px-5 sm:text-xs"
+        {/* ---------- RIGHT: ticket stub (dashed divider + notches) ---------- */}
+        <div
+          className="relative flex shrink-0 items-center gap-3 border-l-2 border-dashed px-3 py-2.5 sm:gap-4 sm:px-5"
+          style={{ borderColor: "rgba(113,52,0,.35)" }}
         >
-          Register Now
-          <ArrowRight className="jobhir-arrow h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </button>
+          <span
+            aria-hidden="true"
+            className="absolute -left-[11px] -top-[10px] h-5 w-5 rounded-full"
+            style={{ background: PAGE_BG, boxShadow: "inset 0 -1px 0 rgba(180,120,30,.45)" }}
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-[10px] -left-[11px] h-5 w-5 rounded-full"
+            style={{ background: PAGE_BG, boxShadow: "inset 0 1px 0 rgba(180,120,30,.45)" }}
+          />
+
+          <div className="leading-none">
+            <div className="mb-1 flex items-center gap-1.5">
+              <span
+                className="text-[11px] font-bold line-through"
+                style={{ color: "rgba(121,69,27,.7)" }}
+              >
+                ₹{oldPrice}
+              </span>
+              <span
+                className="rounded px-1 py-0.5 text-[10px] font-extrabold"
+                style={{ background: "rgba(255,255,255,.6)", color: BROWN }}
+              >
+                {off}% off
+              </span>
+            </div>
+            <div
+              className="text-2xl font-black tracking-tight sm:text-[28px]"
+              style={{ color: DEEP }}
+            >
+              ₹{price}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onRegister}
+            className="jobhir-offer-btn group inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold text-white shadow-md transition-all duration-200 hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#071c19] focus-visible:ring-offset-2 active:scale-95 sm:px-5 sm:text-sm"
+            style={{ background: DEEP }}
+          >
+            Register
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
+  );
+}
 
 
 
