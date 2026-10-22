@@ -1185,23 +1185,60 @@ useEffect(() => {
   />
 </main>
 
-<div className="jobhir-bottom-actions flex w-full justify-center gap-2 px-2 py-3">
+<div className="jobhir-bottom-actions mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-3 py-5">
+  {/* NOW WORKERS */}
   <button
     type="button"
     onClick={() => navigate("/working-workers")}
-    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-700 px-3 py-3 text-sm font-semibold text-black transition hover:bg-red-700 sm:flex-none sm:px-5"
+    className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-800 p-3.5 text-left text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.98] sm:p-4"
   >
-    <BriefcaseBusiness size={18} />
-    <span className="whitespace-nowrap">Now Workers</span>
+    <span className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/10" />
+
+    <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25">
+      <BriefcaseBusiness size={22} />
+    </span>
+
+    <span className="relative min-w-0 flex-1">
+      <span className="flex items-center gap-1.5 text-sm font-extrabold">
+        <span className="whitespace-nowrap">Now Workers</span>
+
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-300 opacity-80" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-300" />
+        </span>
+      </span>
+
+      <span className="block truncate text-[11px] font-medium text-indigo-100">
+        Workers available now
+      </span>
+    </span>
+
+    <ArrowRight className="relative hidden h-4 w-4 shrink-0 transition group-hover:translate-x-1 sm:block" />
   </button>
 
+  {/* PAY JOBHIR */}
   <button
     type="button"
     onClick={() => navigate("/payment")}
-    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 sm:flex-none sm:px-5"
+    className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 p-3.5 text-left text-white shadow-lg shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.98] sm:p-4"
   >
-    <CreditCard size={18} />
-    <span className="whitespace-nowrap">Pay JobHir</span>
+    <span className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/10" />
+
+    <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25">
+      <CreditCard size={22} />
+    </span>
+
+    <span className="relative min-w-0 flex-1">
+      <span className="block whitespace-nowrap text-sm font-extrabold">
+        Pay JobHir
+      </span>
+
+      <span className="block truncate text-[11px] font-medium text-emerald-100">
+        Safe &amp; secure payment
+      </span>
+    </span>
+
+    <ArrowRight className="relative hidden h-4 w-4 shrink-0 transition group-hover:translate-x-1 sm:block" />
   </button>
 </div>
 
