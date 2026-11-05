@@ -27,26 +27,21 @@ import {
    JOBHIR — JOBS AREA (trade tiles + category banner + job cards)
    Save as: src/components/JobsSection.jsx
 
-   Is file me <article> aur <section> tag jaan-bujhkar nahi
-   use kiye: App.jsx ki global CSS (".jobhir-app main article",
-   ".jobhir-app main section button") unhe indigo rang aur
-   !important radius se override kar deti hai.
+   Note: <article> and <section> tags are intentionally not used
+   here. The global CSS in App.jsx (".jobhir-app main article",
+   ".jobhir-app main section button") would override their styles.
    ====================================================== */
 
-const DEEP = "#071c19";
-const FOREST = "#0b302a";
-const GOLD = "#c8ae6a";
-const GOLD_LIGHT = "#e2c77e";
-const LINE = "#e6e0cd";
-const MUTED = "#53665d";
+const DEEP = "#0f172a"; // slate-900
+const NAVY = "#1e1b4b"; // indigo-950
+const ACCENT = "#818cf8"; // indigo-400
+const ACCENT_LIGHT = "#a5b4fc"; // indigo-300
+const ACCENT_DARK = "#6366f1"; // indigo-500
+const LINE = "#e2e8f0"; // slate-200
+const MUTED = "#64748b"; // slate-500
 
-// faint 8-point star (same motif as header / offer banner)
-const star = (stroke) =>
-  `url("data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='${stroke}' stroke-width='1'><rect x='17' y='17' width='26' height='26'/><rect x='17' y='17' width='26' height='26' transform='rotate(45 30 30)'/><circle cx='30' cy='30' r='3'/></g></svg>`
-  )}")`;
-
-const STAR_GOLD = star("rgba(200,174,106,0.35)");
+// subtle dot grid (replaces the old star pattern)
+const DOTS = "radial-gradient(rgba(165,180,252,0.28) 1px, transparent 1px)";
 
 /* ---------- helpers ---------- */
 
@@ -57,7 +52,6 @@ const getJobDistrict = (job) => job?.district || job?.location?.district || "";
 const getJobAddress = (job) =>
   job?.location?.address || job?.address || "Location provided by employer";
 
-// Sab trades ke liye ek hi rang (green + gold); sirf icon alag
 const ICONS = {
   mason: Hammer,
   carpenter: Hammer,
@@ -79,41 +73,18 @@ const ICONS = {
   other: BriefcaseBusiness,
 };
 
-const HINDI = {
-  mason: "राजमिस्त्री",
-  carpenter: "बढ़ई",
-  painter: "पेंटर",
-  electrician: "इलेक्ट्रीशियन",
-  plumber: "प्लंबर",
-  gardener: "माली",
-  cleaner: "सफाई कर्मी",
-  welder: "वेल्डर",
-  driver: "ड्राइवर",
-  "construction worker": "निर्माण मज़दूर",
-  helper: "हेल्पर",
-  "ac technician": "एसी टेक्नीशियन",
-  mechanic: "मैकेनिक",
-  "tiles worker": "टाइल्स मिस्त्री",
-  "furniture worker": "फर्नीचर कारीगर",
-  "home care": "होम केयर",
-  "graphic designer": "ग्राफिक डिज़ाइनर",
-  other: "अन्य काम",
-};
-
 const iconFor = (type) => ICONS[normalize(type)] || BriefcaseBusiness;
-const hindiFor = (type) => HINDI[normalize(type)] || "";
 
-// Muted jewel tones: icon chip ke liye halka tint + gehra icon rang.
-// Brand (deep green + gold) structure me rehta hai, sirf chhote accents rangeen hain.
+// Soft tones: light tint for the icon chip + darker icon colour
 const TONES = {
-  warm: { bg: "#fbe6da", fg: "#b4532a" },
-  ochre: { bg: "#faefc8", fg: "#946400" },
-  teal: { bg: "#d9f0ec", fg: "#0f766e" },
-  leaf: { bg: "#e0f0d8", fg: "#3d7a2a" },
-  plum: { bg: "#f0dff0", fg: "#86388a" },
-  indigo: { bg: "#e1e6f6", fg: "#3b4a9c" },
-  rose: { bg: "#fbe1e5", fg: "#ad3450" },
-  sand: { bg: "#efe8d2", fg: "#6b5a2a" },
+  warm: { bg: "#ffedd5", fg: "#c2410c" },
+  ochre: { bg: "#fef3c7", fg: "#a16207" },
+  teal: { bg: "#ccfbf1", fg: "#0f766e" },
+  leaf: { bg: "#dcfce7", fg: "#15803d" },
+  plum: { bg: "#f3e8ff", fg: "#7e22ce" },
+  indigo: { bg: "#e0e7ff", fg: "#4338ca" },
+  rose: { bg: "#ffe4e6", fg: "#be123c" },
+  slate: { bg: "#e2e8f0", fg: "#475569" },
 };
 
 const TONE_OF = {
@@ -134,10 +105,10 @@ const TONE_OF = {
   mechanic: "indigo",
   "tiles worker": "indigo",
   "home care": "rose",
-  other: "sand",
+  other: "slate",
 };
 
-const toneFor = (type) => TONES[TONE_OF[normalize(type)]] || TONES.sand;
+const toneFor = (type) => TONES[TONE_OF[normalize(type)]] || TONES.slate;
 
 /* ======================================================
    COMPONENT
@@ -162,7 +133,7 @@ export default function JobsSection({
       <div className="flex min-h-[320px] flex-col items-center justify-center gap-4">
         <div
           className="h-12 w-12 animate-spin rounded-full border-4"
-          style={{ borderColor: LINE, borderTopColor: GOLD }}
+          style={{ borderColor: LINE, borderTopColor: ACCENT_DARK }}
         />
         <p className="text-sm font-semibold" style={{ color: MUTED }}>
           Loading jobs...
@@ -181,7 +152,7 @@ export default function JobsSection({
         >
           <div
             className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
-            style={{ background: DEEP, color: GOLD_LIGHT }}
+            style={{ background: DEEP, color: ACCENT_LIGHT }}
           >
             <Search className="h-6 w-6" />
           </div>
@@ -197,8 +168,8 @@ export default function JobsSection({
             <button
               type="button"
               onClick={onShowAll}
-              className="mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-extrabold transition hover:brightness-110"
-              style={{ background: DEEP, color: GOLD_LIGHT }}
+              className="mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-extrabold transition hover:brightness-125"
+              style={{ background: DEEP, color: ACCENT_LIGHT }}
             >
               Show all India
               <ArrowRight className="h-4 w-4" />
@@ -231,7 +202,7 @@ export default function JobsSection({
             className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1 text-xs font-bold"
             style={{ borderColor: LINE, color: DEEP }}
           >
-            <MapPin className="h-3.5 w-3.5" style={{ color: "#8d7947" }} />
+            <MapPin className="h-3.5 w-3.5" style={{ color: ACCENT_DARK }} />
             {placeLabel}
           </span>
         </div>
@@ -239,7 +210,6 @@ export default function JobsSection({
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {categories.map(({ workType, count }) => {
             const Icon = iconFor(workType);
-            const hindi = hindiFor(workType);
             const tone = toneFor(workType);
 
             return (
@@ -247,7 +217,7 @@ export default function JobsSection({
                 <button
                   type="button"
                   onClick={() => onSelectWorkType?.(workType)}
-                  className="group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-2xl border bg-white p-3.5 text-left shadow-[0_3px_12px_rgba(7,28,25,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(7,28,25,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c8ae6a] focus-visible:ring-offset-2"
+                  className="group relative flex min-h-[124px] w-full flex-col justify-between overflow-hidden rounded-2xl border bg-white p-3.5 text-left shadow-[0_3px_12px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(15,23,42,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
                   style={{ borderColor: LINE }}
                 >
                   {/* soft tinted corner glow */}
@@ -258,24 +228,24 @@ export default function JobsSection({
                       background: `radial-gradient(130px 100px at 0% 0%, ${tone.bg}, transparent 70%)`,
                     }}
                   />
-                  {/* hover: tile turns deep green */}
+                  {/* hover: tile turns navy */}
                   <span
                     aria-hidden="true"
                     className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     style={{
-                      background: `linear-gradient(135deg, ${DEEP}, ${FOREST})`,
+                      background: `linear-gradient(135deg, ${DEEP}, ${NAVY})`,
                     }}
                   />
-                  {/* star watermark */}
+                  {/* dot watermark */}
                   <span
                     aria-hidden="true"
                     className="pointer-events-none absolute -bottom-7 -right-7 h-28 w-28 opacity-70"
-                    style={{ backgroundImage: STAR_GOLD, backgroundSize: "40px 40px" }}
+                    style={{ backgroundImage: DOTS, backgroundSize: "14px 14px" }}
                   />
 
                   <span className="relative flex items-start justify-between">
                     <span
-                      className="flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-300 group-hover:!bg-[#c8ae6a] group-hover:!text-[#071c19]"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-300 group-hover:!bg-indigo-400 group-hover:!text-slate-900"
                       style={{
                         background: tone.bg,
                         color: tone.fg,
@@ -287,7 +257,7 @@ export default function JobsSection({
 
                     <span className="text-right leading-none">
                       <span
-                        className="block text-2xl font-black transition-colors duration-300 group-hover:!text-[#e2c77e]"
+                        className="block text-2xl font-black transition-colors duration-300 group-hover:!text-indigo-300"
                         style={{ color: tone.fg }}
                       >
                         {count}
@@ -308,14 +278,6 @@ export default function JobsSection({
                     >
                       {workType}
                     </span>
-                    {hindi && (
-                      <span
-                        className="mt-0.5 block text-xs font-semibold transition-colors duration-300 group-hover:!text-[#e2c77e]"
-                        style={{ color: MUTED }}
-                      >
-                        {hindi}
-                      </span>
-                    )}
                   </span>
                 </button>
               </li>
@@ -328,7 +290,6 @@ export default function JobsSection({
 
   /* ---------------- SELECTED CATEGORY ---------------- */
   const BannerIcon = iconFor(selectedWorkType);
-  const bannerHindi = hindiFor(selectedWorkType);
 
   return (
     <div>
@@ -336,10 +297,10 @@ export default function JobsSection({
       <div
         className="relative mb-5 overflow-hidden rounded-2xl border"
         style={{
-          borderColor: `${GOLD}66`,
-          backgroundColor: FOREST,
-          backgroundImage: `${STAR_GOLD}, linear-gradient(135deg, ${DEEP}, ${FOREST} 60%, #123d32)`,
-          backgroundSize: "60px 60px, 100% 100%",
+          borderColor: "rgba(165,180,252,0.3)",
+          backgroundColor: NAVY,
+          backgroundImage: `${DOTS}, linear-gradient(135deg, ${DEEP}, ${NAVY} 55%, #312e81)`,
+          backgroundSize: "22px 22px, 100% 100%",
         }}
       >
         <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
@@ -347,7 +308,7 @@ export default function JobsSection({
             <span
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full"
               style={{
-                background: `linear-gradient(135deg, ${GOLD_LIGHT}, ${GOLD})`,
+                background: `linear-gradient(135deg, ${ACCENT_LIGHT}, ${ACCENT})`,
                 color: DEEP,
               }}
             >
@@ -357,14 +318,6 @@ export default function JobsSection({
             <div>
               <h2 className="text-xl font-extrabold text-white sm:text-2xl">
                 {selectedWorkType}
-                {bannerHindi && (
-                  <span
-                    className="ml-2 text-sm font-semibold"
-                    style={{ color: GOLD_LIGHT }}
-                  >
-                    {bannerHindi}
-                  </span>
-                )}
               </h2>
               <p className="mt-0.5 text-sm text-white/75">
                 {categoryJobs.length} {categoryJobs.length === 1 ? "job" : "jobs"} in{" "}
@@ -376,8 +329,7 @@ export default function JobsSection({
           <button
             type="button"
             onClick={() => onSelectWorkType?.(null)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e2c77e] sm:w-auto"
-            style={{ borderColor: `${GOLD}99` }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-300/50 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             All trades
@@ -393,7 +345,7 @@ export default function JobsSection({
         >
           <div
             className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
-            style={{ background: DEEP, color: GOLD_LIGHT }}
+            style={{ background: DEEP, color: ACCENT_LIGHT }}
           >
             <Search className="h-6 w-6" />
           </div>
@@ -406,8 +358,8 @@ export default function JobsSection({
           <button
             type="button"
             onClick={() => onSelectWorkType?.(null)}
-            className="mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-extrabold transition hover:brightness-110"
-            style={{ background: DEEP, color: GOLD_LIGHT }}
+            className="mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-extrabold transition hover:brightness-125"
+            style={{ background: DEEP, color: ACCENT_LIGHT }}
           >
             <ArrowLeft className="h-4 w-4" />
             Browse all trades
@@ -426,14 +378,14 @@ export default function JobsSection({
             return (
               <li key={job?._id || job?.id} className="h-full">
                 <div
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-[0_4px_16px_rgba(7,28,25,0.06)] transition-shadow duration-300 hover:shadow-[0_16px_34px_rgba(7,28,25,0.16)]"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-[0_4px_16px_rgba(15,23,42,0.06)] transition-shadow duration-300 hover:shadow-[0_16px_34px_rgba(15,23,42,0.16)]"
                   style={{ borderColor: LINE }}
                 >
-                  {/* gold hairline on top */}
+                  {/* top accent line */}
                   <div
                     className="h-1 w-full"
                     style={{
-                      background: `linear-gradient(90deg, ${GOLD}, ${GOLD_LIGHT}, ${GOLD})`,
+                      background: `linear-gradient(90deg, ${ACCENT_DARK}, ${ACCENT_LIGHT}, ${ACCENT_DARK})`,
                     }}
                   />
 
@@ -461,7 +413,7 @@ export default function JobsSection({
                           </h3>
                           <p
                             className="mt-0.5 text-xs font-semibold"
-                            style={{ color: "#8d7947" }}
+                            style={{ color: ACCENT_DARK }}
                           >
                             {job?.workType || selectedWorkType}
                           </p>
@@ -488,16 +440,16 @@ export default function JobsSection({
                     <div
                       className="relative mt-4 flex items-center justify-between overflow-hidden rounded-xl px-3.5 py-3"
                       style={{
-                        backgroundColor: FOREST,
-                        backgroundImage: `${STAR_GOLD}, linear-gradient(135deg, ${DEEP}, ${FOREST})`,
-                        backgroundSize: "44px 44px, 100% 100%",
-                        boxShadow: `inset 0 0 0 1px ${GOLD}55`,
+                        backgroundColor: NAVY,
+                        backgroundImage: `${DOTS}, linear-gradient(135deg, ${DEEP}, ${NAVY})`,
+                        backgroundSize: "18px 18px, 100% 100%",
+                        boxShadow: "inset 0 0 0 1px rgba(165,180,252,0.25)",
                       }}
                     >
                       <span className="text-xs font-bold text-white/75">Job payment</span>
                       <span
                         className={`font-black tracking-tight ${amount > 0 ? "text-2xl" : "text-sm"}`}
-                        style={{ color: GOLD_LIGHT }}
+                        style={{ color: ACCENT_LIGHT }}
                       >
                         {amount > 0 ? `₹${amount.toLocaleString("en-IN")}` : "Not specified"}
                       </span>
@@ -509,7 +461,7 @@ export default function JobsSection({
                         <div className="flex items-start gap-2.5">
                           <MapPinned
                             className="mt-0.5 h-4 w-4 shrink-0"
-                            style={{ color: "#8d7947" }}
+                            style={{ color: ACCENT_DARK }}
                           />
                           <div className="min-w-0">
                             <p className="text-[11px] font-semibold" style={{ color: MUTED }}>
@@ -529,7 +481,7 @@ export default function JobsSection({
                         <div className="flex items-start gap-2.5">
                           <MapPin
                             className="mt-0.5 h-4 w-4 shrink-0"
-                            style={{ color: "#8d7947" }}
+                            style={{ color: ACCENT_DARK }}
                           />
                           <div className="min-w-0">
                             <p className="text-[11px] font-semibold" style={{ color: MUTED }}>
@@ -537,7 +489,7 @@ export default function JobsSection({
                             </p>
                             <p
                               className="line-clamp-2 text-[13px] font-medium leading-[18px]"
-                              style={{ color: "#2f4a40" }}
+                              style={{ color: "#334155" }}
                             >
                               {address}
                             </p>
@@ -551,10 +503,9 @@ export default function JobsSection({
                       <button
                         type="button"
                         onClick={() => onApply?.(job)}
-                        className="group/btn flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#071c19] focus-visible:ring-offset-2 active:scale-[0.98]"
+                        className="group/btn flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 active:scale-[0.98]"
                         style={{
-                          background: `linear-gradient(135deg, ${GOLD_LIGHT}, ${GOLD})`,
-                          color: DEEP,
+                          background: `linear-gradient(135deg, ${ACCENT_DARK}, #4f46e5)`,
                         }}
                       >
                         Apply now
