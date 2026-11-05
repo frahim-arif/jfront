@@ -13,39 +13,23 @@ import {
 } from "lucide-react";
 
 /* ======================================================
-   JOBHIR HEADER — geometric star pattern style
+   JOBHIR HEADER — navy / indigo theme
    Save as: src/components/Header.jsx
-
-   THEME: "green" (JobHir brand) ya "blue" (aapke screenshot jaisa).
-   Sirf neeche ACTIVE_THEME badlo.
    ====================================================== */
 
-const THEMES = {
-  green: {
-    from: "#071c19",
-    via: "#0b302a",
-    to: "#123d32",
-    line: "rgba(200,174,106,0.30)", // star lines
-    solid: "#071c19", // dropdown / mobile menu base
-  },
-  blue: {
-    from: "#17406a",
-    via: "#1d4d7c",
-    to: "#17406a",
-    line: "rgba(255,255,255,0.18)",
-    solid: "#17406a",
-  },
+const COLORS = {
+  from: "#0f172a", // slate-900
+  via: "#1e1b4b", // indigo-950
+  to: "#312e81", // indigo-900
+  solid: "#0f172a", // dropdown / mobile menu base
+  accent: "#a5b4fc", // indigo-300
+  accentStrong: "#818cf8", // indigo-400
 };
 
-const ACTIVE_THEME = "green";
-const T = THEMES[ACTIVE_THEME];
+// subtle dot grid pattern
+const DOT_GRID = "radial-gradient(rgba(165,180,252,0.16) 1px, transparent 1px)";
 
-const GOLD = "#c8ae6a";
-const GOLD_LIGHT = "#e2c77e";
-
-// 8-pointed star tile (two squares, one rotated 45deg) + corner dots
-const STAR_TILE = `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='${T.line}' stroke-width='1'><rect x='17' y='17' width='26' height='26'/><rect x='17' y='17' width='26' height='26' transform='rotate(45 30 30)'/><circle cx='30' cy='30' r='3'/></g><g fill='${T.line}'><circle cx='0' cy='0' r='1.6'/><circle cx='60' cy='0' r='1.6'/><circle cx='0' cy='60' r='1.6'/><circle cx='60' cy='60' r='1.6'/></g></svg>`;
-const STAR_PATTERN = `url("data:image/svg+xml,${encodeURIComponent(STAR_TILE)}")`;
+const NAV_COLOR = "rgba(255,255,255,0.92)";
 
 const API_URL = "https://jbackend-h963.onrender.com";
 
@@ -57,6 +41,12 @@ const NAV_ITEMS = [
   { label: "Pricing", path: "/pricing" },
 ];
 
+// Orange CTA, same as the "Post a Job" button in GetStartedPanel
+const ctaStyle = {
+  background: "linear-gradient(135deg, #f97316, #fbbf24)",
+  color: "#17251c",
+};
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [workerId, setWorkerId] = useState(null);
@@ -64,7 +54,7 @@ export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  // Alag-alag refs (pehle dono jagah ek hi ref tha, desktop par click band ho jata tha)
+  // Separate refs for desktop and mobile so outside-click works on both
   const desktopNotifRef = useRef(null);
   const mobileNotifRef = useRef(null);
 
@@ -180,7 +170,7 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [workerId]);
 
-  // CLOSE NOTIFICATION WHEN CLICKING OUTSIDE
+  // CLOSE NOTIFICATIONS WHEN CLICKING OUTSIDE
   useEffect(() => {
     const handleOutsideClick = (event) => {
       const inside = [desktopNotifRef, mobileNotifRef].some((ref) =>
@@ -261,7 +251,8 @@ export default function Header() {
   };
 
   // =========================================================
-  // NOTIFICATION BUTTON  (function, component nahi: har render par remount nahi hoga)
+  // NOTIFICATION BUTTON
+  // (a render function, not a component, so it doesn't remount on every render)
   // =========================================================
 
   const renderNotificationButton = () => (
@@ -270,7 +261,7 @@ export default function Header() {
       onClick={toggleNotifications}
       aria-label="Notifications"
       aria-expanded={showNotifications}
-      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white transition-all duration-200 hover:border-[#c8ae6a]/60 hover:bg-white/[0.14] active:scale-95 sm:h-11 sm:w-11"
+      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white transition-all duration-200 hover:border-indigo-300/60 hover:bg-white/[0.14] active:scale-95 sm:h-11 sm:w-11"
     >
       <Bell
         size={20}
@@ -285,7 +276,7 @@ export default function Header() {
           <span className="absolute -right-1 -top-1 h-2.5 w-2.5 animate-ping rounded-full bg-yellow-300 opacity-70" />
           <span
             className="absolute -right-2 -top-2 flex min-h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 bg-red-500 px-1 text-[9px] font-black leading-none text-white shadow-lg"
-            style={{ borderColor: T.solid }}
+            style={{ borderColor: COLORS.solid }}
           >
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
@@ -302,12 +293,14 @@ export default function Header() {
     <div className="w-full bg-white">
       <div
         className="relative overflow-hidden border-b border-slate-200 px-4 py-3.5"
-        style={{ background: `linear-gradient(90deg, ${T.from}, ${T.via}, ${T.to})` }}
+        style={{
+          background: `linear-gradient(90deg, ${COLORS.from}, ${COLORS.via}, ${COLORS.to})`,
+        }}
       >
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/10">
-              <Bell size={16} style={{ color: GOLD_LIGHT }} />
+              <Bell size={16} style={{ color: COLORS.accent }} />
             </div>
 
             <div>
@@ -338,8 +331,8 @@ export default function Header() {
       <div className="max-h-[420px] overflow-y-auto">
         {loadingNotifications && notifications.length === 0 ? (
           <div className="px-5 py-12 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50">
-              <Bell size={22} className="animate-pulse text-emerald-700" />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-indigo-100 bg-indigo-50">
+              <Bell size={22} className="animate-pulse text-indigo-600" />
             </div>
             <p className="text-sm font-semibold text-slate-600">Loading notifications...</p>
           </div>
@@ -361,7 +354,7 @@ export default function Header() {
               onClick={() => markAsRead(notification)}
               className={`group w-full border-b border-slate-100 p-4 text-left transition-all duration-200 ${
                 !notification.isRead
-                  ? "bg-amber-50/80 hover:bg-amber-100/70"
+                  ? "bg-indigo-50/80 hover:bg-indigo-100/70"
                   : "bg-white hover:bg-slate-50"
               }`}
             >
@@ -369,13 +362,13 @@ export default function Header() {
                 <div
                   className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                     !notification.isRead
-                      ? "border-amber-200 bg-amber-100"
+                      ? "border-indigo-200 bg-indigo-100"
                       : "border-slate-200 bg-slate-100"
                   }`}
                 >
                   <BriefcaseBusiness
                     size={18}
-                    className={!notification.isRead ? "text-amber-700" : "text-slate-400"}
+                    className={!notification.isRead ? "text-indigo-700" : "text-slate-400"}
                   />
                 </div>
 
@@ -385,7 +378,7 @@ export default function Header() {
                       {notification.title || "New Job Available"}
                     </h4>
                     {!notification.isRead && (
-                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-amber-600" />
+                      <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-indigo-600" />
                     )}
                   </div>
 
@@ -402,7 +395,7 @@ export default function Header() {
 
                 <ChevronRight
                   size={15}
-                  className="mt-1 flex-shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-amber-600"
+                  className="mt-1 flex-shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-600"
                 />
               </div>
             </button>
@@ -417,31 +410,21 @@ export default function Header() {
     setShowNotifications(false);
   };
 
-  // Gold button style (dark text, kyunki gold par safed text padhna mushkil tha)
-  const goldButtonStyle = {
-    background: `linear-gradient(135deg, ${GOLD_LIGHT}, ${GOLD})`,
-    color: "#071c19",
-  };
-
   // =========================================================
   // HEADER
   // =========================================================
 
   return (
     <header
-      className="relative z-50 w-full border-b shadow-[0_10px_35px_rgba(2,6,23,0.28)]"
+      className="relative z-50 w-full border-b border-indigo-300/20 shadow-[0_10px_35px_rgba(2,6,23,0.28)]"
       style={{
-        borderColor: `${GOLD}66`,
-        backgroundColor: T.via,
-        backgroundImage: `${STAR_PATTERN}, linear-gradient(90deg, ${T.from}, ${T.via}, ${T.to})`,
-        backgroundSize: "60px 60px, 100% 100%",
+        backgroundColor: COLORS.via,
+        backgroundImage: `${DOT_GRID}, linear-gradient(90deg, ${COLORS.from}, ${COLORS.via}, ${COLORS.to})`,
+        backgroundSize: "22px 22px, 100% 100%",
       }}
     >
-      {/* Gold hairline at the bottom */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{ background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }}
-      />
+      {/* Bottom hairline */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-300/70 to-transparent" />
 
       <div className="relative w-full px-3 sm:px-5 lg:px-8">
         <div className="flex min-h-[72px] items-center justify-between gap-3 sm:min-h-[80px]">
@@ -453,11 +436,8 @@ export default function Header() {
             aria-label="JobHir home"
           >
             <span
-              className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white p-1 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14"
-              style={{
-                border: `2px solid ${GOLD}`,
-                boxShadow: "0 6px 18px rgba(0,0,0,.28)",
-              }}
+              className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-indigo-300 bg-white p-1 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14"
+              style={{ boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}
             >
               <img
                 src="/images/logo.png"
@@ -492,15 +472,15 @@ export default function Header() {
                   key={item.path}
                   to={item.path}
                   className="group relative px-2.5 py-2 text-xs font-bold transition-colors duration-200 lg:px-3 lg:text-sm"
-                  // Inline colour: index.css ka default `a { color }` Tailwind class ko override kar deta tha
-                  style={{ color: "rgba(255,255,255,0.92)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = GOLD_LIGHT)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.92)")}
+                  // Inline colour: a global `a { color }` rule in index.css would override Tailwind classes
+                  style={{ color: NAV_COLOR }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.accent)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = NAV_COLOR)}
                 >
                   {item.label}
                   <span
                     className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 transition-all duration-300 group-hover:w-2/3"
-                    style={{ background: GOLD }}
+                    style={{ background: COLORS.accentStrong }}
                   />
                 </Link>
               ))}
@@ -508,8 +488,8 @@ export default function Header() {
 
             <Link
               to="/offer-job"
-              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_8px_22px_rgba(0,0,0,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
-              style={goldButtonStyle}
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_8px_22px_rgba(249,115,22,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
+              style={ctaStyle}
             >
               <Plus size={16} strokeWidth={3} />
               Job Post
@@ -534,7 +514,7 @@ export default function Header() {
               to="/offer-job"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-1 rounded-xl px-3 py-2 text-[11px] font-black shadow-md transition-all active:scale-95"
-              style={goldButtonStyle}
+              style={ctaStyle}
             >
               <Plus size={14} strokeWidth={3} />
               Job Post
@@ -556,8 +536,8 @@ export default function Header() {
       {/* ================= MOBILE MENU ================= */}
       {isOpen && (
         <div
-          className="relative border-t px-4 py-4 md:hidden"
-          style={{ background: T.solid, borderColor: `${GOLD}40` }}
+          className="relative border-t border-indigo-300/20 px-4 py-4 md:hidden"
+          style={{ background: COLORS.solid }}
         >
           <nav className="space-y-0.5">
             {NAV_ITEMS.map((item) => (
@@ -571,7 +551,7 @@ export default function Header() {
                 <span>{item.label}</span>
                 <ChevronRight
                   size={16}
-                  className="text-white/30 transition-all group-hover:translate-x-1 group-hover:text-[#e2c77e]"
+                  className="text-white/30 transition-all group-hover:translate-x-1 group-hover:text-indigo-300"
                 />
               </Link>
             ))}
@@ -580,7 +560,7 @@ export default function Header() {
               to="/offer-job"
               onClick={handleMobileLinkClick}
               className="mt-4 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-black shadow-lg"
-              style={goldButtonStyle}
+              style={ctaStyle}
             >
               <BriefcaseBusiness size={17} />
               Offer a Job
