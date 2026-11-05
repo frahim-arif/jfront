@@ -31,10 +31,10 @@ const NAV_ITEMS = [
 const NAV_COLOR = "#334155"; // slate-700
 const NAV_HOVER = "#4f46e5"; // indigo-600
 
-// Orange CTA, same as the "Post a Job" button in GetStartedPanel
+// Sky blue CTA
 const ctaStyle = {
-  background: "linear-gradient(135deg, #f97316, #fbbf24)",
-  color: "#17251c",
+  background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+  color: "#082f49",
 };
 
 export default function Header() {
@@ -451,7 +451,7 @@ export default function Header() {
 
             <Link
               to="/offer-job"
-              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_6px_16px_rgba(249,115,22,0.30)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_6px_16px_rgba(14,165,233,0.30)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
               style={ctaStyle}
             >
               <Plus size={16} strokeWidth={3} />
