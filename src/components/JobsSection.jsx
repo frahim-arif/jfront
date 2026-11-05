@@ -184,7 +184,7 @@ export default function JobsSection({
   if (!selectedWorkType) {
     return (
       <div>
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+        {/* <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>
             <h2
               className="text-xl font-extrabold sm:text-2xl"
@@ -205,7 +205,7 @@ export default function JobsSection({
             <MapPin className="h-3.5 w-3.5" style={{ color: ACCENT_DARK }} />
             {placeLabel}
           </span>
-        </div>
+        </div> */}
 
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {categories.map(({ workType, count }) => {
