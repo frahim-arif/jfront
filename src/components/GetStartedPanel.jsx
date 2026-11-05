@@ -1,17 +1,10 @@
 /* ======================================================
-   JOBHIR — GET STARTED PANEL
+   JOBHIR — GET STARTED PANEL (standard white card, sky blue buttons)
    Save as: src/components/GetStartedPanel.jsx
 
    Props (same as before, App.jsx needs no change):
      stateList, selectedState, onStateChange, onPostJob, onRegister
    ====================================================== */
-
-// subtle dot-grid pattern (replaces the old star pattern)
-const DOT_GRID = {
-  backgroundImage:
-    "radial-gradient(rgba(165, 180, 252, 0.18) 1px, transparent 1px)",
-  backgroundSize: "22px 22px",
-};
 
 export default function GetStartedPanel({
   stateList = [],
@@ -21,7 +14,7 @@ export default function GetStartedPanel({
   onRegister,
 }) {
   return (
-    <section className="w-full px-3 pt-2 sm:px-5 sm:pt-3 lg:px-8 xl:px-10">
+    <section className="w-full px-3 pt-3 sm:px-5 lg:px-8 xl:px-10">
       <style>{`
         @keyframes jobhirShimmer {
           0%, 55% { transform: translateX(-120%); }
@@ -29,45 +22,33 @@ export default function GetStartedPanel({
         }
         .jobhir-post-shimmer { animation: jobhirShimmer 3.2s ease-in-out infinite; }
 
+        /* App.jsx has a global select:focus rule (indigo); restore sky blue here */
+        #jobhir-state-selector:focus {
+          border-color: #0ea5e9 !important;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.22) !important;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .jobhir-post-shimmer { animation: none; display: none; }
         }
       `}</style>
 
-      <div
-        className="relative w-full overflow-hidden rounded-2xl border border-indigo-300/20 shadow-[0_14px_34px_rgba(15,23,42,0.25)]"
-        style={{
-          background: "linear-gradient(135deg,#0f172a,#1e1b4b 55%,#312e81)",
-        }}
-      >
-        {/* dot grid layer */}
+      <div className="relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 via-white to-white shadow-[0_4px_18px_rgba(15,23,42,0.06)]">
+        {/* top accent line */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={DOT_GRID}
+          className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 via-sky-500 to-cyan-400"
         />
 
-        {/* soft indigo glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl"
-        />
-
-        {/* top hairline */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/70 to-transparent"
-        />
-
-        <div className="relative z-10 grid grid-cols-1 items-center gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-8 lg:p-6">
+        <div className="relative grid grid-cols-1 items-center gap-5 p-4 pt-5 sm:p-5 sm:pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-8 lg:p-6 lg:pt-7">
           {/* LEFT — tagline (large screens only) */}
           <div className="hidden lg:block">
-            <p className="text-3xl font-extrabold leading-tight text-white xl:text-[34px]">
+            <p className="text-3xl font-extrabold leading-tight text-slate-900 xl:text-[34px]">
               Find work,
               <br />
-              right in your city.
+              <span className="text-sky-600">right in your city.</span>
             </p>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/70">
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
               Pick your state, choose your trade and apply in a minute.
             </p>
           </div>
@@ -77,12 +58,12 @@ export default function GetStartedPanel({
             <div className="mb-3 flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="h-2 w-2 shrink-0 rotate-45 bg-indigo-300"
+                className="h-2 w-2 shrink-0 rotate-45 bg-sky-500"
               />
-              <h2 className="whitespace-nowrap text-sm font-extrabold text-white sm:text-base">
+              <h2 className="whitespace-nowrap text-sm font-extrabold text-slate-800 sm:text-base">
                 Get started
               </h2>
-              <span className="h-px flex-1 bg-gradient-to-r from-indigo-300/70 to-transparent" />
+              <span className="h-px flex-1 bg-gradient-to-r from-sky-300 to-transparent" />
             </div>
 
             {/* TWO BUTTONS, SAME HEIGHT */}
@@ -94,20 +75,20 @@ export default function GetStartedPanel({
                 className="
                   group relative flex h-[54px] min-w-0
                   items-center justify-center gap-2
-                  overflow-hidden rounded-xl border border-[#f5b36a]
-                  bg-gradient-to-r from-orange-500 to-amber-400
-                  px-2.5 text-[#17251c]
-                  shadow-[0_8px_20px_rgba(249,115,22,0.35),inset_0_1px_0_rgba(255,255,255,0.45)]
+                  overflow-hidden rounded-xl border border-sky-300
+                  bg-gradient-to-r from-sky-400 to-sky-500
+                  px-2.5 text-sky-950
+                  shadow-[0_6px_16px_rgba(14,165,233,0.30),inset_0_1px_0_rgba(255,255,255,0.45)]
                   transition-all duration-200
                   hover:-translate-y-0.5 hover:brightness-105
-                  hover:shadow-[0_12px_26px_rgba(249,115,22,0.45),inset_0_1px_0_rgba(255,255,255,0.45)]
+                  hover:shadow-[0_10px_22px_rgba(14,165,233,0.40),inset_0_1px_0_rgba(255,255,255,0.45)]
                   active:translate-y-0 active:scale-[0.98]
                   focus-visible:outline-none focus-visible:ring-2
-                  focus-visible:ring-amber-300 focus-visible:ring-offset-2
-                  focus-visible:ring-offset-slate-900
+                  focus-visible:ring-sky-400 focus-visible:ring-offset-2
+                  focus-visible:ring-offset-white
                 "
               >
-                <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/10 text-2xl font-normal leading-none">
+                <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/30 text-2xl font-normal leading-none">
                   +
                 </span>
 
@@ -115,7 +96,7 @@ export default function GetStartedPanel({
                   <span className="whitespace-nowrap text-xs font-extrabold sm:text-sm">
                     Post a Job
                   </span>
-                  <span className="mt-0.5 whitespace-nowrap text-[10px] font-bold text-[#47321e]">
+                  <span className="mt-0.5 whitespace-nowrap text-[10px] font-bold text-sky-900/80">
                     Free posting
                   </span>
                 </span>
@@ -127,7 +108,7 @@ export default function GetStartedPanel({
                 </span>
 
                 {/* Shimmer */}
-                <span className="jobhir-post-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <span className="jobhir-post-shimmer pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent" />
               </button>
 
               {/* REGISTER */}
@@ -137,22 +118,22 @@ export default function GetStartedPanel({
                 className="
                   group flex h-[54px] min-w-0 items-center
                   justify-center gap-2 rounded-xl
-                  border border-indigo-300/40
-                  bg-white/[0.06] px-2.5
-                  text-xs font-bold text-white
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+                  border border-sky-300
+                  bg-white px-2.5
+                  text-xs font-bold text-sky-800
+                  shadow-sm
                   transition-all duration-200
-                  hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-white/[0.12]
+                  hover:-translate-y-0.5 hover:border-sky-400 hover:bg-sky-50
                   active:translate-y-0 active:scale-[0.98]
                   focus-visible:outline-none focus-visible:ring-2
-                  focus-visible:ring-indigo-300 focus-visible:ring-offset-2
-                  focus-visible:ring-offset-slate-900
+                  focus-visible:ring-sky-400 focus-visible:ring-offset-2
+                  focus-visible:ring-offset-white
                   sm:text-sm
                 "
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-indigo-300/30 bg-white/[0.06]">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-100">
                   <svg
-                    className="h-[18px] w-[18px] text-indigo-200"
+                    className="h-[18px] w-[18px] text-sky-700"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -169,7 +150,7 @@ export default function GetStartedPanel({
                 <span className="whitespace-nowrap">Register</span>
 
                 <svg
-                  className="ml-auto hidden h-4 w-4 shrink-0 text-white/55 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-indigo-200 sm:block"
+                  className="ml-auto hidden h-4 w-4 shrink-0 text-sky-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-sky-600 sm:block"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -188,14 +169,14 @@ export default function GetStartedPanel({
             <div className="mt-3">
               <label
                 htmlFor="jobhir-state-selector"
-                className="mb-1.5 block text-xs font-semibold text-white/75"
+                className="mb-1.5 block text-xs font-semibold text-slate-600"
               >
                 Explore jobs by location
               </label>
 
               <div className="relative">
                 <svg
-                  className="pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-indigo-500"
+                  className="pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-sky-600"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -214,12 +195,12 @@ export default function GetStartedPanel({
                   onChange={(event) => onStateChange?.(event.target.value)}
                   className="
                     h-11 w-full cursor-pointer appearance-none
-                    rounded-xl border border-slate-200
+                    rounded-xl border border-slate-300
                     bg-white pl-10 pr-9
                     text-sm font-semibold text-slate-800
-                    shadow-[0_4px_12px_rgba(0,0,0,0.18)]
+                    shadow-sm
                     outline-none transition-colors duration-200
-                    hover:border-indigo-300
+                    hover:border-sky-400
                   "
                 >
                   <option value="All">All India — All States</option>

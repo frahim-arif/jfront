@@ -883,6 +883,9 @@ export default function App() {
   </div>
 </div>
 
+ {/* WORKER REGISTRATION OFFER */}
+      <OfferBanner onRegister={() => navigate("/worker-register")} />
+
       {/* ACTION AREA */}
       <GetStartedPanel
         stateList={stateList}
@@ -896,8 +899,7 @@ export default function App() {
         onRegister={() => navigate("/worker-register")}
       />
 
-      {/* WORKER REGISTRATION OFFER */}
-      <OfferBanner onRegister={() => navigate("/worker-register")} />
+     
 
       {/* MAIN JOB AREA */}
       <main
