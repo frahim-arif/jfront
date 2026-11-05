@@ -1,0 +1,13 @@
+
+{
+  "appId": "com.jobhir.app",
+  "appName": "JobHir",
+  "webDir": "dist",
+  "android": {
+    "path": "jobhir-android"
+  },
+  "server": {
+    "url": "https://www.jobhir.com",
+    "cleartext": false
+  }
+}
