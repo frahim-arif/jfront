@@ -1,30 +1,17 @@
 /* ======================================================
-   JOBHIR — GET STARTED PANEL (same buttons, same colours,
-   same heights; sirf style shandaar)
+   JOBHIR — GET STARTED PANEL
    Save as: src/components/GetStartedPanel.jsx
 
-   App.jsx me:
-     import GetStartedPanel from "./components/GetStartedPanel.jsx";
-
-     <GetStartedPanel
-       stateList={stateList}
-       selectedState={selectedState}
-       onStateChange={(state) => {
-         setSelectedState(state);
-         setSelectedWorkType(null);
-         setTimeout(scrollToJobs, 50);
-       }}
-       onPostJob={() => navigate("/offer-job")}
-       onRegister={() => navigate("/worker-register")}
-     />
+   Props (same as before, App.jsx needs no change):
+     stateList, selectedState, onStateChange, onPostJob, onRegister
    ====================================================== */
 
-const GOLD = "#c8ae6a";
-
-// same 8-point star motif as header / offer banner / jobs section
-const STAR = `url("data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='rgba(200,174,106,0.20)' stroke-width='1'><rect x='17' y='17' width='26' height='26'/><rect x='17' y='17' width='26' height='26' transform='rotate(45 30 30)'/><circle cx='30' cy='30' r='3'/></g></svg>`
-)}")`;
+// subtle dot-grid pattern (replaces the old star pattern)
+const DOT_GRID = {
+  backgroundImage:
+    "radial-gradient(rgba(165, 180, 252, 0.18) 1px, transparent 1px)",
+  backgroundSize: "22px 22px",
+};
 
 export default function GetStartedPanel({
   stateList = [],
@@ -42,53 +29,43 @@ export default function GetStartedPanel({
         }
         .jobhir-post-shimmer { animation: jobhirShimmer 3.2s ease-in-out infinite; }
 
-        /* App.jsx ki global CSS select:focus ko indigo bana deti hai; ID se gold wapas */
-        #jobhir-state-selector:focus {
-          border-color: ${GOLD} !important;
-          box-shadow: 0 0 0 3px rgba(200, 174, 106, 0.28) !important;
-        }
-
         @media (prefers-reduced-motion: reduce) {
           .jobhir-post-shimmer { animation: none; display: none; }
         }
       `}</style>
 
       <div
-        className="relative w-full overflow-hidden rounded-2xl border border-[#c8ae6a]/50 shadow-[0_14px_34px_rgba(7,28,25,0.22)]"
+        className="relative w-full overflow-hidden rounded-2xl border border-indigo-300/20 shadow-[0_14px_34px_rgba(15,23,42,0.25)]"
         style={{
-          background: "linear-gradient(135deg,#071c19,#0b302a 55%,#123d32)",
+          background: "linear-gradient(135deg,#0f172a,#1e1b4b 55%,#312e81)",
         }}
       >
-        {/* star pattern layer */}
+        {/* dot grid layer */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
-          style={{ backgroundImage: STAR, backgroundSize: "60px 60px" }}
+          style={DOT_GRID}
         />
-        {/* soft gold glow */}
+
+        {/* soft indigo glow */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-[#c8ae6a]/15 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl"
         />
-        {/* gold hairline on top */}
+
+        {/* top hairline */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
-          }}
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/70 to-transparent"
         />
 
         <div className="relative z-10 grid grid-cols-1 items-center gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-8 lg:p-6">
-          {/* LEFT — tagline (sirf bade screen par; hata do to bhi layout theek rahega) */}
+          {/* LEFT — tagline (large screens only) */}
           <div className="hidden lg:block">
-            <p
-              className="text-3xl font-extrabold leading-tight text-white xl:text-[34px]"
-              style={{ fontFamily: "'Mukta', 'Poppins', system-ui, sans-serif" }}
-            >
-              काम ढूंढिए,
+            <p className="text-3xl font-extrabold leading-tight text-white xl:text-[34px]">
+              Find work,
               <br />
-              अपने शहर में।
+              right in your city.
             </p>
             <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/70">
               Pick your state, choose your trade and apply in a minute.
@@ -100,13 +77,12 @@ export default function GetStartedPanel({
             <div className="mb-3 flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="h-2 w-2 shrink-0 rotate-45"
-                style={{ background: GOLD }}
+                className="h-2 w-2 shrink-0 rotate-45 bg-indigo-300"
               />
               <h2 className="whitespace-nowrap text-sm font-extrabold text-white sm:text-base">
                 Get started
               </h2>
-              <span className="h-px flex-1 bg-gradient-to-r from-[#c8ae6a]/70 to-transparent" />
+              <span className="h-px flex-1 bg-gradient-to-r from-indigo-300/70 to-transparent" />
             </div>
 
             {/* TWO BUTTONS, SAME HEIGHT */}
@@ -128,7 +104,7 @@ export default function GetStartedPanel({
                   active:translate-y-0 active:scale-[0.98]
                   focus-visible:outline-none focus-visible:ring-2
                   focus-visible:ring-amber-300 focus-visible:ring-offset-2
-                  focus-visible:ring-offset-[#071c19]
+                  focus-visible:ring-offset-slate-900
                 "
               >
                 <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/10 text-2xl font-normal leading-none">
@@ -161,22 +137,22 @@ export default function GetStartedPanel({
                 className="
                   group flex h-[54px] min-w-0 items-center
                   justify-center gap-2 rounded-xl
-                  border border-[#c8ae6a]/55
-                  bg-white/[0.05] px-2.5
+                  border border-indigo-300/40
+                  bg-white/[0.06] px-2.5
                   text-xs font-bold text-white
-                  shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]
+                  shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
                   transition-all duration-200
-                  hover:-translate-y-0.5 hover:border-[#e2c77e] hover:bg-white/[0.1]
+                  hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-white/[0.12]
                   active:translate-y-0 active:scale-[0.98]
                   focus-visible:outline-none focus-visible:ring-2
-                  focus-visible:ring-[#e2c77e] focus-visible:ring-offset-2
-                  focus-visible:ring-offset-[#071c19]
+                  focus-visible:ring-indigo-300 focus-visible:ring-offset-2
+                  focus-visible:ring-offset-slate-900
                   sm:text-sm
                 "
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#c8ae6a]/40 bg-white/[0.05]">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-indigo-300/30 bg-white/[0.06]">
                   <svg
-                    className="h-[18px] w-[18px] text-[#e2c77e]"
+                    className="h-[18px] w-[18px] text-indigo-200"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -193,7 +169,7 @@ export default function GetStartedPanel({
                 <span className="whitespace-nowrap">Register</span>
 
                 <svg
-                  className="ml-auto hidden h-4 w-4 shrink-0 text-white/55 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-[#e2c77e] sm:block"
+                  className="ml-auto hidden h-4 w-4 shrink-0 text-white/55 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-indigo-200 sm:block"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -219,7 +195,7 @@ export default function GetStartedPanel({
 
               <div className="relative">
                 <svg
-                  className="pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-[#8d7947]"
+                  className="pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-indigo-500"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -238,12 +214,12 @@ export default function GetStartedPanel({
                   onChange={(event) => onStateChange?.(event.target.value)}
                   className="
                     h-11 w-full cursor-pointer appearance-none
-                    rounded-xl border border-[#d9d5c7]
-                    bg-[#faf8ef] pl-10 pr-9
-                    text-sm font-semibold text-[#172d27]
+                    rounded-xl border border-slate-200
+                    bg-white pl-10 pr-9
+                    text-sm font-semibold text-slate-800
                     shadow-[0_4px_12px_rgba(0,0,0,0.18)]
                     outline-none transition-colors duration-200
-                    hover:border-[#c8ae6a]
+                    hover:border-indigo-300
                   "
                 >
                   <option value="All">All India — All States</option>
@@ -256,7 +232,7 @@ export default function GetStartedPanel({
                 </select>
 
                 <svg
-                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#53665d]"
+                  className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
