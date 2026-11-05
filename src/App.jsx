@@ -871,17 +871,17 @@ export default function App() {
       <Header onOfferJobClick={() => navigate("/offer-job")} />
 
       {/* TOP MARQUEE */}
-      <div className="w-full overflow-hidden border-b border-[#c8ae6a]/40 bg-[#071c19] py-1 text-white shadow-sm">
-        <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
-          <span className="text-slate-300">{currentTime}</span>
-          <span className="mx-5 text-amber-400">•</span>
-          <span>Find genuine job opportunities near you</span>
-          <span className="mx-5 text-amber-400">•</span>
-          <span>100% Secure &amp; Safe</span>
-          <span className="mx-5 text-amber-400">•</span>
-          <span>JobHir — Jobs for Everyone</span>
-        </div>
-      </div>
+<div className="w-full overflow-hidden border-b border-white/20 bg-gradient-to-r from-sky-700 via-sky-600 to-cyan-500 py-1 text-white shadow-[0_2px_10px_rgba(2,132,199,0.25)]">
+  <div className="jobhir-marquee text-[11px] font-semibold tracking-wide sm:text-xs">
+    <span className="text-sky-100">{currentTime}</span>
+    <span className="mx-5 text-amber-300">•</span>
+    <span>Find genuine job opportunities near you</span>
+    <span className="mx-5 text-amber-300">•</span>
+    <span>100% Secure &amp; Safe</span>
+    <span className="mx-5 text-amber-300">•</span>
+    <span>JobHir — Jobs for Everyone</span>
+  </div>
+</div>
 
       {/* ACTION AREA */}
       <GetStartedPanel
