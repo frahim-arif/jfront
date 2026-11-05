@@ -10,15 +10,18 @@ import {
 
 /* ======================================================
    JOBHIR — FLOATING MOBILE NAV
-   Dark green bar, gold active state, raised centre
-   "Post Job" button (the one memorable element).
-   Same routes and scroll logic as before.
+   White bar, sky blue active state, raised centre
+   "Post job" button. Same routes and scroll logic as before.
    Save as: src/components/MobileBottomNav.jsx
    ====================================================== */
 
-const GOLD = "#c8ae6a";
-const GOLD_LIGHT = "#e2c77e";
-const DEEP = "#071c19";
+const SKY = "#0ea5e9"; // sky-500
+const SKY_LIGHT = "#38bdf8"; // sky-400
+const SKY_DARK = "#0369a1"; // sky-700
+const SKY_TINT = "#e0f2fe"; // sky-100
+const INK = "#082f49"; // sky-950 (icon/text on sky buttons)
+const INACTIVE = "#64748b"; // slate-500
+const PAGE_BG = "#f8fafc"; // matches the app background
 
 const items = [
   { key: "home", label: "Home", href: "/", icon: Home },
@@ -36,20 +39,20 @@ export default function MobileBottomNav() {
   const [activeScroll, setActiveScroll] = useState("home");
   const scrollTimerRef = useRef(null);
 
-  // Pending timers cleanup
+  // Clean up pending timers
   useEffect(() => {
     return () => {
       if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
     };
   }, []);
 
-  // URL hash (#jobs) se Jobs active karo.
-  // NOTE: ye hook early return se PEHLE hona chahiye (Rules of Hooks).
+  // Activate "Jobs" when the URL hash is #jobs.
+  // NOTE: this hook must stay above the early return (Rules of Hooks).
   useEffect(() => {
     if (pathname === "/" && hash === "#jobs") setActiveScroll("jobs");
   }, [pathname, hash]);
 
-  // Admin pages par bottom navigation hide rahega
+  // Hide the bottom navigation on admin pages
   if (pathname.startsWith("/admin")) return null;
 
   const scrollToTop = () => {
@@ -65,7 +68,7 @@ export default function MobileBottomNav() {
     return true;
   };
 
-  // Home page render hone tak Jobs section ko retry karo
+  // Retry until the home page has rendered the Jobs section
   const waitAndScrollToJobs = () => {
     if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
 
@@ -87,7 +90,7 @@ export default function MobileBottomNav() {
         scrollTimerRef.current = window.setTimeout(tryScroll, 150);
       } else {
         scrollTimerRef.current = null;
-        console.warn('JobHir: Jobs section nahi mila. App.jsx mein id="jobs" check karein.');
+        console.warn('JobHir: Jobs section not found. Check that App.jsx has id="jobs".');
       }
     };
 
@@ -138,7 +141,7 @@ export default function MobileBottomNav() {
     <>
       <style>{`
         .jobhir-nav-btn { -webkit-tap-highlight-color: transparent; }
-        .jobhir-nav-btn:focus-visible { outline: 2px solid ${GOLD_LIGHT}; outline-offset: 2px; border-radius: 14px; }
+        .jobhir-nav-btn:focus-visible { outline: 2px solid ${SKY}; outline-offset: 2px; border-radius: 14px; }
         .jobhir-nav-btn:active .jobhir-nav-ico { transform: scale(.9); }
         .jobhir-nav-ico, .jobhir-nav-dot { transition: transform .18s ease, background-color .18s ease, color .18s ease, width .25s ease, opacity .25s ease; }
         @media (prefers-reduced-motion: reduce) {
@@ -146,7 +149,7 @@ export default function MobileBottomNav() {
         }
       `}</style>
 
-      {/* Content ko nav ke peeche chhupne se rokne ke liye spacer */}
+      {/* Spacer so page content doesn't hide behind the nav */}
       <div className="md:hidden" style={{ height: "88px" }} aria-hidden="true" />
 
       <div
@@ -162,10 +165,10 @@ export default function MobileBottomNav() {
           className="relative mx-auto max-w-md"
           style={{
             pointerEvents: "auto",
-            background: `linear-gradient(135deg, ${DEEP}, #0b302a 60%, #123d32)`,
-            border: `1px solid ${GOLD}66`,
+            background: "#ffffff",
+            border: "1px solid #e2e8f0",
             borderRadius: "22px",
-            boxShadow: "0 14px 34px rgba(7,28,25,.38), 0 2px 0 rgba(255,255,255,.04) inset",
+            boxShadow: "0 10px 30px rgba(15,23,42,.14), 0 2px 6px rgba(15,23,42,.06)",
           }}
         >
           <ul className="flex items-end px-1">
@@ -190,19 +193,19 @@ export default function MobileBottomNav() {
                           width: 58,
                           height: 58,
                           marginTop: -26,
-                          background: `linear-gradient(145deg, ${GOLD_LIGHT}, ${GOLD})`,
-                          color: DEEP,
-                          border: "4px solid #faf8ef",
+                          background: `linear-gradient(145deg, ${SKY_LIGHT}, ${SKY})`,
+                          color: INK,
+                          border: `4px solid ${PAGE_BG}`,
                           boxShadow: active
-                            ? `0 0 0 3px ${GOLD}88, 0 10px 22px rgba(7,28,25,.35)`
-                            : "0 10px 22px rgba(7,28,25,.35)",
+                            ? `0 0 0 3px ${SKY}66, 0 10px 22px rgba(14,165,233,.35)`
+                            : "0 10px 22px rgba(14,165,233,.35)",
                         }}
                       >
                         <Icon size={28} strokeWidth={2.8} />
                       </span>
                       <span
                         className="mt-1 whitespace-nowrap text-[11px] font-extrabold leading-4"
-                        style={{ color: GOLD_LIGHT }}
+                        style={{ color: SKY_DARK }}
                       >
                         {item.label}
                       </span>
@@ -224,8 +227,8 @@ export default function MobileBottomNav() {
                     <span
                       className="jobhir-nav-ico flex h-8 w-11 items-center justify-center rounded-xl"
                       style={{
-                        background: active ? `${GOLD}26` : "transparent",
-                        color: active ? GOLD_LIGHT : "rgba(255,255,255,.6)",
+                        background: active ? SKY_TINT : "transparent",
+                        color: active ? SKY_DARK : INACTIVE,
                       }}
                     >
                       <Icon size={20} strokeWidth={active ? 2.5 : 1.9} />
@@ -235,19 +238,19 @@ export default function MobileBottomNav() {
                       className="whitespace-nowrap text-[11px] leading-4"
                       style={{
                         fontWeight: active ? 800 : 600,
-                        color: active ? "#ffffff" : "rgba(255,255,255,.6)",
+                        color: active ? SKY_DARK : INACTIVE,
                       }}
                     >
                       {item.label}
                     </span>
 
-                    {/* active dot */}
+                    {/* active indicator */}
                     <span
                       className="jobhir-nav-dot absolute bottom-0 left-1/2 h-[3px] -translate-x-1/2 rounded-full"
                       style={{
                         width: active ? 18 : 0,
                         opacity: active ? 1 : 0,
-                        background: GOLD,
+                        background: SKY,
                       }}
                     />
                   </button>
