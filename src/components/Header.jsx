@@ -13,23 +13,9 @@ import {
 } from "lucide-react";
 
 /* ======================================================
-   JOBHIR HEADER — navy / indigo theme
+   JOBHIR HEADER — white, clean
    Save as: src/components/Header.jsx
    ====================================================== */
-
-const COLORS = {
-  from: "#0f172a", // slate-900
-  via: "#1e1b4b", // indigo-950
-  to: "#312e81", // indigo-900
-  solid: "#0f172a", // dropdown / mobile menu base
-  accent: "#a5b4fc", // indigo-300
-  accentStrong: "#818cf8", // indigo-400
-};
-
-// subtle dot grid pattern
-const DOT_GRID = "radial-gradient(rgba(165,180,252,0.16) 1px, transparent 1px)";
-
-const NAV_COLOR = "rgba(255,255,255,0.92)";
 
 const API_URL = "https://jbackend-h963.onrender.com";
 
@@ -40,6 +26,10 @@ const NAV_ITEMS = [
   { label: "Privacy", path: "/privacy" },
   { label: "Pricing", path: "/pricing" },
 ];
+
+// Inline colours: a global `a { color }` rule in index.css would override Tailwind classes
+const NAV_COLOR = "#334155"; // slate-700
+const NAV_HOVER = "#4f46e5"; // indigo-600
 
 // Orange CTA, same as the "Post a Job" button in GetStartedPanel
 const ctaStyle = {
@@ -261,23 +251,20 @@ export default function Header() {
       onClick={toggleNotifications}
       aria-label="Notifications"
       aria-expanded={showNotifications}
-      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white transition-all duration-200 hover:border-indigo-300/60 hover:bg-white/[0.14] active:scale-95 sm:h-11 sm:w-11"
+      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 active:scale-95 sm:h-11 sm:w-11"
     >
       <Bell
         size={20}
         strokeWidth={2}
         className={`transition-all duration-200 group-hover:scale-110 ${
-          unreadCount > 0 ? "fill-yellow-300 text-yellow-300" : "text-white/90"
+          unreadCount > 0 ? "fill-amber-400 text-amber-500" : "text-slate-600"
         }`}
       />
 
       {unreadCount > 0 && (
         <>
-          <span className="absolute -right-1 -top-1 h-2.5 w-2.5 animate-ping rounded-full bg-yellow-300 opacity-70" />
-          <span
-            className="absolute -right-2 -top-2 flex min-h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 bg-red-500 px-1 text-[9px] font-black leading-none text-white shadow-lg"
-            style={{ borderColor: COLORS.solid }}
-          >
+          <span className="absolute -right-1 -top-1 h-2.5 w-2.5 animate-ping rounded-full bg-red-400 opacity-70" />
+          <span className="absolute -right-2 -top-2 flex min-h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[9px] font-black leading-none text-white shadow-md">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         </>
@@ -291,41 +278,34 @@ export default function Header() {
 
   const renderNotificationList = () => (
     <div className="w-full bg-white">
-      <div
-        className="relative overflow-hidden border-b border-slate-200 px-4 py-3.5"
-        style={{
-          background: `linear-gradient(90deg, ${COLORS.from}, ${COLORS.via}, ${COLORS.to})`,
-        }}
-      >
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/10">
-              <Bell size={16} style={{ color: COLORS.accent }} />
-            </div>
-
-            <div>
-              <h3 className="text-sm font-black text-white">Job Notifications</h3>
-              {unreadCount > 0 ? (
-                <p className="mt-0.5 text-[11px] font-medium text-white/80">
-                  {unreadCount} unread notification{unreadCount > 1 ? "s" : ""}
-                </p>
-              ) : (
-                <p className="mt-0.5 text-[11px] text-white/60">You're all caught up</p>
-              )}
-            </div>
+      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3.5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100">
+            <Bell size={16} className="text-indigo-600" />
           </div>
 
-          {unreadCount > 0 && (
-            <button
-              type="button"
-              onClick={markAllAsRead}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/10 px-2.5 py-1.5 text-[10px] font-bold text-white transition hover:bg-white/20"
-            >
-              <CheckCheck size={13} />
-              Mark all
-            </button>
-          )}
+          <div>
+            <h3 className="text-sm font-black text-slate-800">Job Notifications</h3>
+            {unreadCount > 0 ? (
+              <p className="mt-0.5 text-[11px] font-medium text-slate-500">
+                {unreadCount} unread notification{unreadCount > 1 ? "s" : ""}
+              </p>
+            ) : (
+              <p className="mt-0.5 text-[11px] text-slate-400">You're all caught up</p>
+            )}
+          </div>
         </div>
+
+        {unreadCount > 0 && (
+          <button
+            type="button"
+            onClick={markAllAsRead}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-bold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50"
+          >
+            <CheckCheck size={13} />
+            Mark all
+          </button>
+        )}
       </div>
 
       <div className="max-h-[420px] overflow-y-auto">
@@ -354,7 +334,7 @@ export default function Header() {
               onClick={() => markAsRead(notification)}
               className={`group w-full border-b border-slate-100 p-4 text-left transition-all duration-200 ${
                 !notification.isRead
-                  ? "bg-indigo-50/80 hover:bg-indigo-100/70"
+                  ? "bg-indigo-50/70 hover:bg-indigo-100/60"
                   : "bg-white hover:bg-slate-50"
               }`}
             >
@@ -415,30 +395,17 @@ export default function Header() {
   // =========================================================
 
   return (
-    <header
-      className="relative z-50 w-full border-b border-indigo-300/20 shadow-[0_10px_35px_rgba(2,6,23,0.28)]"
-      style={{
-        backgroundColor: COLORS.via,
-        backgroundImage: `${DOT_GRID}, linear-gradient(90deg, ${COLORS.from}, ${COLORS.via}, ${COLORS.to})`,
-        backgroundSize: "22px 22px, 100% 100%",
-      }}
-    >
-      {/* Bottom hairline */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-300/70 to-transparent" />
-
+    <header className="relative z-50 w-full border-b border-slate-200 bg-white shadow-[0_1px_8px_rgba(15,23,42,0.06)]">
       <div className="relative w-full px-3 sm:px-5 lg:px-8">
-        <div className="flex min-h-[72px] items-center justify-between gap-3 sm:min-h-[80px]">
-          {/* ================= LOGO (round badge) ================= */}
+        <div className="flex min-h-[68px] items-center justify-between gap-3 sm:min-h-[76px]">
+          {/* ================= LOGO ================= */}
           <Link
             to="/"
             onClick={() => setIsOpen(false)}
             className="group relative flex flex-shrink-0 items-center"
             aria-label="JobHir home"
           >
-            <span
-              className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-indigo-300 bg-white p-1 transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14"
-              style={{ boxShadow: "0 6px 18px rgba(0,0,0,.28)" }}
-            >
+            <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
               <img
                 src="/images/logo.png"
                 alt="JobHir"
@@ -446,7 +413,7 @@ export default function Header() {
               />
             </span>
 
-            <span className="absolute -bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-emerald-200 bg-white px-2.5 py-0.5 text-[8px] font-extrabold tracking-wide text-emerald-700 shadow-[0_3px_10px_rgba(15,23,42,0.18)]">
+            <span className="absolute -bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border border-emerald-200 bg-white px-2.5 py-0.5 text-[8px] font-extrabold tracking-wide text-emerald-700 shadow-[0_3px_10px_rgba(15,23,42,0.12)]">
               <ShieldCheck size={9} strokeWidth={2.5} />
               Secure
             </span>
@@ -459,36 +426,32 @@ export default function Header() {
                 {renderNotificationButton()}
 
                 {showNotifications && (
-                  <div className="absolute right-0 top-[56px] z-[100] w-[370px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.28)]">
+                  <div className="absolute right-0 top-[56px] z-[100] w-[370px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
                     {renderNotificationList()}
                   </div>
                 )}
               </div>
             )}
 
-            <nav className="flex items-center border-l border-white/15 pl-3 lg:pl-4">
+            <nav className="flex items-center border-l border-slate-200 pl-3 lg:pl-4">
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   className="group relative px-2.5 py-2 text-xs font-bold transition-colors duration-200 lg:px-3 lg:text-sm"
-                  // Inline colour: a global `a { color }` rule in index.css would override Tailwind classes
                   style={{ color: NAV_COLOR }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.accent)}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = NAV_HOVER)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = NAV_COLOR)}
                 >
                   {item.label}
-                  <span
-                    className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 transition-all duration-300 group-hover:w-2/3"
-                    style={{ background: COLORS.accentStrong }}
-                  />
+                  <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-indigo-500 transition-all duration-300 group-hover:w-2/3" />
                 </Link>
               ))}
             </nav>
 
             <Link
               to="/offer-job"
-              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_8px_22px_rgba(249,115,22,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black shadow-[0_6px_16px_rgba(249,115,22,0.30)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-105 lg:px-5 lg:text-sm"
               style={ctaStyle}
             >
               <Plus size={16} strokeWidth={3} />
@@ -503,7 +466,7 @@ export default function Header() {
                 {renderNotificationButton()}
 
                 {showNotifications && (
-                  <div className="fixed left-3 right-3 top-[82px] z-[100] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.3)]">
+                  <div className="fixed left-3 right-3 top-[78px] z-[100] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
                     {renderNotificationList()}
                   </div>
                 )}
@@ -523,7 +486,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white transition-all duration-200 hover:bg-white/[0.14] active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:bg-slate-50 active:scale-95"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
             >
@@ -535,23 +498,20 @@ export default function Header() {
 
       {/* ================= MOBILE MENU ================= */}
       {isOpen && (
-        <div
-          className="relative border-t border-indigo-300/20 px-4 py-4 md:hidden"
-          style={{ background: COLORS.solid }}
-        >
+        <div className="relative border-t border-slate-200 bg-white px-4 py-4 md:hidden">
           <nav className="space-y-0.5">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={handleMobileLinkClick}
-                className="group flex items-center justify-between border-b border-white/[0.08] px-2 py-3 text-sm font-semibold transition-all duration-200 hover:bg-white/[0.05]"
-                style={{ color: "rgba(255,255,255,0.9)" }}
+                className="group flex items-center justify-between border-b border-slate-100 px-2 py-3 text-sm font-semibold transition-all duration-200 hover:bg-slate-50"
+                style={{ color: NAV_COLOR }}
               >
                 <span>{item.label}</span>
                 <ChevronRight
                   size={16}
-                  className="text-white/30 transition-all group-hover:translate-x-1 group-hover:text-indigo-300"
+                  className="text-slate-300 transition-all group-hover:translate-x-1 group-hover:text-indigo-500"
                 />
               </Link>
             ))}
